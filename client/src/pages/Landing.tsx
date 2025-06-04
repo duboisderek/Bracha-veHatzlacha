@@ -48,7 +48,6 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative overflow-hidden">
-      <FloatingParticles count={40} />
       
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 relative z-10">
