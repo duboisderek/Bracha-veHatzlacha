@@ -1,0 +1,96 @@
+📌 Projet : Développement complet d’une plateforme de loto privé en ligne – Full stack (front-end + back-end) sophistiqué
+
+🧱 Objectif :
+Créer une plateforme en ligne de loto privé où les utilisateurs choisissent 6 numéros, participent à des tirages hebdomadaires (basés sur les résultats officiels entrés manuellement), et gagnent des parts d’une cagnotte. Le système doit gérer automatiquement les tickets, calculer les gagnants et distribuer les gains.
+
+🌍 La plateforme doit être disponible uniquement en **anglais** 🇬🇧 et **hébreu** 🇮🇱, avec une bascule dynamique de langue (i18n).
+
+---
+
+🎨 FRONT-END – DESIGN SOPHISTIQUÉ
+Utiliser React.js + Tailwind CSS + Framer Motion :
+- Palette moderne (bleu nuit, doré, blanc pur).
+- Affichage visuel et stylé des numéros (en forme de boules animées avec ombrage doux).
+- Interface utilisateur fluide, responsive, animations douces.
+- Bascule entre **anglais (LTR)** et **hébreu (RTL)** via un bouton en haut à droite.
+- Affichage des tickets, résultats, et gains sous forme de cartes animées.
+- Icônes stylées pour : dépôt, historique, tickets, support, parrainage.
+- Confettis animés ou effet de vibration à l’annonce d’un gain.
+
+🧑‍💼 Pages à créer :
+1. **Page d'accueil + Login/Register**
+2. **Tableau de bord utilisateur** :
+   - Affichage du solde
+   - Sélection de 6 numéros entre 1 et 37
+   - Bouton pour soumettre un ticket (100₪ déduits)
+   - Affichage du lien de parrainage avec QR code
+   - Historique des tickets, résultats, gains
+   - Support chat intégré (WebSocket ou Firebase)
+3. **Page administrateur (protégée)** :
+   - Formulaire pour saisir les 6 numéros gagnants
+   - Liste des tickets du tirage courant
+   - Résultat automatisé : gagnants par niveau (4, 5, 6 bons numéros)
+   - Statistiques des dépôts, joueurs, gains
+
+---
+
+🧠 BACK-END – LOGIQUE (Node.js ou Python)
+Utiliser Supabase, Firebase, ou SQLite selon ta préférence.
+
+🔐 Authentification :
+- Création de compte / login avec email et mot de passe
+- Session sécurisée avec JWT
+
+💳 Dépôt :
+- L’utilisateur recharge son solde (simulation manuelle)
+- 50% du dépôt va à la maison, 50% à la cagnotte du prochain tirage
+
+🎟️ Ticket :
+- Coût : 100₪ par ticket
+- L’utilisateur choisit 6 numéros (1–37)
+- Ticket associé à l’utilisateur, à un tirage actif, et stocké avec timestamp
+
+🏆 Tirage :
+- Admin entre les 6 numéros gagnants
+- Le système :
+   - Compare les tickets
+   - Calcule le nombre de bons numéros par ticket
+   - Répartit la cagnotte selon le barème :
+     - 6 bons : 50%
+     - 5 bons : 30%
+     - 4 bons : 20%
+     - 3 ou moins : aucun gain
+- Mise à jour automatique du solde des gagnants
+
+👥 Parrainage :
+- Lien unique généré pour chaque utilisateur
+- Si un nouveau joueur s’inscrit via ce lien et fait un dépôt :
+   - Le parrain gagne 100₪
+- Après 5 filleuls : bonus de 1,000₪ crédité
+
+📊 Historique & transparence :
+- Affichage clair de chaque transaction : part de la maison / part cagnotte
+- Historique des tickets, résultats, gains
+- Visualisation des cagnottes précédentes
+
+🌐 API REST à prévoir :
+- `/register`, `/login`, `/logout`
+- `/deposit`, `/balance`, `/tickets`, `/play`
+- `/admin/submit-results`, `/admin/stats`
+- `/results`, `/my-history`
+- `/referral-link`, `/referrals`
+
+💬 Chat intégré :
+- Chat simple entre utilisateur et agent (WebSocket ou Firebase Realtime DB)
+
+---
+
+🧪 Extra :
+- Valider les entrées utilisateur (pas plus d’un ticket par tirage, 6 numéros uniques entre 1 et 37).
+- Animation visuelle lors de l'envoi d’un ticket.
+- Responsive mobile et design élégant.
+- Composants stylisés pour l'hébreu RTL : texte aligné à droite, navigation inversée.
+
+📦 Finalité :
+Le projet doit pouvoir tourner dans Replit (Mono-repo ou deux projets liés : front-end + back-end).
+
