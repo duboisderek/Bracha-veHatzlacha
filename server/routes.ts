@@ -312,11 +312,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateTicketResults(ticket.id, matches, "0");
       }
       
-      // Distribute winnings
+      // Distribute winnings (50-50 split: 50% to winners, 50% retained)
       const distributions = {
-        6: 0.5, // 50%
-        5: 0.3, // 30%
-        4: 0.2, // 20%
+        6: 0.4, // 40% of total jackpot (80% of distributed amount)
+        5: 0.075, // 7.5% of total jackpot (15% of distributed amount)
+        4: 0.025, // 2.5% of total jackpot (5% of distributed amount)
       };
       
       for (const [matchCount, winnerTickets] of Object.entries(winners)) {
