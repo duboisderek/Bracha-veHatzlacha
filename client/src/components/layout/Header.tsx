@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AnimatedLogo } from "@/components/ui/animated-logo";
-import { Coins } from "lucide-react";
+import { Coins, Settings } from "lucide-react";
+import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -65,6 +66,16 @@ export function Header() {
                 עב
               </Button>
             </div>
+
+            {/* Admin Panel Link */}
+            {(user as any)?.isAdmin && (
+              <Link href="/admin">
+                <Button variant="default" size="sm" className="bg-red-600 hover:bg-red-700 text-white">
+                  <Settings className="w-4 h-4 mr-2" />
+                  {t('admin_panel')}
+                </Button>
+              </Link>
+            )}
 
             {/* User Menu */}
             {user && (

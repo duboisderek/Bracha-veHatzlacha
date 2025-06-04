@@ -145,7 +145,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/tickets', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const ticketData = insertTicketSchema.parse(req.body);
+      const ticketData = insertTicketSchema.parse({
+        ...req.body,
+        userId // Add userId to the data being validated
+      });
       
       // Check if user already has a ticket for this draw
       const hasTicket = await storage.getUserHasTicketForDraw(userId, ticketData.drawId);

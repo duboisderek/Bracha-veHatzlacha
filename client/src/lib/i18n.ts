@@ -53,6 +53,7 @@ export const translations = {
     
     // Messages
     congratulations: "Congratulations!",
+    admin_panel: "Admin Panel",
     youWon: "You've won",
     with: "with",
     matchingNumbers: "matching numbers",
