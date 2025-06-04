@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Coins, Dice1 } from "lucide-react";
+import { AnimatedLogo } from "@/components/ui/animated-logo";
+import { Coins } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -16,15 +17,15 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
-            <div className="w-10 h-10 bg-gradient-to-r from-slate-900 to-slate-700 rounded-full flex items-center justify-center">
-              <Dice1 className="text-yellow-500 text-lg" />
+            <AnimatedLogo size="md" />
+            <div className="text-slate-900 font-bold text-xl bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
+              LotoPro
             </div>
-            <div className="text-slate-900 font-bold text-xl">LotoPro</div>
           </div>
 
           {/* Navigation and Controls */}
