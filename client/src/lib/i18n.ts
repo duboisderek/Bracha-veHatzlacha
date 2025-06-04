@@ -121,6 +121,7 @@ export const translations = {
     
     // Messages
     congratulations: "מזל טוב!",
+    admin_panel: "פאנל ניהול",
     youWon: "זכית ב",
     with: "עם",
     matchingNumbers: "מספרים תואמים",
