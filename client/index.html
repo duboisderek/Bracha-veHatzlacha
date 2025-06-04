@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="description" content="LotoPro - Premium online lottery platform with weekly draws, referral rewards, and multi-language support. Join thousands of players and win amazing prizes!" />
+    <meta name="keywords" content="lottery, online lottery, jackpot, prizes, referral rewards, weekly draws" />
+    <meta name="author" content="LotoPro" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lotopro.com/" />
+    <meta property="og:title" content="LotoPro - Premium Online Lottery Platform" />
+    <meta property="og:description" content="Join thousands of players in our exclusive lottery community. Choose your lucky numbers, win amazing prizes, and earn rewards through our referral program." />
+    <meta property="og:image" content="https://lotopro.com/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://lotopro.com/" />
+    <meta property="twitter:title" content="LotoPro - Premium Online Lottery Platform" />
+    <meta property="twitter:description" content="Join thousands of players in our exclusive lottery community. Choose your lucky numbers, win amazing prizes, and earn rewards through our referral program." />
+    <meta property="twitter:image" content="https://lotopro.com/og-image.jpg" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#fbbf24" />
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Title -->
+    <title>LotoPro - Premium Online Lottery Platform</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="modulepreload" href="/src/main.tsx" />
+    
+    <!-- Security headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    
+    <!-- Structured data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "LotoPro",
+      "description": "Premium online lottery platform with weekly draws and referral rewards",
+      "url": "https://lotopro.com",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "100",
+        "priceCurrency": "ILS",
+        "description": "Lottery ticket price"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1247"
+      }
+    }
+    </script>
+    
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileColor" content="#1e293b" />
+    <meta name="msapplication-TileImage" content="/mstile-150x150.png" />
+    
+    <!-- Additional performance optimizations -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="LotoPro" />
+  </head>
+  <body>
+    <!-- Main app container -->
+    <div id="root"></div>
+    
+    <!-- Main application script -->
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Development banner for Replit -->
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('SW registered: ', registration);
+            })
+            .catch(function(registrationError) {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        font-family: Inter, sans-serif;
+      ">
+        <div style="
+          text-align: center;
+          padding: 2rem;
+          background: white;
+          border-radius: 1rem;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+          max-width: 400px;
+        ">
+          <div style="
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+          ">
+            <i class="fas fa-dice" style="color: #fbbf24; font-size: 1.5rem;"></i>
+          </div>
+          <h1 style="
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 1rem;
+          ">LotoPro</h1>
+          <p style="
+            color: #64748b;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+          ">
+            Please enable JavaScript to use LotoPro. 
+            Our lottery platform requires JavaScript for the best experience.
+          </p>
+          <div style="
+            padding: 1rem;
+            background: #fef3c7;
+            border-radius: 0.5rem;
+            border: 1px solid #fbbf24;
+          ">
+            <p style="
+              color: #92400e;
+              font-size: 0.875rem;
+              margin: 0;
+            ">
+              <strong>How to enable JavaScript:</strong><br>
+              • Chrome: Settings → Privacy and Security → Site Settings → JavaScript<br>
+              • Firefox: about:config → javascript.enabled → true<br>
+              • Safari: Preferences → Security → Enable JavaScript
+            </p>
+          </div>
+        </div>
+      </div>
+    </noscript>
+  </body>
+</html>
