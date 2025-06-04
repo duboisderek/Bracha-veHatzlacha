@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AnimatedLogo } from "@/components/ui/animated-logo";
-import { FloatingParticles } from "@/components/ui/floating-particles";
 import { Trophy, Users, Gift } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
