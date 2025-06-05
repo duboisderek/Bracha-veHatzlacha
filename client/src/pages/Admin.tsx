@@ -370,15 +370,15 @@ function SystemControlsSection() {
     },
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "New draw created successfully!",
+        title: t('success'),
+        description: t('drawCreatedSuccessfully'),
       });
       setNewDrawDate("");
       queryClient.invalidateQueries();
     },
     onError: (error) => {
       toast({
-        title: "Error",
+        title: t('error'),
         description: error.message,
         variant: "destructive",
       });
@@ -388,8 +388,8 @@ function SystemControlsSection() {
   const createDraw = () => {
     if (!newDrawDate) {
       toast({
-        title: "Error",
-        description: "Please select a draw date",
+        title: t('error'),
+        description: t('selectDrawDate'),
         variant: "destructive",
       });
       return;
@@ -400,10 +400,10 @@ function SystemControlsSection() {
   return (
     <div className="space-y-6">
       <div className="p-4 bg-green-50 rounded-lg">
-        <h3 className="font-semibold text-green-900 mb-4">Create New Draw</h3>
+        <h3 className="font-semibold text-green-900 mb-4">{t('createNewDraw')}</h3>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="drawDate">Draw Date</Label>
+            <Label htmlFor="drawDate">{t('drawDate')}</Label>
             <Input
               id="drawDate"
               type="datetime-local"
@@ -417,7 +417,7 @@ function SystemControlsSection() {
             disabled={createDrawMutation.isPending}
             className="w-full bg-green-600 hover:bg-green-700"
           >
-            {createDrawMutation.isPending ? "Creating..." : "Create Draw"}
+            {createDrawMutation.isPending ? t('creating') : t('createDraw')}
           </Button>
         </div>
       </div>

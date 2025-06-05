@@ -100,6 +100,12 @@ export const translations = {
     alreadyHaveTicket: "You already have a ticket for this draw",
     mustSelect6Numbers: "You must select exactly 6 numbers",
     loginRequired: "Please log in to continue",
+    
+    // Admin specific translations
+    success: "Success",
+    error: "Error",
+    drawCreatedSuccessfully: "Draw created successfully",
+    selectDrawDate: "Please select a draw date",
   },
   he: {
     // Header
@@ -203,6 +209,12 @@ export const translations = {
     alreadyHaveTicket: "כבר יש לך כרטיס להגרלה זו",
     mustSelect6Numbers: "עליך לבחור בדיוק 6 מספרים",
     loginRequired: "נא להתחבר כדי להמשיך",
+    
+    // Admin specific translations
+    success: "הצלחה",
+    error: "שגיאה",
+    drawCreatedSuccessfully: "הגרלה נוצרה בהצלחה",
+    selectDrawDate: "נא לבחור תאריך הגרלה",
   },
 };
 
