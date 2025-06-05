@@ -283,7 +283,203 @@ export default function Admin() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Additional Admin Features */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+          {/* User Management */}
+          <Card className="shadow-xl border-0">
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">User Management</h2>
+              <UserManagementSection />
+            </CardContent>
+          </Card>
+
+          {/* System Controls */}
+          <Card className="shadow-xl border-0">
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">System Controls</h2>
+              <SystemControlsSection />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Draw History */}
+        <Card className="shadow-xl border-0 mt-8">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">Draw History</h2>
+            <DrawHistorySection />
+          </CardContent>
+        </Card>
       </main>
+    </div>
+  );
+}
+
+// User Management Component
+function UserManagementSection() {
+  const { data: users } = useQuery({
+    queryKey: ["/api/admin/users"],
+  });
+
+  return (
+    <div className="space-y-4">
+      <div className="bg-blue-50 p-4 rounded-lg">
+        <h3 className="font-semibold text-blue-900 mb-2">Total Users</h3>
+        <div className="text-2xl font-bold text-blue-600">
+          {users?.length || 0}
+        </div>
+      </div>
+      
+      <div className="max-h-64 overflow-y-auto">
+        <div className="space-y-2">
+          {users?.slice(0, 10).map((user: any) => (
+            <div key={user.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+              <div>
+                <div className="font-medium">{user.firstName} {user.lastName}</div>
+                <div className="text-sm text-gray-600">{user.email}</div>
+              </div>
+              <div className="text-right">
+                <div className="font-medium">₪{user.balance}</div>
+                <div className="text-sm text-gray-600">
+                  {user.isAdmin ? "Admin" : "User"}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// System Controls Component
+function SystemControlsSection() {
+  const [newDrawDate, setNewDrawDate] = useState("");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const createDrawMutation = useMutation({
+    mutationFn: async (drawDate: string) => {
+      return apiRequest("POST", "/api/admin/draws", {
+        drawDate: new Date(drawDate).toISOString(),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "New draw created successfully!",
+      });
+      setNewDrawDate("");
+      queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const createDraw = () => {
+    if (!newDrawDate) {
+      toast({
+        title: "Error",
+        description: "Please select a draw date",
+        variant: "destructive",
+      });
+      return;
+    }
+    createDrawMutation.mutate(newDrawDate);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="p-4 bg-green-50 rounded-lg">
+        <h3 className="font-semibold text-green-900 mb-4">Create New Draw</h3>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="drawDate">Draw Date</Label>
+            <Input
+              id="drawDate"
+              type="datetime-local"
+              value={newDrawDate}
+              onChange={(e) => setNewDrawDate(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+          <Button
+            onClick={createDraw}
+            disabled={createDrawMutation.isPending}
+            className="w-full bg-green-600 hover:bg-green-700"
+          >
+            {createDrawMutation.isPending ? "Creating..." : "Create Draw"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="p-4 bg-purple-50 rounded-lg">
+        <h3 className="font-semibold text-purple-900 mb-2">Platform Revenue</h3>
+        <div className="text-2xl font-bold text-purple-600">
+          ₪{Math.round(87340 * 0.5).toLocaleString()}
+        </div>
+        <div className="text-sm text-purple-700">50% retention from current draw</div>
+      </div>
+    </div>
+  );
+}
+
+// Draw History Component
+function DrawHistorySection() {
+  const { data: completedDraws } = useQuery({
+    queryKey: ["/api/draws/completed"],
+  });
+
+  return (
+    <div className="space-y-4">
+      {completedDraws?.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b">
+                <th className="text-left p-2">Draw #</th>
+                <th className="text-left p-2">Date</th>
+                <th className="text-left p-2">Winning Numbers</th>
+                <th className="text-left p-2">Jackpot</th>
+                <th className="text-left p-2">Winners</th>
+              </tr>
+            </thead>
+            <tbody>
+              {completedDraws.slice(0, 5).map((draw: any) => (
+                <tr key={draw.id} className="border-b hover:bg-gray-50">
+                  <td className="p-2 font-medium">#{draw.drawNumber}</td>
+                  <td className="p-2">{new Date(draw.drawDate).toLocaleDateString()}</td>
+                  <td className="p-2">
+                    <div className="flex space-x-1">
+                      {draw.winningNumbers?.map((num: number, idx: number) => (
+                        <span key={idx} className="inline-flex items-center justify-center w-6 h-6 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">
+                          {num}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="p-2 font-medium">₪{parseFloat(draw.jackpotAmount).toLocaleString()}</td>
+                  <td className="p-2">
+                    <span className="text-green-600 font-medium">
+                      {/* Winners count would be fetched from stats */}
+                      TBD
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="text-center text-gray-500 py-8">
+          No completed draws yet
+        </div>
+      )}
     </div>
   );
 }
