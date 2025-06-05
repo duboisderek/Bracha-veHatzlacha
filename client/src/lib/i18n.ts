@@ -106,6 +106,7 @@ export const translations = {
     error: "Error",
     drawCreatedSuccessfully: "Draw created successfully",
     selectDrawDate: "Please select a draw date",
+    drawNumber: "Draw #",
   },
   he: {
     // Header
@@ -215,6 +216,7 @@ export const translations = {
     error: "שגיאה",
     drawCreatedSuccessfully: "הגרלה נוצרה בהצלחה",
     selectDrawDate: "נא לבחור תאריך הגרלה",
+    drawNumber: "הגרלה מס'",
   },
 };
 

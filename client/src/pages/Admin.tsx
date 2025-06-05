@@ -423,11 +423,11 @@ function SystemControlsSection() {
       </div>
 
       <div className="p-4 bg-purple-50 rounded-lg">
-        <h3 className="font-semibold text-purple-900 mb-2">Platform Revenue</h3>
+        <h3 className="font-semibold text-purple-900 mb-2">{t('platformRevenue')}</h3>
         <div className="text-2xl font-bold text-purple-600">
           ₪{Math.round(87340 * 0.5).toLocaleString()}
         </div>
-        <div className="text-sm text-purple-700">50% retention from current draw</div>
+        <div className="text-sm text-purple-700">{t('retentionFromDraw')}</div>
       </div>
     </div>
   );
@@ -435,26 +435,27 @@ function SystemControlsSection() {
 
 // Draw History Component
 function DrawHistorySection() {
+  const { t } = useLanguage();
   const { data: completedDraws } = useQuery({
     queryKey: ["/api/draws/completed"],
   });
 
   return (
     <div className="space-y-4">
-      {completedDraws?.length > 0 ? (
+      {(completedDraws as any)?.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b">
-                <th className="text-left p-2">Draw #</th>
-                <th className="text-left p-2">Date</th>
-                <th className="text-left p-2">Winning Numbers</th>
-                <th className="text-left p-2">Jackpot</th>
-                <th className="text-left p-2">Winners</th>
+                <th className="text-left p-2">{t('drawNumber')}</th>
+                <th className="text-left p-2">{t('date')}</th>
+                <th className="text-left p-2">{t('yourWinningNumbers')}</th>
+                <th className="text-left p-2">{t('jackpot')}</th>
+                <th className="text-left p-2">{t('winners')}</th>
               </tr>
             </thead>
             <tbody>
-              {completedDraws.slice(0, 5).map((draw: any) => (
+              {(completedDraws as any).slice(0, 5).map((draw: any) => (
                 <tr key={draw.id} className="border-b hover:bg-gray-50">
                   <td className="p-2 font-medium">#{draw.drawNumber}</td>
                   <td className="p-2">{new Date(draw.drawDate).toLocaleDateString()}</td>
@@ -481,7 +482,7 @@ function DrawHistorySection() {
         </div>
       ) : (
         <div className="text-center text-gray-500 py-8">
-          No completed draws yet
+          {t('noCompletedDraws')}
         </div>
       )}
     </div>

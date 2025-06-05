@@ -300,9 +300,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { drawDate } = req.body;
       
-      // Generate next draw number
-      const completedDraws = await storage.getCompletedDraws();
-      const drawNumber = completedDraws.length + 1000;
+      // Generate next draw number - get all draws to find highest number
+      const allDraws = await storage.getAllDraws();
+      const maxDrawNumber = allDraws.length > 0 
+        ? Math.max(...allDraws.map(d => d.drawNumber)) 
+        : 999;
+      const drawNumber = maxDrawNumber + 1;
       
       const newDraw = await storage.createDraw({
         drawNumber,
