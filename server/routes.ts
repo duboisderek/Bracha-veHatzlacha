@@ -114,9 +114,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const currentDraw = await storage.getCurrentDraw();
       if (!currentDraw) {
-        // Create a new draw if none exists
+        // Get highest existing draw number to avoid duplicates
+        const existingDraws = await storage.getCompletedDraws();
+        const allDraws = [...existingDraws];
+        const highestDrawNumber = allDraws.length > 0 
+          ? Math.max(...allDraws.map(d => d.drawNumber))
+          : 1000;
+        
         const newDraw = await storage.createDraw({
-          drawNumber: 1248,
+          drawNumber: highestDrawNumber + 1,
           drawDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
           jackpotAmount: "87340.00",
           isActive: true,
