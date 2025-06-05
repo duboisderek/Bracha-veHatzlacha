@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LotteryBall } from "@/components/ui/lottery-ball";
-import { Trophy, Users, TrendingUp, DollarSign } from "lucide-react";
+import { Trophy, Users, TrendingUp, DollarSign, Target, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -663,7 +663,7 @@ function WinnersDisplay({ drawId }: { drawId: number }) {
         onClick={() => setIsOpen(true)}
         className="flex items-center gap-2"
       >
-        <Target className="w-4 h-4" />
+        <Eye className="w-4 h-4" />
         View Winners
       </Button>
 
@@ -729,7 +729,7 @@ function WinnersDisplay({ drawId }: { drawId: number }) {
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
-                <Target className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <Trophy className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                 <p>No Winners Found</p>
               </div>
             )}
