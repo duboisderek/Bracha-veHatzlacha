@@ -388,10 +388,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         4: 0.025, // 2.5% of total jackpot (5% of distributed amount)
       };
       
+      let totalWinningsDistributed = 0;
+      
       for (const [matchCount, winnerTickets] of Object.entries(winners)) {
         if (winnerTickets.length > 0) {
           const totalForLevel = jackpot * distributions[matchCount as keyof typeof distributions];
           const winningPerTicket = totalForLevel / winnerTickets.length;
+          totalWinningsDistributed += totalForLevel;
           
           for (const ticket of winnerTickets) {
             await storage.updateTicketResults(ticket.id, parseInt(matchCount), winningPerTicket.toFixed(2));
@@ -405,6 +408,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
               ticketId: ticket.id,
             });
           }
+        }
+      }
+      
+      // Handle rollover - add undistributed jackpot to next draw
+      const rolloverAmount = jackpot * 0.4 - (winners[6]?.length > 0 ? jackpot * 0.4 : 0);
+      
+      if (rolloverAmount > 0) {
+        // Get or create next draw
+        let nextDraw = await storage.getCurrentDraw();
+        if (!nextDraw || nextDraw.id === drawId) {
+          // Create next draw if it doesn't exist
+          const allDraws = await storage.getAllDraws();
+          const nextDrawNumber = allDraws.length > 0 
+            ? Math.max(...allDraws.map(d => d.drawNumber)) + 1 
+            : 1;
+          
+          const nextDrawDate = new Date();
+          nextDrawDate.setDate(nextDrawDate.getDate() + 7); // Next week
+          
+          nextDraw = await storage.createDraw({
+            drawNumber: nextDrawNumber,
+            drawDate: nextDrawDate,
+            jackpotAmount: rolloverAmount.toFixed(2),
+          });
+        } else {
+          // Add rollover to existing next draw
+          await storage.updateDrawJackpot(nextDraw.id, rolloverAmount);
         }
       }
       

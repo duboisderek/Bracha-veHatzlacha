@@ -120,6 +120,10 @@ export const translations = {
     depositSuccessful: "Deposit successful",
     userNotFound: "User not found",
     invalidAmount: "Invalid amount",
+    rollover: "Rollover",
+    jackpotRollover: "Jackpot Rollover",
+    noWinners: "No jackpot winners",
+    rolloverToNext: "Amount rolled over to next draw",
   },
   he: {
     // Header
@@ -243,6 +247,10 @@ export const translations = {
     depositSuccessful: "הפקדה בוצעה בהצלחה",
     userNotFound: "משתמש לא נמצא",
     invalidAmount: "סכום לא תקין",
+    rollover: "גלגול",
+    jackpotRollover: "גלגול ג'קפוט",
+    noWinners: "אין זוכים בג'קפוט",
+    rolloverToNext: "סכום מועבר להגרלה הבאה",
   },
 };
 

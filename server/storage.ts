@@ -36,6 +36,7 @@ export interface IStorage {
   getAllDraws(): Promise<Draw[]>;
   createDraw(draw: InsertDraw): Promise<Draw>;
   updateDrawWinningNumbers(drawId: number, winningNumbers: number[]): Promise<void>;
+  updateDrawJackpot(drawId: number, additionalAmount: number): Promise<void>;
   completeDraw(drawId: number): Promise<void>;
   
   // Ticket operations
@@ -144,6 +145,15 @@ export class DatabaseStorage implements IStorage {
     await db
       .update(draws)
       .set({ winningNumbers })
+      .where(eq(draws.id, drawId));
+  }
+
+  async updateDrawJackpot(drawId: number, additionalAmount: number): Promise<void> {
+    await db
+      .update(draws)
+      .set({ 
+        jackpotAmount: sql`${draws.jackpotAmount} + ${additionalAmount.toFixed(2)}` 
+      })
       .where(eq(draws.id, drawId));
   }
 
