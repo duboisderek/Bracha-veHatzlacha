@@ -145,28 +145,28 @@ export default function Admin() {
           {/* Submit Results */}
           <Card className="shadow-xl border-0">
             <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Submit Draw Results</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('submitDrawResults')}</h2>
               
               {currentDraw && (
                 <div className="mb-6 p-4 bg-blue-50 rounded-lg">
                   <h3 className="font-semibold text-blue-900 mb-2">
-                    Draw #{currentDraw.drawNumber}
+                    Draw #{(currentDraw as any).drawNumber}
                   </h3>
                   <p className="text-blue-700 text-sm">
-                    Date: {new Date(currentDraw.drawDate).toLocaleDateString()}
+                    {t('date')}: {new Date((currentDraw as any).drawDate).toLocaleDateString()}
                   </p>
                   <p className="text-blue-700 text-sm">
-                    Jackpot: ₪{currentDraw.jackpotAmount}
+                    {t('jackpot')}: ₪{(currentDraw as any).jackpotAmount}
                   </p>
                   <p className="text-blue-700 text-sm">
-                    Total Tickets: {drawStats?.totalTickets || 0}
+                    {t('totalTickets')}: {(drawStats as any)?.totalTickets || 0}
                   </p>
                 </div>
               )}
 
               <div className="mb-6">
                 <Label className="text-base font-medium text-slate-900 mb-4 block">
-                  Select 6 Winning Numbers (1-37)
+                  {t('selectWinningNumbers')}
                 </Label>
                 <div className="grid grid-cols-6 sm:grid-cols-7 gap-3">
                   {Array.from({ length: 37 }, (_, i) => i + 1).map((number) => (
@@ -184,7 +184,7 @@ export default function Admin() {
               {/* Selected Numbers Display */}
               <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-6 mb-6">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                  Winning Numbers ({winningNumbers.length}/6 selected)
+                  {t('winningNumbers')} ({winningNumbers.length}/6 {t('selected')})
                 </h3>
                 <div className="flex space-x-3 justify-center">
                   {Array.from({ length: 6 }, (_, i) => (
@@ -206,15 +206,15 @@ export default function Admin() {
 
               <Button
                 onClick={submitResults}
-                disabled={winningNumbers.length !== 6 || submitResultsMutation.isPending || currentDraw?.isCompleted}
+                disabled={winningNumbers.length !== 6 || submitResultsMutation.isPending || (currentDraw as any)?.isCompleted}
                 className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-slate-900 font-bold py-4 text-lg"
               >
-                {submitResultsMutation.isPending ? "Processing..." : "Submit Results"}
+                {submitResultsMutation.isPending ? t('processing') : t('submitResults')}
               </Button>
 
-              {currentDraw?.isCompleted && (
+              {(currentDraw as any)?.isCompleted && (
                 <p className="text-center text-green-600 font-medium mt-4">
-                  This draw has already been completed.
+                  {t('drawCompleted')}
                 </p>
               )}
             </CardContent>
@@ -223,44 +223,44 @@ export default function Admin() {
           {/* Draw Statistics */}
           <Card className="shadow-xl border-0">
             <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Draw Statistics</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('drawStatistics')}</h2>
               
               <div className="space-y-6">
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold text-slate-900 mb-2">Ticket Sales</h3>
+                  <h3 className="font-semibold text-slate-900 mb-2">{t('ticketSales')}</h3>
                   <div className="text-2xl font-bold text-blue-600">
-                    {drawStats?.totalTickets || 0} tickets
+                    {(drawStats as any)?.totalTickets || 0} {t('ticketsText')}
                   </div>
                   <div className="text-sm text-gray-600">
-                    Revenue: ₪{drawStats?.totalTickets ? (drawStats.totalTickets * 100).toLocaleString() : "0"}
+                    {t('revenue')}: ₪{(drawStats as any)?.totalTickets ? ((drawStats as any).totalTickets * 100).toLocaleString() : "0"}
                   </div>
                 </div>
 
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-semibold text-slate-900 mb-2">Prize Distribution</h3>
+                  <h3 className="font-semibold text-slate-900 mb-2">{t('prizeDistribution')}</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>6 matches (40% du total):</span>
+                      <span>6 {t('matches')} (40% du total):</span>
                       <span className="font-medium">
-                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.4).toLocaleString() : "0"}
+                        ₪{currentDraw ? (parseFloat((currentDraw as any).jackpotAmount) * 0.4).toLocaleString() : "0"}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>5 matches (7.5% du total):</span>
+                      <span>5 {t('matches')} (7.5% du total):</span>
                       <span className="font-medium">
-                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.075).toLocaleString() : "0"}
+                        ₪{currentDraw ? (parseFloat((currentDraw as any).jackpotAmount) * 0.075).toLocaleString() : "0"}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>4 matches (2.5% du total):</span>
+                      <span>4 {t('matches')} (2.5% du total):</span>
                       <span className="font-medium">
-                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.025).toLocaleString() : "0"}
+                        ₪{currentDraw ? (parseFloat((currentDraw as any).jackpotAmount) * 0.025).toLocaleString() : "0"}
                       </span>
                     </div>
                     <div className="flex justify-between border-t pt-2 mt-2 font-bold">
-                      <span>Retenu par la plateforme:</span>
+                      <span>{t('platformRetention')}:</span>
                       <span className="text-green-600">
-                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.5).toLocaleString() : "0"} (50%)
+                        ₪{currentDraw ? (parseFloat((currentDraw as any).jackpotAmount) * 0.5).toLocaleString() : "0"} (50%)
                       </span>
                     </div>
                   </div>
