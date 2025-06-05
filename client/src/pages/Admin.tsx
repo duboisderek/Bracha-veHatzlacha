@@ -629,10 +629,7 @@ function DrawHistorySection() {
                   </td>
                   <td className="p-2 font-medium">₪{parseFloat(draw.jackpotAmount).toLocaleString()}</td>
                   <td className="p-2">
-                    <span className="text-green-600 font-medium">
-                      {/* Winners count would be fetched from stats */}
-                      TBD
-                    </span>
+                    <WinnersDisplay drawId={draw.id} />
                   </td>
                 </tr>
               ))}

@@ -124,6 +124,14 @@ export const translations = {
     jackpotRollover: "Jackpot Rollover",
     noWinners: "No jackpot winners",
     rolloverToNext: "Amount rolled over to next draw",
+    viewWinners: "View Winners",
+    noWinnersFound: "No Winners",
+    drawWinners: "Draw Winners",
+    close: "Close",
+    email: "Email",
+    winningAmount: "Winning Amount",
+    ticketNumbers: "Ticket Numbers",
+    date: "Date",
   },
   he: {
     // Header
@@ -251,6 +259,13 @@ export const translations = {
     jackpotRollover: "גלגול ג'קפוט",
     noWinners: "אין זוכים בג'קפוט",
     rolloverToNext: "סכום מועבר להגרלה הבאה",
+    viewWinners: "צפה בזוכים",
+    drawWinners: "זוכי ההגרלה",
+    close: "סגור",
+    email: "אימייל",
+    winningAmount: "סכום זכייה",
+    ticketNumbers: "מספרי הכרטיס",
+    date: "תאריך",
   },
   fr: {
     // Header
@@ -362,6 +377,14 @@ export const translations = {
     jackpotRollover: "Report du Jackpot",
     noWinners: "Aucun gagnant du jackpot",
     rolloverToNext: "Montant reporté au prochain tirage",
+    viewWinners: "Voir les gagnants",
+    noWinnersFound: "Aucun gagnant",
+    drawWinners: "Gagnants du tirage",
+    close: "Fermer",
+    email: "Email",
+    winningAmount: "Montant gagné",
+    ticketNumbers: "Numéros du billet",
+    date: "Date",
   },
 };
 
