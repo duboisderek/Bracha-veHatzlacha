@@ -33,6 +33,7 @@ export interface IStorage {
   // Draw operations
   getCurrentDraw(): Promise<Draw | undefined>;
   getCompletedDraws(): Promise<Draw[]>;
+  getAllDraws(): Promise<Draw[]>;
   createDraw(draw: InsertDraw): Promise<Draw>;
   updateDrawWinningNumbers(drawId: number, winningNumbers: number[]): Promise<void>;
   completeDraw(drawId: number): Promise<void>;
@@ -124,6 +125,13 @@ export class DatabaseStorage implements IStorage {
       .where(eq(draws.isCompleted, true))
       .orderBy(desc(draws.drawDate))
       .limit(10);
+  }
+
+  async getAllDraws(): Promise<Draw[]> {
+    return db
+      .select()
+      .from(draws)
+      .orderBy(desc(draws.drawNumber));
   }
 
   async createDraw(drawData: InsertDraw): Promise<Draw> {
