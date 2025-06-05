@@ -77,13 +77,13 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50" dir={isRTL ? "rtl" : "ltr"}>
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage draws and view platform statistics</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">{t('adminDashboard')}</h1>
+          <p className="text-gray-600">{t('managePlatform')}</p>
         </div>
 
         {/* Statistics Cards */}
@@ -91,52 +91,52 @@ export default function Admin() {
           <Card className="shadow-xl border-0">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-900">Total Tickets</h3>
+                <h3 className="text-lg font-semibold text-slate-900">{t('totalTickets')}</h3>
                 <Users className="text-blue-500 text-xl" />
               </div>
               <div className="text-3xl font-bold text-slate-900">
-                {drawStats?.totalTickets || 0}
+                {(drawStats as any)?.totalTickets || 0}
               </div>
-              <div className="text-sm text-gray-600">Current draw</div>
+              <div className="text-sm text-gray-600">{t('currentDraw')}</div>
             </CardContent>
           </Card>
 
           <Card className="shadow-xl border-0">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-900">Jackpot</h3>
+                <h3 className="text-lg font-semibold text-slate-900">{t('jackpot')}</h3>
                 <Trophy className="text-yellow-500 text-xl" />
               </div>
               <div className="text-3xl font-bold text-slate-900">
-                ₪{drawStats?.totalJackpot || currentDraw?.jackpotAmount || "0"}
+                ₪{(drawStats as any)?.totalJackpot || (currentDraw as any)?.jackpotAmount || "0"}
               </div>
-              <div className="text-sm text-gray-600">Prize pool</div>
+              <div className="text-sm text-gray-600">{t('prizePool')}</div>
             </CardContent>
           </Card>
 
           <Card className="shadow-xl border-0">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-900">Revenue</h3>
+                <h3 className="text-lg font-semibold text-slate-900">{t('revenue')}</h3>
                 <DollarSign className="text-green-500 text-xl" />
               </div>
               <div className="text-3xl font-bold text-slate-900">
-                ₪{drawStats?.totalTickets ? (drawStats.totalTickets * 100).toLocaleString() : "0"}
+                ₪{(drawStats as any)?.totalTickets ? ((drawStats as any).totalTickets * 100).toLocaleString() : "0"}
               </div>
-              <div className="text-sm text-gray-600">Ticket sales</div>
+              <div className="text-sm text-gray-600">{t('ticketSales')}</div>
             </CardContent>
           </Card>
 
           <Card className="shadow-xl border-0">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-900">Winners</h3>
+                <h3 className="text-lg font-semibold text-slate-900">{t('winners')}</h3>
                 <TrendingUp className="text-purple-500 text-xl" />
               </div>
               <div className="text-3xl font-bold text-slate-900">
-                {drawStats?.winners?.reduce((sum, w) => sum + w.count, 0) || 0}
+                {(drawStats as any)?.winners?.reduce((sum: number, w: any) => sum + w.count, 0) || 0}
               </div>
-              <div className="text-sm text-gray-600">Total winners</div>
+              <div className="text-sm text-gray-600">{t('totalWinners')}</div>
             </CardContent>
           </Card>
         </div>
