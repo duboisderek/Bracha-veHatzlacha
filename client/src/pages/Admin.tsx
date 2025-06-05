@@ -238,21 +238,27 @@ export default function Admin() {
                   <h3 className="font-semibold text-slate-900 mb-2">Prize Distribution</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>6 matches (50%):</span>
+                      <span>6 matches (40% du total):</span>
                       <span className="font-medium">
-                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.5).toLocaleString() : "0"}
+                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.4).toLocaleString() : "0"}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>5 matches (30%):</span>
+                      <span>5 matches (7.5% du total):</span>
                       <span className="font-medium">
-                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.3).toLocaleString() : "0"}
+                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.075).toLocaleString() : "0"}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span>4 matches (20%):</span>
+                      <span>4 matches (2.5% du total):</span>
                       <span className="font-medium">
-                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.2).toLocaleString() : "0"}
+                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.025).toLocaleString() : "0"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between border-t pt-2 mt-2 font-bold">
+                      <span>Retenu par la plateforme:</span>
+                      <span className="text-green-600">
+                        ₪{currentDraw ? (parseFloat(currentDraw.jackpotAmount) * 0.5).toLocaleString() : "0"} (50%)
                       </span>
                     </div>
                   </div>
