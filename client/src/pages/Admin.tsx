@@ -644,3 +644,98 @@ function DrawHistorySection() {
     </div>
   );
 }
+
+// Winners Display Component
+function WinnersDisplay({ drawId }: { drawId: number }) {
+  const { t } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
+  const { data: winners, isLoading } = useQuery({
+    queryKey: ["/api/admin/draws", drawId, "winners"],
+    queryFn: () => apiRequest("GET", `/api/admin/draws/${drawId}/winners`),
+    enabled: isOpen,
+  });
+
+  return (
+    <div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-2"
+      >
+        <Target className="w-4 h-4" />
+        View Winners
+      </Button>
+
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Draw Winners - #{drawId}</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                Close
+              </Button>
+            </div>
+
+            {isLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p className="mt-2 text-gray-600">Loading...</p>
+              </div>
+            ) : winners && (winners as any).length > 0 ? (
+              <div className="space-y-4">
+                {(winners as any).map((winner: any, index: number) => (
+                  <div
+                    key={index}
+                    className="border rounded-lg p-4 bg-gradient-to-r from-yellow-50 to-orange-50"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h4 className="font-semibold text-lg">
+                          {winner.user.firstName} {winner.user.lastName}
+                        </h4>
+                        <p className="text-gray-600 text-sm">{winner.user.email}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-green-600">
+                          ₪{parseFloat(winner.winningAmount).toLocaleString()}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          {winner.matchCount} matches
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-sm font-medium text-gray-700">Ticket Numbers:</span>
+                      <div className="flex gap-1">
+                        {winner.numbers.map((num: number, idx: number) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-xs font-bold rounded-full"
+                          >
+                            {num}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Target className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                <p>No Winners Found</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
