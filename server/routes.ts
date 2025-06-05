@@ -320,6 +320,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/admin/draws/:drawId/winners', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const drawId = parseInt(req.params.drawId);
+      const winners = await storage.getDrawWinners(drawId);
+      res.json(winners);
+    } catch (error) {
+      console.error("Error fetching draw winners:", error);
+      res.status(500).json({ message: "Failed to fetch draw winners" });
+    }
+  });
+
   app.post('/api/admin/draws', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const { drawDate } = req.body;

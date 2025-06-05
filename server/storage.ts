@@ -66,6 +66,12 @@ export interface IStorage {
     totalJackpot: string;
     winners: { matchCount: number; count: number; totalWinnings: string }[];
   }>;
+  getDrawWinners(drawId: number): Promise<{
+    matchCount: number;
+    user: { id: string; firstName: string; lastName: string; email: string };
+    winningAmount: string;
+    numbers: number[];
+  }[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -346,6 +352,45 @@ export class DatabaseStorage implements IStorage {
         totalWinnings: w.totalWinnings || "0",
       })),
     };
+  }
+
+  async getDrawWinners(drawId: number): Promise<{
+    matchCount: number;
+    user: { id: string; firstName: string; lastName: string; email: string };
+    winningAmount: string;
+    numbers: number[];
+  }[]> {
+    const winners = await db
+      .select({
+        ticketId: tickets.id,
+        matchCount: tickets.matchCount,
+        winningAmount: tickets.winningAmount,
+        numbers: tickets.numbers,
+        userId: tickets.userId,
+        userFirstName: users.firstName,
+        userLastName: users.lastName,
+        userEmail: users.email,
+      })
+      .from(tickets)
+      .leftJoin(users, eq(tickets.userId, users.id))
+      .where(and(
+        eq(tickets.drawId, drawId),
+        sql`${tickets.matchCount} >= 4`,
+        sql`${tickets.winningAmount} > 0`
+      ))
+      .orderBy(desc(tickets.matchCount), desc(tickets.winningAmount));
+
+    return winners.map(winner => ({
+      matchCount: winner.matchCount || 0,
+      user: {
+        id: winner.userId,
+        firstName: winner.userFirstName || "Unknown",
+        lastName: winner.userLastName || "User",
+        email: winner.userEmail || "unknown@email.com",
+      },
+      winningAmount: winner.winningAmount || "0",
+      numbers: winner.numbers as number[] || [],
+    }));
   }
 }
 
