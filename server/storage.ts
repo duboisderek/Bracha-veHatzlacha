@@ -25,6 +25,7 @@ import { eq, desc, and, sql, count } from "drizzle-orm";
 export interface IStorage {
   // User operations (mandatory for auth)
   getUser(id: string): Promise<User | undefined>;
+  getAllUsers(): Promise<User[]>;
   upsertUser(user: UpsertUser): Promise<User>;
   getUserByReferralCode(referralCode: string): Promise<User | undefined>;
   updateUserBalance(userId: string, amount: string): Promise<void>;
