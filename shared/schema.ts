@@ -76,10 +76,11 @@ export const tickets = pgTable("tickets", {
 export const transactions = pgTable("transactions", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: varchar("user_id").references(() => users.id).notNull(),
-  type: varchar("type").notNull(), // 'deposit', 'ticket_purchase', 'winnings', 'referral_bonus'
+  type: varchar("type").notNull(), // 'deposit', 'ticket_purchase', 'winnings', 'referral_bonus', 'admin_deposit'
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   description: text("description").notNull(),
   ticketId: uuid("ticket_id").references(() => tickets.id),
+  adminComment: text("admin_comment"), // For manual deposits by admin
   createdAt: timestamp("created_at").defaultNow(),
 });
 

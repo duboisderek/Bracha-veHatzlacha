@@ -296,6 +296,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/admin/manual-deposit', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId, amount, comment } = req.body;
+      
+      if (!userId || !amount || parseFloat(amount) <= 0) {
+        return res.status(400).json({ message: "Valid user ID and amount are required" });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const transaction = await storage.createAdminDeposit(userId, amount.toString(), comment || "");
+      res.json({ 
+        transaction, 
+        message: `Successfully deposited ₪${amount} to ${user.firstName} ${user.lastName}` 
+      });
+    } catch (error) {
+      console.error("Error creating manual deposit:", error);
+      res.status(500).json({ message: "Failed to create manual deposit" });
+    }
+  });
+
   app.post('/api/admin/draws', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const { drawDate } = req.body;

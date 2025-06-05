@@ -48,6 +48,7 @@ export interface IStorage {
   // Transaction operations
   createTransaction(transaction: InsertTransaction): Promise<Transaction>;
   getUserTransactions(userId: string): Promise<Transaction[]>;
+  createAdminDeposit(userId: string, amount: string, comment: string): Promise<Transaction>;
   
   // Chat operations
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
@@ -206,6 +207,39 @@ export class DatabaseStorage implements IStorage {
       .where(eq(transactions.userId, userId))
       .orderBy(desc(transactions.createdAt))
       .limit(50);
+  }
+
+  async createAdminDeposit(userId: string, amount: string, comment: string): Promise<Transaction> {
+    // Create the transaction record
+    const [transaction] = await db.insert(transactions).values({
+      userId,
+      type: "admin_deposit",
+      amount,
+      description: `Manual deposit by admin: ₪${amount}`,
+      adminComment: comment,
+    }).returning();
+
+    // Update user balance (add full amount to user)
+    await db
+      .update(users)
+      .set({ 
+        balance: sql`${users.balance} + ${amount}` 
+      })
+      .where(eq(users.id, userId));
+
+    // Update current draw jackpot (50% goes to next draw)
+    const currentDraw = await this.getCurrentDraw();
+    if (currentDraw) {
+      const jackpotIncrease = (parseFloat(amount) * 0.5).toFixed(2);
+      await db
+        .update(draws)
+        .set({ 
+          jackpotAmount: sql`${draws.jackpotAmount} + ${jackpotIncrease}` 
+        })
+        .where(eq(draws.id, currentDraw.id));
+    }
+
+    return transaction;
   }
 
   // Chat operations
