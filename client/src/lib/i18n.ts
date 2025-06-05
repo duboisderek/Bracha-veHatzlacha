@@ -252,6 +252,117 @@ export const translations = {
     noWinners: "אין זוכים בג'קפוט",
     rolloverToNext: "סכום מועבר להגרלה הבאה",
   },
+  fr: {
+    // Header
+    balance: "Solde",
+    language: "Langue",
+    
+    // Dashboard Stats
+    nextDraw: "Prochain Tirage",
+    myTickets: "Mes Billets",
+    totalWinnings: "Gains Totaux",
+    referrals: "Parrainages",
+    jackpot: "Jackpot",
+    activeForNextDraw: "Actif pour le prochain tirage",
+    lifetimeEarnings: "Gains à vie",
+    thisMonth: "ce mois",
+    friendsJoined: "Amis rejoints",
+    earnedFromReferrals: "gagné des parrainages",
+    
+    // Number Selection
+    selectYourLuckyNumbers: "Sélectionnez Vos Numéros Chanceux",
+    chooseNumbers: "Choisissez 6 numéros (1-37)",
+    yourSelectedNumbers: "Vos Numéros Sélectionnés",
+    selected: "sélectionné",
+    costPerTicket: "Coût par billet",
+    quickPick: "Sélection Rapide",
+    purchaseTicket: "Acheter Billet",
+    
+    // Quick Actions
+    quickActions: "Actions Rapides",
+    addFunds: "Ajouter des Fonds",
+    myHistory: "Mon Historique",
+    supportChat: "Chat Support",
+    
+    // Referral
+    referFriends: "Parrainer des Amis",
+    referralDescription: "Gagnez ₪100 pour chaque ami qui rejoint et fait un dépôt!",
+    progressToBonus: "Progression vers le bonus ₪1,000:",
+    referralsCount: "parrainages",
+    
+    // Tickets
+    myActiveTickets: "Mes Billets Actifs",
+    ticket: "Billet",
+    cost: "Coût",
+    active: "Actif",
+    
+    // Last Draw Results
+    lastDrawResults: "Résultats du Dernier Tirage",
+    draw: "Tirage",
+    matches: "correspondances",
+    winner: "gagnant",
+    winners: "gagnants",
+    each: "chacun",
+    with: "avec",
+    
+    // Other
+    yourWinningNumbers: "Vos Numéros Gagnants",
+    won: "gagné",
+    congratulations: "Félicitations",
+    noWinningsThisDraw: "Aucun gain pour ce tirage",
+    betterLuckNextTime: "Bonne chance pour la prochaine fois",
+    prizePool: "Cagnotte",
+    
+    // Landing Page
+    welcomeToLotto: "Bienvenue à la Loterie",
+    joinMillions: "Rejoignez des millions de joueurs dans l'expérience de loterie la plus passionnante!",
+    playNow: "Jouer Maintenant",
+    
+    // Admin Panel
+    adminPanel: "Panneau d'Administration",
+    userManagement: "Gestion des Utilisateurs",
+    totalUsers: "Utilisateurs Totaux",
+    activeUsers: "Utilisateurs Actifs",
+    totalRevenue: "Revenus Totaux",
+    systemControls: "Contrôles Système",
+    createNewDraw: "Créer Nouveau Tirage",
+    selectDate: "Sélectionner Date",
+    createDraw: "Créer Tirage",
+    drawHistory: "Historique des Tirages",
+    drawManagement: "Gestion des Tirages",
+    submitResults: "Soumettre Résultats",
+    enterWinningNumbers: "Entrer Numéros Gagnants",
+    winningNumbers: "Numéros Gagnants",
+    submit: "Soumettre",
+    platformRevenue: "Revenus de la Plateforme",
+    retentionFromDraw: "Rétention du tirage",
+    prizeDistribution: "Distribution des Prix",
+    platformRetention: "Rétention Plateforme",
+    
+    // Admin specific translations
+    success: "Succès",
+    error: "Erreur",
+    drawCreatedSuccessfully: "Tirage créé avec succès",
+    selectDrawDate: "Veuillez sélectionner une date de tirage",
+    drawNumber: "Tirage #",
+    manualDeposit: "Dépôt Manuel",
+    selectUser: "Sélectionner Utilisateur",
+    amount: "Montant",
+    comment: "Commentaire",
+    depositAmount: "Montant du Dépôt",
+    enterAmount: "Entrer montant",
+    enterComment: "Entrer commentaire (optionnel)",
+    searchUserByEmail: "Rechercher utilisateur par email...",
+    deposit: "Déposer",
+    depositing: "Dépôt en cours...",
+    depositSuccessful: "Dépôt réussi",
+    userNotFound: "Utilisateur non trouvé",
+    invalidAmount: "Montant invalide",
+    rollover: "Report",
+    jackpotRollover: "Report du Jackpot",
+    noWinners: "Aucun gagnant du jackpot",
+    rolloverToNext: "Montant reporté au prochain tirage",
+  },
 };
 
 export type Language = keyof typeof translations;
