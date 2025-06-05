@@ -266,15 +266,15 @@ export default function Admin() {
                   </div>
                 </div>
 
-                {drawStats?.winners && drawStats.winners.length > 0 && (
+                {(drawStats as any)?.winners && (drawStats as any).winners.length > 0 && (
                   <div className="p-4 bg-green-50 rounded-lg">
-                    <h3 className="font-semibold text-green-900 mb-2">Current Winners</h3>
+                    <h3 className="font-semibold text-green-900 mb-2">Current {t('winners')}</h3>
                     <div className="space-y-2 text-sm">
-                      {drawStats.winners.map((winner) => (
+                      {(drawStats as any).winners.map((winner: any) => (
                         <div key={winner.matchCount} className="flex justify-between">
-                          <span>{winner.matchCount} matches:</span>
+                          <span>{winner.matchCount} {t('matches')}:</span>
                           <span className="font-medium text-green-700">
-                            {winner.count} winners - ₪{winner.totalWinnings} total
+                            {winner.count} {t('winners')} - ₪{winner.totalWinnings} total
                           </span>
                         </div>
                       ))}
@@ -291,7 +291,7 @@ export default function Admin() {
           {/* User Management */}
           <Card className="shadow-xl border-0">
             <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">User Management</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('userManagement')}</h2>
               <UserManagementSection />
             </CardContent>
           </Card>
@@ -299,7 +299,7 @@ export default function Admin() {
           {/* System Controls */}
           <Card className="shadow-xl border-0">
             <CardContent className="p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">System Controls</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('systemControls')}</h2>
               <SystemControlsSection />
             </CardContent>
           </Card>
@@ -308,7 +308,7 @@ export default function Admin() {
         {/* Draw History */}
         <Card className="shadow-xl border-0 mt-8">
           <CardContent className="p-8">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">Draw History</h2>
+            <h2 className="text-2xl font-bold text-slate-900 mb-6">{t('drawHistory')}</h2>
             <DrawHistorySection />
           </CardContent>
         </Card>
@@ -319,6 +319,7 @@ export default function Admin() {
 
 // User Management Component
 function UserManagementSection() {
+  const { t } = useLanguage();
   const { data: users } = useQuery({
     queryKey: ["/api/admin/users"],
   });
@@ -326,15 +327,15 @@ function UserManagementSection() {
   return (
     <div className="space-y-4">
       <div className="bg-blue-50 p-4 rounded-lg">
-        <h3 className="font-semibold text-blue-900 mb-2">Total Users</h3>
+        <h3 className="font-semibold text-blue-900 mb-2">{t('totalUsers')}</h3>
         <div className="text-2xl font-bold text-blue-600">
-          {users?.length || 0}
+          {(users as any)?.length || 0}
         </div>
       </div>
       
       <div className="max-h-64 overflow-y-auto">
         <div className="space-y-2">
-          {users?.slice(0, 10).map((user: any) => (
+          {(users as any)?.slice(0, 10).map((user: any) => (
             <div key={user.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
               <div>
                 <div className="font-medium">{user.firstName} {user.lastName}</div>
@@ -343,7 +344,7 @@ function UserManagementSection() {
               <div className="text-right">
                 <div className="font-medium">₪{user.balance}</div>
                 <div className="text-sm text-gray-600">
-                  {user.isAdmin ? "Admin" : "User"}
+                  {user.isAdmin ? t('admin') : t('user')}
                 </div>
               </div>
             </div>
@@ -359,6 +360,7 @@ function SystemControlsSection() {
   const [newDrawDate, setNewDrawDate] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const createDrawMutation = useMutation({
     mutationFn: async (drawDate: string) => {
