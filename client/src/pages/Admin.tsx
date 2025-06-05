@@ -429,6 +429,165 @@ function SystemControlsSection() {
         </div>
         <div className="text-sm text-purple-700">{t('retentionFromDraw')}</div>
       </div>
+
+      <ManualDepositSection />
+    </div>
+  );
+}
+
+// Manual Deposit Component
+function ManualDepositSection() {
+  const { t } = useLanguage();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [amount, setAmount] = useState("");
+  const [comment, setComment] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const { data: users } = useQuery({
+    queryKey: ["/api/admin/users"],
+  });
+
+  const depositMutation = useMutation({
+    mutationFn: async (data: { userId: string; amount: string; comment: string }) => {
+      return apiRequest("POST", "/api/admin/manual-deposit", data);
+    },
+    onSuccess: (response) => {
+      toast({
+        title: t('success'),
+        description: response.message || t('depositSuccessful'),
+      });
+      setSelectedUserId("");
+      setAmount("");
+      setComment("");
+      setSearchTerm("");
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+    },
+    onError: (error) => {
+      toast({
+        title: t('error'),
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const filteredUsers = (users as any)?.filter((user: any) =>
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
+  const selectedUser = (users as any)?.find((user: any) => user.id === selectedUserId);
+
+  const handleDeposit = () => {
+    if (!selectedUserId) {
+      toast({
+        title: t('error'),
+        description: t('selectUser'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!amount || parseFloat(amount) <= 0) {
+      toast({
+        title: t('error'),
+        description: t('invalidAmount'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    depositMutation.mutate({
+      userId: selectedUserId,
+      amount: amount,
+      comment: comment,
+    });
+  };
+
+  return (
+    <div className="p-4 bg-orange-50 rounded-lg">
+      <h3 className="font-semibold text-orange-900 mb-4">{t('manualDeposit')}</h3>
+      <div className="space-y-4">
+        {/* User Selection */}
+        <div>
+          <Label htmlFor="userSearch">{t('selectUser')}</Label>
+          <div className="relative mt-1">
+            <Input
+              id="userSearch"
+              placeholder={t('searchUserByEmail')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pr-10"
+            />
+            {searchTerm && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.slice(0, 10).map((user: any) => (
+                    <button
+                      key={user.id}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100"
+                      onClick={() => {
+                        setSelectedUserId(user.id);
+                        setSearchTerm(`${user.firstName} ${user.lastName} (${user.email})`);
+                      }}
+                    >
+                      <div className="font-medium">{user.firstName} {user.lastName}</div>
+                      <div className="text-sm text-gray-500">{user.email}</div>
+                      <div className="text-xs text-gray-400">Balance: ₪{user.balance}</div>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-3 py-2 text-gray-500">{t('userNotFound')}</div>
+                )}
+              </div>
+            )}
+          </div>
+          {selectedUser && (
+            <div className="mt-2 p-2 bg-blue-50 rounded text-sm">
+              <strong>{selectedUser.firstName} {selectedUser.lastName}</strong>
+              <br />
+              {selectedUser.email} | Current Balance: ₪{selectedUser.balance}
+            </div>
+          )}
+        </div>
+
+        {/* Amount */}
+        <div>
+          <Label htmlFor="depositAmount">{t('depositAmount')}</Label>
+          <Input
+            id="depositAmount"
+            type="number"
+            placeholder={t('enterAmount')}
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="mt-1"
+            min="1"
+            step="0.01"
+          />
+        </div>
+
+        {/* Comment */}
+        <div>
+          <Label htmlFor="depositComment">{t('comment')}</Label>
+          <Input
+            id="depositComment"
+            placeholder={t('enterComment')}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="mt-1"
+          />
+        </div>
+
+        <Button
+          onClick={handleDeposit}
+          disabled={depositMutation.isPending}
+          className="w-full bg-orange-600 hover:bg-orange-700"
+        >
+          {depositMutation.isPending ? t('depositing') : t('deposit')}
+        </Button>
+      </div>
     </div>
   );
 }
