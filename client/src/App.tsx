@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
+import AdminLogin from "@/pages/AdminLogin";
 import Home from "@/pages/Home";
 import PersonalArea from "@/pages/PersonalArea";
 import ChatSupport from "@/pages/ChatSupport";
@@ -32,7 +33,10 @@ function AppContent() {
       {isAuthenticated && <Header />}
       <Switch>
         {!isAuthenticated ? (
-          <Route path="/" component={Landing} />
+          <>
+            <Route path="/" component={Landing} />
+            <Route path="/admin" component={AdminLogin} />
+          </>
         ) : (
           <>
             <Route path="/" component={Home} />

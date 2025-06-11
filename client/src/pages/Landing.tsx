@@ -181,7 +181,7 @@ export default function Landing() {
                 <h3 className="text-2xl font-bold text-white mb-4">Choose Your Access</h3>
                 
                 <div className="grid gap-4">
-                  {/* Client Login */}
+                  {/* Client Login Only */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -190,29 +190,11 @@ export default function Landing() {
                       onClick={() => handleLogin('client')}
                       disabled={isLoggingIn}
                       size="lg"
-                      className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-6 px-8 rounded-xl shadow-2xl text-lg"
+                      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-8 rounded-xl shadow-2xl text-lg"
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
-                      {isLoggingIn ? t("loading") : "Client Login"}
-                      <span className="text-sm ml-2 opacity-80">(Play Lottery)</span>
-                    </Button>
-                  </motion.div>
-
-                  {/* Admin Login */}
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      onClick={() => handleLogin('admin')}
-                      disabled={isLoggingIn}
-                      size="lg"
-                      variant="outline"
-                      className="w-full bg-white bg-opacity-10 border-2 border-white border-opacity-30 text-white hover:bg-white hover:bg-opacity-20 font-bold py-6 px-8 rounded-xl shadow-2xl text-lg"
-                    >
-                      <Settings className="w-6 h-6 mr-3" />
-                      {isLoggingIn ? t("loading") : "Admin Login"}
-                      <span className="text-sm ml-2 opacity-80">(Management)</span>
+                      {isLoggingIn ? t("loading") : "Entrer en tant que Client"}
+                      <span className="text-sm ml-2 opacity-90">(Compte Démo)</span>
                     </Button>
                   </motion.div>
                 </div>

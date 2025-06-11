@@ -53,7 +53,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // Login endpoint for admin and client
+  // Admin login with email/password
+  app.post('/api/auth/admin-login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      // Verify admin credentials
+      if (email === 'admin@brachavehatzlacha.com' && password === 'BrachaVeHatzlacha2024!') {
+        const adminData = {
+          id: 'admin_bracha_vehatzlacha',
+          email: 'admin@brachavehatzlacha.com',
+          firstName: 'Admin',
+          lastName: 'Bracha veHatzlacha',
+          profileImageUrl: null,
+          referralCode: 'ADMIN001',
+          balance: "50000.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 0,
+          language: "he",
+        };
+        
+        const user = await storage.upsertUser(adminData as any);
+        
+        (req.session as any).user = {
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          isAdmin: true
+        };
+        
+        res.json({ user: { ...user, isAdmin: true } });
+      } else {
+        res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      }
+    } catch (error) {
+      console.error("Admin login error:", error);
+      res.status(500).json({ message: "Erreur de connexion" });
+    }
+  });
+
+  // Client demo login endpoint
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { type } = req.body;
@@ -76,19 +119,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           language: "he",
         };
       } else {
-        // Client user
-        const clientId = Math.random().toString(36).substring(2, 8);
+        // Demo client user
         userData = {
-          id: `client_${clientId}`,
-          email: `client${clientId}@brachavehatzlacha.com`,
-          firstName: 'משתמש',
-          lastName: clientId.toUpperCase(),
+          id: 'demo_client_bracha_vehatzlacha',
+          email: 'demo@brachavehatzlacha.com',
+          firstName: 'Utilisateur',
+          lastName: 'Démo',
           profileImageUrl: null,
-          referralCode: clientId.toUpperCase(),
+          referralCode: 'DEMO2024',
           balance: "1000.00",
           totalWinnings: "0.00",
           referralBonus: "0.00",
-          referralCount: 0,
+          referralCount: 5,
           language: "he",
         };
       }
