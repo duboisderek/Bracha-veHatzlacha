@@ -135,7 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       }
 
-      const user = await storage.upsertUser(userData);
+      const user = await storage.upsertUser(userData as any);
       
       (req.session as any).user = {
         claims: {
