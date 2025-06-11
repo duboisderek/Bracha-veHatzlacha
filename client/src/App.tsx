@@ -7,8 +7,11 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
-import Dashboard from "@/pages/Dashboard";
+import Home from "@/pages/Home";
+import PersonalArea from "@/pages/PersonalArea";
+import ChatSupport from "@/pages/ChatSupport";
 import Admin from "@/pages/Admin";
+import { Header } from "@/components/layout/Header";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -25,17 +28,22 @@ function Router() {
   }
 
   return (
-    <Switch>
-      {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          <Route path="/" component={Dashboard} />
-          {(user as any)?.isAdmin && <Route path="/admin" component={Admin} />}
-        </>
-      )}
-      <Route component={NotFound} />
-    </Switch>
+    <div className="min-h-screen">
+      {isAuthenticated && <Header />}
+      <Switch>
+        {!isAuthenticated ? (
+          <Route path="/" component={Landing} />
+        ) : (
+          <>
+            <Route path="/" component={Home} />
+            <Route path="/personal" component={PersonalArea} />
+            <Route path="/chat" component={ChatSupport} />
+            {(user as any)?.isAdmin && <Route path="/admin" component={Admin} />}
+          </>
+        )}
+        <Route component={NotFound} />
+      </Switch>
+    </div>
   );
 }
 

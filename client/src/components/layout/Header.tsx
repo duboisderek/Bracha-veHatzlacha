@@ -1,106 +1,143 @@
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AnimatedLogo } from "@/components/ui/animated-logo";
-import { Coins, Settings } from "lucide-react";
-import { Link } from "wouter";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LogOut, User, Globe, Home, UserCircle, MessageCircle, Settings } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 
 export function Header() {
-  const { language, setLanguage, t, isRTL } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { user } = useAuth();
+  const [location] = useLocation();
 
-  const handleLogout = () => {
-    fetch("/api/auth/logout", { method: "POST", credentials: "include" })
-      .then(() => {
-        window.location.reload();
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
       });
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
-  return (
-    <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
-          {/* Logo and Brand */}
-          <div className="flex items-center space-x-3" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
-            <AnimatedLogo size="md" />
-            <div className="text-slate-900 font-bold text-xl bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
-              LotoPro
-            </div>
-          </div>
+  const navItems = [
+    { path: "/", label: t("home"), icon: Home },
+    { path: "/personal", label: t("dashboard"), icon: UserCircle },
+    { path: "/chat", label: t("chat"), icon: MessageCircle },
+  ];
 
-          {/* Navigation and Controls */}
-          <div className="flex items-center space-x-6" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
+  if ((user as any)?.isAdmin) {
+    navItems.push({ path: "/admin", label: t("admin"), icon: Settings });
+  }
+
+  return (
+    <header className="border-b bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/">
+            <div className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-lg">ב</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">{t("appName")}</h1>
+                <p className="text-xs opacity-80">Private Lottery Platform</p>
+              </div>
+            </div>
+          </Link>
+
+          {/* Navigation */}
+          <nav className="hidden md:flex items-center space-x-6">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location === item.path;
+              return (
+                <Link key={item.path} href={item.path}>
+                  <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all cursor-pointer ${
+                    isActive 
+                      ? 'bg-white bg-opacity-20 text-white font-medium' 
+                      : 'hover:bg-white hover:bg-opacity-10'
+                  }`}>
+                    <Icon className="w-4 h-4" />
+                    <span className="text-sm">{item.label}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* User Info & Actions */}
+          <div className="flex items-center space-x-4">
             {/* Balance Display */}
             {user && (
-              <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-slate-900 px-4 py-2 rounded-full font-semibold shadow-lg">
-                <Coins className="inline w-4 h-4 mr-2" />
-                <span>₪{user.balance}</span>
+              <div className="flex items-center space-x-2 bg-white bg-opacity-20 px-3 py-1 rounded-full">
+                <span className="text-sm font-medium">{t('balance')}:</span>
+                <span className="text-sm font-bold">
+                  ₪{parseFloat((user as any).balance || "0").toLocaleString()}
+                </span>
               </div>
             )}
-            
-            {/* Language Toggle */}
-            <div className="flex bg-gray-100 rounded-full p-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLanguage("en")}
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  language === "en"
-                    ? "bg-slate-900 text-white"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                EN
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setLanguage("he")}
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  language === "he"
-                    ? "bg-slate-900 text-white"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                עב
-              </Button>
-            </div>
 
-            {/* Admin Panel Link */}
-            {(user as any)?.isAdmin && (
-              <Link href="/admin">
-                <Button variant="default" size="sm" className="bg-red-600 hover:bg-red-700 text-white">
-                  <Settings className="w-4 h-4 mr-2" />
-                  {t('admin_panel')}
-                </Button>
-              </Link>
-            )}
+            {/* Language Selector */}
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-32 bg-white bg-opacity-20 border-white border-opacity-30 text-white">
+                <div className="flex items-center space-x-2">
+                  <Globe className="w-4 h-4" />
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="he">עברית</SelectItem>
+              </SelectContent>
+            </Select>
 
             {/* User Menu */}
             {user && (
-              <div className="flex items-center space-x-2" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={user.profileImageUrl} alt={`${user.firstName} ${user.lastName}`} />
-                  <AvatarFallback>
-                    {user.firstName?.[0]}{user.lastName?.[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-gray-700 font-medium">
-                  {user.firstName} {user.lastName}
-                </span>
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 text-sm">
+                  <User className="w-4 h-4" />
+                  <span>
+                    {(user as any).firstName || (user as any).email}
+                  </span>
+                </div>
+                
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-gray-800"
+                  className="text-white hover:bg-white hover:bg-opacity-20 hover:text-white"
                 >
-                  Logout
+                  <LogOut className="w-4 h-4" />
+                  <span className="ml-1 hidden sm:inline">{t('logout')}</span>
                 </Button>
               </div>
             )}
           </div>
         </div>
+
+        {/* Mobile Navigation */}
+        <nav className="md:hidden mt-3 flex justify-around bg-white bg-opacity-10 rounded-lg p-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location === item.path;
+            return (
+              <Link key={item.path} href={item.path}>
+                <div className={`flex flex-col items-center space-y-1 px-3 py-2 rounded-lg transition-all cursor-pointer ${
+                  isActive 
+                    ? 'bg-white bg-opacity-20 text-white' 
+                    : 'hover:bg-white hover:bg-opacity-10'
+                }`}>
+                  <Icon className="w-5 h-5" />
+                  <span className="text-xs">{item.label}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </header>
   );
