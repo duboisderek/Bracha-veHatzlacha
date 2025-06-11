@@ -170,9 +170,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/tickets', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
+      const { numbers, amount } = req.body;
+      
+      // Get current draw
+      const currentDraw = await storage.getCurrentDraw();
+      if (!currentDraw) {
+        return res.status(400).json({ message: "No active draw available" });
+      }
+      
       const ticketData = insertTicketSchema.parse({
-        ...req.body,
-        userId // Add userId to the data being validated
+        userId,
+        drawId: currentDraw.id,
+        numbers,
+        cost: amount || "10.00"
       });
       
       // Check if user already has a ticket for this draw
