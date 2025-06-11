@@ -95,7 +95,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const user = await storage.upsertUser(userData);
       
-      req.session.user = {
+      (req.session as any).user = {
         claims: {
           sub: user.id,
           email: user.email,
@@ -397,7 +397,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const jackpot = parseFloat(draw.jackpotAmount);
-      const winners = { 6: [], 5: [], 4: [] };
+      const winners: { [key: number]: any[] } = { 6: [], 5: [], 4: [] };
       
       // Calculate matches for each ticket
       for (const ticket of tickets) {
@@ -405,14 +405,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const matches = ticketNumbers.filter(num => winningNumbers.includes(num)).length;
         
         if (matches >= 4) {
-          winners[matches as keyof typeof winners].push(ticket);
+          winners[matches].push(ticket);
         }
         
         await storage.updateTicketResults(ticket.id, matches, "0");
       }
       
       // Distribute winnings (50-50 split: 50% to winners, 50% retained)
-      const distributions = {
+      const distributions: { [key: number]: number } = {
         6: 0.4, // 40% of total jackpot (80% of distributed amount)
         5: 0.075, // 7.5% of total jackpot (15% of distributed amount)
         4: 0.025, // 2.5% of total jackpot (5% of distributed amount)
@@ -422,12 +422,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       for (const [matchCount, winnerTickets] of Object.entries(winners)) {
         if (winnerTickets.length > 0) {
-          const totalForLevel = jackpot * distributions[matchCount as keyof typeof distributions];
+          const matchNum = parseInt(matchCount);
+          const totalForLevel = jackpot * distributions[matchNum];
           const winningPerTicket = totalForLevel / winnerTickets.length;
           totalWinningsDistributed += totalForLevel;
           
           for (const ticket of winnerTickets) {
-            await storage.updateTicketResults(ticket.id, parseInt(matchCount), winningPerTicket.toFixed(2));
+            await storage.updateTicketResults(ticket.id, matchNum, winningPerTicket.toFixed(2));
             await storage.updateUserBalance(ticket.userId, winningPerTicket.toFixed(2));
             
             await storage.createTransaction({

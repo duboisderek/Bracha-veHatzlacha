@@ -13,7 +13,7 @@ import ChatSupport from "@/pages/ChatSupport";
 import Admin from "@/pages/Admin";
 import { Header } from "@/components/layout/Header";
 
-function Router() {
+function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
@@ -53,7 +53,7 @@ function App() {
       <LanguageProvider>
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <AppContent />
         </TooltipProvider>
       </LanguageProvider>
     </QueryClientProvider>
