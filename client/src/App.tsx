@@ -11,7 +11,7 @@ import AdminLogin from "@/pages/AdminLogin";
 import Home from "@/pages/Home";
 import PersonalArea from "@/pages/PersonalArea";
 import ChatSupport from "@/pages/ChatSupport";
-import Admin from "@/pages/AdminClean";
+import Admin from "@/pages/AdminFinal";
 import { Header } from "@/components/layout/Header";
 
 function AppContent() {
