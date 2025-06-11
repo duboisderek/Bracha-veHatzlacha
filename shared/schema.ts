@@ -41,6 +41,7 @@ export const users = pgTable("users", {
   referralBonus: decimal("referral_bonus", { precision: 10, scale: 2 }).default("0").notNull(),
   referralCount: integer("referral_count").default(0).notNull(),
   isAdmin: boolean("is_admin").default(false).notNull(),
+  isBlocked: boolean("is_blocked").default(false).notNull(),
   language: varchar("language", { length: 5 }).default("en").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
