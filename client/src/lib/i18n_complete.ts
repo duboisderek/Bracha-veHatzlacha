@@ -148,24 +148,6 @@ export const translations = {
     share: "Share",
     copy: "Copy",
     copied: "Copied!",
-    
-    // Legacy compatibility
-    balance: "Balance",
-    language: "Language",
-    nextDraw: "Next Draw",
-    myTickets: "My Tickets",
-    totalWinnings: "Total Winnings",
-    referrals: "Referrals",
-    jackpot: "Jackpot",
-    yourTickets: "Your Tickets",
-    ticket: "Ticket",
-    draw: "Draw",
-    cost: "Cost",
-    matches: "Matches",
-    winnings: "Winnings",
-    noTickets: "No tickets found",
-    winningNumbers: "Winning Numbers",
-    winners: "Winners",
   },
   
   he: {
@@ -317,24 +299,6 @@ export const translations = {
     share: "שתף",
     copy: "העתק",
     copied: "הועתק!",
-    
-    // Legacy compatibility
-    balance: "יתרה",
-    language: "שפה",
-    nextDraw: "הגרלה הבאה",
-    myTickets: "הכרטיסים שלי",
-    totalWinnings: "סך הזכיות",
-    referrals: "הפניות",
-    jackpot: "ג'קפוט",
-    yourTickets: "הכרטיסים שלך",
-    ticket: "כרטיס",
-    draw: "הגרלה",
-    cost: "עלות",
-    matches: "התאמות",
-    winnings: "זכיות",
-    noTickets: "לא נמצאו כרטיסים",
-    winningNumbers: "מספרים זוכים",
-    winners: "זוכים",
   },
 };
 
@@ -343,4 +307,13 @@ export type TranslationKey = keyof typeof translations.en;
 
 export const getTranslation = (key: TranslationKey, language: Language): string => {
   return translations[language][key] || translations.en[key];
+};
+
+export const formatAmount = (amount: number, language: Language): string => {
+  const formatted = amount.toLocaleString();
+  return language === 'he' ? `₪${formatted}` : `₪${formatted}`;
+};
+
+export const formatJackpot = (amount: number, language: Language): string => {
+  return translations[language].jackpotAmount.replace('{amount}', amount.toLocaleString());
 };
