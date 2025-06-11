@@ -151,7 +151,7 @@ function NumberSelection() {
   };
 
   const selectRandomNumbers = () => {
-    const numbers = [];
+    const numbers: number[] = [];
     while (numbers.length < 6) {
       const num = Math.floor(Math.random() * 37) + 1;
       if (!numbers.includes(num)) {
@@ -162,7 +162,7 @@ function NumberSelection() {
   };
 
   const reusePreviousNumbers = () => {
-    if (previousNumbers && previousNumbers.length >= 6) {
+    if (previousNumbers && Array.isArray(previousNumbers) && previousNumbers.length >= 6) {
       setSelectedNumbers(previousNumbers.slice(0, 6));
     }
   };
@@ -261,7 +261,7 @@ function NumberSelection() {
             Random Numbers
           </Button>
           
-          {previousNumbers && (
+          {previousNumbers && Array.isArray(previousNumbers) && previousNumbers.length > 0 && (
             <Button
               onClick={reusePreviousNumbers}
               variant="outline"
@@ -271,7 +271,7 @@ function NumberSelection() {
               <Repeat className="w-4 h-4" />
               {t("reuseNumbers")}
             </Button>
-          )}
+          ) as React.ReactNode}
         </div>
 
         {/* Participation Amount */}

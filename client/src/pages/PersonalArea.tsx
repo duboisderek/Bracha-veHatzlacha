@@ -130,7 +130,7 @@ function AccountBalance() {
   const { t } = useLanguage();
   const { user } = useAuth();
   
-  const balance = parseFloat(user?.balance || "0");
+  const balance = parseFloat((user as any)?.balance || "0");
 
   return (
     <Card className="bg-gradient-to-br from-green-500 to-blue-600 text-white shadow-xl">
@@ -289,8 +289,8 @@ function ReferralStats() {
     queryKey: ["/api/user/referral-stats"],
   });
 
-  const totalReferrals = referralData?.totalReferrals || 0;
-  const totalEarnings = parseFloat(referralData?.totalEarnings || "0");
+  const totalReferrals = (referralData as any)?.totalReferrals || 0;
+  const totalEarnings = parseFloat((referralData as any)?.totalEarnings || "0");
 
   return (
     <Card className="bg-gradient-to-br from-orange-400 to-pink-500 text-white shadow-xl">
@@ -333,7 +333,7 @@ export default function PersonalArea() {
   const { user } = useAuth();
 
   // Calculate user status based on participation count
-  const participationCount = parseInt(user?.participationCount || "0");
+  const participationCount = parseInt((user as any)?.participationCount || "0");
   const getUserStatus = (count: number) => {
     if (count >= 500) return 'diamond';
     if (count >= 100) return 'gold';
@@ -356,7 +356,7 @@ export default function PersonalArea() {
             {t("personalArea")}
           </h1>
           <p className="text-lg text-gray-600">
-            Welcome back, {user?.firstName || "User"}!
+            Welcome back, {(user as any)?.firstName || "User"}!
           </p>
         </motion.div>
 
