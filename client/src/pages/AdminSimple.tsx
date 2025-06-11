@@ -23,15 +23,15 @@ export default function AdminSimple() {
   });
 
   const { data: drawStats } = useQuery({
-    queryKey: ["/api/admin/draws", currentDraw?.id, "stats"],
-    enabled: !!currentDraw?.id,
+    queryKey: ["/api/admin/draws", (currentDraw as any)?.id, "stats"],
+    enabled: !!(currentDraw as any)?.id,
   });
 
   const submitResultsMutation = useMutation({
     mutationFn: async (numbers: number[]) => {
       if (!currentDraw) throw new Error("No active draw");
       
-      return apiRequest("POST", `/api/admin/draws/${currentDraw.id}/submit-results`, {
+      return apiRequest("POST", `/api/admin/draws/${(currentDraw as any).id}/submit-results`, {
         winningNumbers: numbers,
       });
     },
