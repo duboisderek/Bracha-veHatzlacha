@@ -53,27 +53,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // Demo login endpoint (replace with proper auth in production)
+  // Login endpoint for admin and client
   app.post('/api/auth/login', async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { type } = req.body;
       
-      // Demo: Create or get user
-      const userId = email.replace('@', '_').replace('.', '_');
-      const referralCode = `REF_${userId}`;
+      let userData;
       
-      const userData = {
-        id: userId,
-        email,
-        firstName: email.split('@')[0],
-        lastName: "User",
-        referralCode,
-        balance: "2450.00",
-        totalWinnings: "12750.00",
-        referralBonus: "1700.00",
-        referralCount: 7,
-        language: "en",
-      };
+      if (type === 'admin') {
+        // Admin user
+        userData = {
+          id: 'admin_bracha_vehatzlacha',
+          email: 'admin@brachavehatzlacha.com',
+          firstName: 'Admin',
+          lastName: 'Bracha veHatzlacha',
+          profileImageUrl: null,
+          referralCode: 'ADMIN001',
+          balance: "50000.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 0,
+          language: "he",
+        };
+      } else {
+        // Client user
+        const clientId = Math.random().toString(36).substring(2, 8);
+        userData = {
+          id: `client_${clientId}`,
+          email: `client${clientId}@brachavehatzlacha.com`,
+          firstName: 'משתמש',
+          lastName: clientId.toUpperCase(),
+          profileImageUrl: null,
+          referralCode: clientId.toUpperCase(),
+          balance: "1000.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 0,
+          language: "he",
+        };
+      }
 
       const user = await storage.upsertUser(userData);
       
@@ -83,10 +101,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           email: user.email,
           first_name: user.firstName,
           last_name: user.lastName,
-        }
+        },
+        isAdmin: type === 'admin'
       };
       
-      res.json({ user });
+      res.json({ user: { ...user, isAdmin: type === 'admin' } });
     } catch (error) {
       console.error("Login error:", error);
       res.status(500).json({ message: "Login failed" });
