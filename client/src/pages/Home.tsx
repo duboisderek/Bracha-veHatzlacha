@@ -215,11 +215,10 @@ function NumberSelection() {
               <LotteryBall
                 key={number}
                 number={number}
-                isSelected={selectedNumbers.includes(number)}
+                selected={selectedNumbers.includes(number)}
                 onClick={() => toggleNumber(number)}
                 disabled={isParticipationLocked}
                 size="sm"
-                className="cursor-pointer hover:scale-110 transition-transform"
               />
             ))}
           </div>
@@ -232,9 +231,8 @@ function NumberSelection() {
                 <LotteryBall
                   key={idx}
                   number={num}
-                  isSelected={true}
+                  selected={true}
                   size="sm"
-                  variant="golden"
                 />
               ))}
               {Array.from({ length: 6 - selectedNumbers.length }).map((_, idx) => (
@@ -271,7 +269,7 @@ function NumberSelection() {
               <Repeat className="w-4 h-4" />
               {t("reuseNumbers")}
             </Button>
-          ) as React.ReactNode}
+          )}
         </div>
 
         {/* Participation Amount */}
