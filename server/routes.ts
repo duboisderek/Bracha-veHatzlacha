@@ -391,6 +391,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create user endpoint
+  app.post('/api/admin/users', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { username, firstName, lastName, email, balance, language } = req.body;
+      
+      if (!username) {
+        return res.status(400).json({ message: "Username is required" });
+      }
+      
+      const userData = {
+        id: `user_${username}_${Date.now()}`,
+        firstName: firstName || username,
+        lastName: lastName || "User",
+        email: email || `${username}@brachavehatzlacha.com`,
+        balance: balance || "0.00",
+        totalWinnings: "0.00",
+        referralCode: `REF${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+        referralBonus: "0.00",
+        referralCount: 0,
+        language: language || "he",
+      };
+      
+      const user = await storage.upsertUser(userData as any);
+      res.json(user);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  // Block user endpoint
+  app.post('/api/admin/users/:userId/block', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId } = req.params;
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Update user to blocked status
+      const updatedUser = await storage.upsertUser({
+        ...user,
+        isBlocked: true,
+      } as any);
+      
+      res.json({ message: `User ${user.firstName} ${user.lastName} has been blocked`, user: updatedUser });
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      res.status(500).json({ message: "Failed to block user" });
+    }
+  });
+
   app.get('/api/admin/draws/:drawId/winners', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const drawId = parseInt(req.params.drawId);
