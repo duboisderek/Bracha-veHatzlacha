@@ -193,7 +193,15 @@ export const translations = {
     referralEarnings: "Referral Earnings",
     depositBonus: "100₪ bonus when referred user makes first deposit of 1000₪+",
     createQRCode: "Create QR Code",
-    shareMyReferralLink: "Share My Referral Link"
+    shareMyReferralLink: "Share My Referral Link",
+    
+    // Missing translations for NumberSelection
+    selectYourLuckyNumbers: "Select Your Lucky Numbers",
+    chooseNumbers: "Choose 6 numbers from 1 to 37",
+    yourSelectedNumbers: "Your Selected Numbers",
+    selected: "Selected",
+    costPerTicket: "Cost per Ticket",
+    purchaseTicket: "Purchase Ticket"
   },
   
   he: {
@@ -220,6 +228,12 @@ export const translations = {
     jackpotAmount: "סכום הג'קפוט",
     quickPick: "בחירה מהירה",
     mustSelect6Numbers: "יש לבחור 6 מספרים",
+    currentJackpot: "הג'קפוט הנוכחי",
+    drawNumber: "הגרלה מס'",
+    participationHistory: "היסטוריית השתתפות",
+    yourNumbers: "המספרים שלך",
+    result: "תוצאה",
+    winnings: "זכיות",
     
     // Personal Area
     currentBalance: "יתרה נוכחית",
@@ -384,7 +398,15 @@ export const translations = {
     referralEarnings: "רווחי הפניות",
     depositBonus: "בונוס 100₪ כאשר המופנה מבצע הפקדה ראשונה של 1000₪+",
     createQRCode: "יצור קוד QR",
-    shareMyReferralLink: "שתף את קישור ההפניה שלי"
+    shareMyReferralLink: "שתף את קישור ההפניה שלי",
+    
+    // Missing translations for NumberSelection Hebrew
+    selectYourLuckyNumbers: "בחר את המספרים המזל שלך",
+    chooseNumbers: "בחר 6 מספרים מ-1 עד 37",
+    yourSelectedNumbers: "המספרים שבחרת",
+    selected: "נבחר",
+    costPerTicket: "עלות כרטיס",
+    purchaseTicket: "רכישת כרטיס"
   }
 };
 

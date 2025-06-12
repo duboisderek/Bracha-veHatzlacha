@@ -36,7 +36,7 @@ export function PreviousNumbersSelector({ onNumbersSelected }: PreviousNumbersSe
           {t("selectFromDrawHistory")}
         </div>
         
-        {completedDraws && completedDraws.length > 0 ? (
+        {completedDraws && Array.isArray(completedDraws) && completedDraws.length > 0 ? (
           <div className="space-y-3 max-h-60 overflow-y-auto">
             {completedDraws.slice(0, 10).map((draw: any) => (
               <motion.div

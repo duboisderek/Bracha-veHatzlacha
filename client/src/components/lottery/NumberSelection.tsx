@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LotteryBall } from "@/components/ui/lottery-ball";
-import { Dice6, Ticket } from "lucide-react";
+import { PreviousNumbersSelector } from "./PreviousNumbersSelector";
+import { Dice6, Ticket, Clock, AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,6 +17,8 @@ interface NumberSelectionProps {
 
 export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
+  const [isLocked, setIsLocked] = useState(false);
+  const [timeUntilDraw, setTimeUntilDraw] = useState<number>(0);
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
@@ -25,9 +28,26 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
     queryKey: ["/api/draws/current"],
   });
 
+  // Auto-lock system: 60 seconds before draw
+  useEffect(() => {
+    if (currentDraw && 'drawDate' in currentDraw) {
+      const drawTime = new Date(currentDraw.drawDate).getTime();
+      const updateTimer = () => {
+        const now = Date.now();
+        const timeLeft = drawTime - now;
+        setTimeUntilDraw(timeLeft);
+        setIsLocked(timeLeft <= 60000); // Lock 60 seconds before
+      };
+      
+      updateTimer();
+      const interval = setInterval(updateTimer, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [currentDraw]);
+
   const purchaseTicketMutation = useMutation({
     mutationFn: async (numbers: number[]) => {
-      if (!currentDraw) throw new Error("No active draw");
+      if (!currentDraw || !('id' in currentDraw)) throw new Error("No active draw");
       
       return apiRequest("POST", "/api/tickets", {
         drawId: currentDraw.id,
