@@ -34,7 +34,7 @@ export default function AdminLogin() {
       } else {
         const errorData = await response.json();
         toast({
-          title: "Erreur de connexion",
+          title: "Connection Error",
           description: errorData.message || "Email ou mot de passe incorrect",
           variant: "destructive"
         });
@@ -42,8 +42,8 @@ export default function AdminLogin() {
     } catch (error) {
       console.error("Login error:", error);
       toast({
-        title: "Erreur",
-        description: "Erreur de connexion au serveur",
+        title: "Error",
+        description: "Server connection error",
         variant: "destructive"
       });
     } finally {
@@ -93,7 +93,7 @@ export default function AdminLogin() {
             <CardHeader className="text-center">
               <CardTitle className="text-2xl font-bold text-white flex items-center justify-center gap-2">
                 <Shield className="w-6 h-6 text-purple-400" />
-                Connexion Admin
+                Admin Login
               </CardTitle>
             </CardHeader>
             
@@ -141,7 +141,7 @@ export default function AdminLogin() {
                   disabled={isLoggingIn}
                   className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3"
                 >
-                  {isLoggingIn ? "Connexion..." : "Se connecter"}
+                  {isLoggingIn ? "Connecting..." : "Login"}
                 </Button>
               </form>
               
