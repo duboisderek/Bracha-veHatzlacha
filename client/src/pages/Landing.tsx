@@ -194,7 +194,7 @@ export default function Landing() {
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
                       {isLoggingIn ? t("loading") : "Entrer en tant que Client"}
-                      <span className="text-sm ml-2 opacity-90">(Compte Démo)</span>
+                      <span className="text-sm ml-2 opacity-90">(Demo Account)</span>
                     </Button>
                   </motion.div>
                 </div>

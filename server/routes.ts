@@ -135,8 +135,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userData = {
           id: 'demo_client_bracha_vehatzlacha',
           email: 'demo@brachavehatzlacha.com',
-          firstName: 'Utilisateur',
-          lastName: 'Démo',
+          firstName: 'Demo',
+          lastName: 'User',
           profileImageUrl: null,
           referralCode: 'DEMO2024',
           balance: "1000.00",

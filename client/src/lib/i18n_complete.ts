@@ -89,12 +89,42 @@ export const translations = {
     
     // Admin Panel
     adminPanel: "Admin Panel",
+    platformManagement: "Bracha veHatzlacha Platform Management",
     userManagement: "User Management",
     createUser: "Create User",
-    manualTopup: "Manual Top-up",
-    winnersHistory: "Winners History",
-    blockUser: "Block User",
-    unblockUser: "Unblock User",
+    manualDeposit: "Manual Deposit",
+    systemControls: "System Controls",
+    currentDraw: "Current Draw",
+    runDraw: "Run Draw",
+    drawCompleted: "Draw Completed",
+    totalUsers: "Total Users",
+    totalDraws: "Total Draws",
+    usersList: "Users List",
+    name: "Name",
+    status: "Status",
+    actions: "Actions",
+    active: "Active",
+    blocked: "Blocked",
+    block: "Block",
+    unblock: "Unblock",
+    loading: "Loading...",
+    
+    // Admin Messages
+    userCreated: "User created successfully",
+    depositSuccess: "Deposit completed successfully",
+    userBlocked: "User blocked successfully",
+    userUnblocked: "User unblocked successfully",
+    errorLoading: "Loading error",
+    errorCreating: "Error creating user",
+    errorDeposit: "Error processing deposit",
+    errorBlocking: "Error blocking user",
+    errorDraw: "Error running draw",
+    connectionError: "Connection error",
+    
+    // Admin Actions
+    deposit: "Deposit",
+    amount: "Amount",
+    selectUser: "Select User",
     
     // Admin - User Creation
     createNewUser: "Create New User",

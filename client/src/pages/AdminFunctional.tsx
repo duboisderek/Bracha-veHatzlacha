@@ -29,8 +29,8 @@ export default function AdminFunctional() {
         setCurrentDraw(drawData);
       }
     } catch (error) {
-      console.error("Erreur:", error);
-      setMessage("Erreur de chargement");
+      console.error("Error:", error);
+      setMessage("Loading error");
     } finally {
       setLoading(false);
     }
@@ -63,11 +63,11 @@ export default function AdminFunctional() {
       });
 
       if (res.ok) {
-        showMessage("Utilisateur créé avec succès");
+        showMessage("User created successfully");
         setNewUsername("");
         loadData();
       } else {
-        showMessage("Erreur lors de la création");
+        showMessage("Error creating user");
       }
     } catch (error) {
       showMessage("Erreur de connexion");
