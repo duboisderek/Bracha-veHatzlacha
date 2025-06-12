@@ -54,10 +54,10 @@ export const translations = {
     liveChat: "Live Chat",
     supportRequest: "Open Support Request",
     chatWithSupport: "Chat with Support",
-    typeMessage: "Type your message...",
+    typeMessage: "Type message...",
     send: "Send",
     newSupportRequest: "New Support Request",
-    describeProblem: "Describe your issue",
+    describeProblem: "Describe your problem",
     
     // Notifications
     drawImminent: "Draw starting soon!",
@@ -77,7 +77,7 @@ export const translations = {
     
     // Winners Display
     recentWinners: "Recent Winners",
-    winnersCarousel: "Latest Winners",
+    winnersCarousel: "Recent Winners",
     congratulations: "Congratulations",
     winner: "Winner",
     amount: "Amount",
@@ -101,6 +101,8 @@ export const translations = {
     totalDraws: "Total Draws",
     usersList: "Users List",
     name: "Name",
+    email: "Email",
+    balance: "Balance",
     status: "Status",
     actions: "Actions",
     active: "Active",
@@ -123,25 +125,11 @@ export const translations = {
     
     // Admin Actions
     deposit: "Deposit",
-    amount: "Amount",
-    selectUser: "Select User",
-    
-    // Admin - User Creation
-    createNewUser: "Create New User",
     username: "Username",
+    selectUser: "Select User",
     createUserButton: "Create User",
-    
-    // Admin - Top-ups
-    topupAmount: "Top-up Amount",
-    processTopup: "Process Top-up",
-    topupSuccess: "Top-up completed successfully",
-    
-    // Admin - Winners
     drawNumber: "Draw #",
     drawDate: "Draw Date",
-    winnerName: "Winner Name",
-    winningAmount: "Winning Amount",
-    viewDetails: "View Details",
     
     // Form Elements
     submit: "Submit",
@@ -156,7 +144,6 @@ export const translations = {
     invalidInput: "Invalid input",
     error: "Error",
     success: "Success",
-    loading: "Loading...",
     
     // Time & Dates
     days: "days",
@@ -175,40 +162,7 @@ export const translations = {
     contact: "Contact",
     share: "Share",
     copy: "Copy",
-
-    // Additional Admin Terms
-    managePlatform: "Manage Bracha veHatzlacha Platform",
-    totalUsers: "Total Users",
-    currentDraw: "Current Draw",
-    jackpot: "Jackpot",
-    platformRevenue: "Platform Revenue",
-    submitDrawResults: "Submit Draw Results",
-    selectWinningNumbers: "Select Winning Numbers (Choose 6)",
-    selected: "Selected",
-    submitResults: "Submit Results",
-    selectSixNumbers: "Please select exactly 6 numbers",
-    noActiveDraw: "No active draw",
-    resultsSubmitted: "Results submitted successfully!",
-    usersList: "Users List",
-    name: "Name",
-    email: "Email",
-    balance: "Balance",
-    status: "Status",
-    blocked: "Blocked",
-    date: "Date",
-
-    // Lottery & Tickets
-    tickets: "Tickets",
-    noTickets: "No tickets found",
-    myTickets: "My Tickets",
-    ticketNumbers: "Numbers",
-    ticketCost: "Cost",
-    ticketDate: "Date",
-    
-    // Winners
-    winners: "Winners",
-    winningNumbers: "Winning Numbers",
-    copied: "Copied!",
+    copied: "Copied!"
   },
   
   he: {
@@ -221,8 +175,8 @@ export const translations = {
     dashboard: "אזור אישי",
     chat: "צ'אט ותמיכה",
     admin: "פאנל ניהול",
-    logout: "התנתקות",
-    login: "התחברות",
+    logout: "התנתק",
+    login: "התחבר",
     
     // Home Screen
     welcomeMessage: "ברוכים הבאים ללוטו ברכה והצלחה",
@@ -313,6 +267,8 @@ export const translations = {
     totalDraws: "סך כל ההגרלות",
     usersList: "רשימת משתמשים",
     name: "שם",
+    email: "אימייל",
+    balance: "יתרה",
     status: "סטטוס",
     actions: "פעולות",
     active: "פעיל",
@@ -335,27 +291,11 @@ export const translations = {
     
     // Admin Actions
     deposit: "הפקד",
-    amount: "סכום",
-    selectUser: "בחר משתמש",
-    
-    // Admin - User Creation
-    createNewUser: "צור משתמש חדש",
     username: "שם משתמש",
-    createUserButton: "צור משתמש",
-    userCreated: "משתמש נוצר בהצלחה",
-    
-    // Admin - Top-ups
     selectUser: "בחר משתמש",
-    topupAmount: "סכום טעינה",
-    processTopup: "בצע טעינה",
-    topupSuccess: "טעינה הושלמה בהצלחה",
-    
-    // Admin - Winners
+    createUserButton: "צור משתמש",
     drawNumber: "הגרלה מס'",
     drawDate: "תאריך הגרלה",
-    winnerName: "שם הזוכה",
-    winningAmount: "סכום הזכייה",
-    viewDetails: "צפה בפרטים",
     
     // Form Elements
     submit: "שלח",
@@ -370,7 +310,6 @@ export const translations = {
     invalidInput: "קלט לא תקין",
     error: "שגיאה",
     success: "הצלחה",
-    loading: "טוען...",
     
     // Time & Dates
     days: "ימים",
@@ -384,60 +323,26 @@ export const translations = {
     
     // Actions
     participate: "השתתף",
-    topUp: "טען",
+    topUp: "טען יתרה",
     claim: "קבל פרס",
     contact: "צור קשר",
     share: "שתף",
     copy: "העתק",
-
-    // Additional Admin Terms
-    managePlatform: "ניהול פלטפורמת ברכה והצלחה",
-    totalUsers: "סה״כ משתמשים",
-    currentDraw: "הגרלה נוכחית",
-    jackpot: "ג׳קפוט",
-    platformRevenue: "הכנסות הפלטפורמה",
-    submitDrawResults: "שלח תוצאות הגרלה",
-    selectWinningNumbers: "בחר מספרים זוכים (בחר 6)",
-    selected: "נבחרו",
-    submitResults: "שלח תוצאות",
-    selectSixNumbers: "אנא בחר בדיוק 6 מספרים",
-    noActiveDraw: "אין הגרלה פעילה",
-    resultsSubmitted: "התוצאות נשלחו בהצלחה!",
-    usersList: "רשימת משתמשים",
-    name: "שם",
-    email: "אימייל",
-    balance: "יתרה",
-    status: "סטטוס",
-    blocked: "חסום",
-    date: "תאריך",
-
-    // Lottery & Tickets
-    tickets: "כרטיסים",
-    noTickets: "לא נמצאו כרטיסים",
-    myTickets: "הכרטיסים שלי",
-    ticketNumbers: "מספרים",
-    ticketCost: "עלות",
-    ticketDate: "תאריך",
-    
-    // Winners
-    winners: "זוכים",
-    winningNumbers: "מספרים זוכים",
-    copied: "הועתק!",
-  },
+    copied: "הועתק!"
+  }
 };
 
 export type Language = keyof typeof translations;
 export type TranslationKey = keyof typeof translations.en;
 
 export const getTranslation = (key: TranslationKey, language: Language): string => {
-  return translations[language][key] || translations.en[key];
+  return translations[language][key] || translations.en[key] || key;
 };
 
 export const formatAmount = (amount: number, language: Language): string => {
-  const formatted = amount.toLocaleString();
-  return language === 'he' ? `₪${formatted}` : `₪${formatted}`;
+  return language === "he" ? `₪${amount.toLocaleString()}` : `₪${amount.toLocaleString()}`;
 };
 
 export const formatJackpot = (amount: number, language: Language): string => {
-  return translations[language].jackpotAmount.replace('{amount}', amount.toLocaleString());
+  return language === "he" ? `₪${amount.toLocaleString()}` : `₪${amount.toLocaleString()}`;
 };
