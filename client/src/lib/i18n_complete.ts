@@ -147,6 +147,39 @@ export const translations = {
     contact: "Contact",
     share: "Share",
     copy: "Copy",
+
+    // Additional Admin Terms
+    managePlatform: "Manage Bracha veHatzlacha Platform",
+    totalUsers: "Total Users",
+    currentDraw: "Current Draw",
+    jackpot: "Jackpot",
+    platformRevenue: "Platform Revenue",
+    submitDrawResults: "Submit Draw Results",
+    selectWinningNumbers: "Select Winning Numbers (Choose 6)",
+    selected: "Selected",
+    submitResults: "Submit Results",
+    selectSixNumbers: "Please select exactly 6 numbers",
+    noActiveDraw: "No active draw",
+    resultsSubmitted: "Results submitted successfully!",
+    usersList: "Users List",
+    name: "Name",
+    email: "Email",
+    balance: "Balance",
+    status: "Status",
+    blocked: "Blocked",
+    date: "Date",
+
+    // Lottery & Tickets
+    tickets: "Tickets",
+    noTickets: "No tickets found",
+    myTickets: "My Tickets",
+    ticketNumbers: "Numbers",
+    ticketCost: "Cost",
+    ticketDate: "Date",
+    
+    // Winners
+    winners: "Winners",
+    winningNumbers: "Winning Numbers",
     copied: "Copied!",
   },
   
@@ -298,6 +331,39 @@ export const translations = {
     contact: "צור קשר",
     share: "שתף",
     copy: "העתק",
+
+    // Additional Admin Terms
+    managePlatform: "ניהול פלטפורמת ברכה והצלחה",
+    totalUsers: "סה״כ משתמשים",
+    currentDraw: "הגרלה נוכחית",
+    jackpot: "ג׳קפוט",
+    platformRevenue: "הכנסות הפלטפורמה",
+    submitDrawResults: "שלח תוצאות הגרלה",
+    selectWinningNumbers: "בחר מספרים זוכים (בחר 6)",
+    selected: "נבחרו",
+    submitResults: "שלח תוצאות",
+    selectSixNumbers: "אנא בחר בדיוק 6 מספרים",
+    noActiveDraw: "אין הגרלה פעילה",
+    resultsSubmitted: "התוצאות נשלחו בהצלחה!",
+    usersList: "רשימת משתמשים",
+    name: "שם",
+    email: "אימייל",
+    balance: "יתרה",
+    status: "סטטוס",
+    blocked: "חסום",
+    date: "תאריך",
+
+    // Lottery & Tickets
+    tickets: "כרטיסים",
+    noTickets: "לא נמצאו כרטיסים",
+    myTickets: "הכרטיסים שלי",
+    ticketNumbers: "מספרים",
+    ticketCost: "עלות",
+    ticketDate: "תאריך",
+    
+    // Winners
+    winners: "זוכים",
+    winningNumbers: "מספרים זוכים",
     copied: "הועתק!",
   },
 };
