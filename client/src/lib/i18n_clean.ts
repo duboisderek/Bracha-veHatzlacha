@@ -11,6 +11,7 @@ export const translations = {
     admin: "Admin Panel",
     logout: "Logout",
     login: "Login",
+    loginAsClient: "Enter as Client",
     
     // Home Screen
     welcomeMessage: "Welcome to Bracha veHatzlacha Lottery",
@@ -177,6 +178,7 @@ export const translations = {
     admin: "פאנל ניהול",
     logout: "התנתק",
     login: "התחבר",
+    loginAsClient: "כניסה כלקוח",
     
     // Home Screen
     welcomeMessage: "ברוכים הבאים ללוטו ברכה והצלחה",

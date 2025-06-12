@@ -193,7 +193,7 @@ export default function Landing() {
                       className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-8 rounded-xl shadow-2xl text-lg"
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
-                      {isLoggingIn ? t("loading") : "Entrer en tant que Client"}
+                      {isLoggingIn ? t("loading") : t("loginAsClient")}
                       <span className="text-sm ml-2 opacity-90">(Demo Account)</span>
                     </Button>
                   </motion.div>
@@ -259,7 +259,6 @@ export default function Landing() {
                           number={number}
                           selected={true}
                           size="lg"
-                          className="animate-bounce"
                         />
                       </motion.div>
                     ))}
