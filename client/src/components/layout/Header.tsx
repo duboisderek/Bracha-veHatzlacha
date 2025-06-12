@@ -44,7 +44,7 @@ export function Header() {
               </div>
               <div>
                 <h1 className="text-xl font-bold">{t("appName")}</h1>
-                <p className="text-xs opacity-80">Private Lottery Platform</p>
+                <p className="text-xs opacity-80">{language === "he" ? "פלטפורמת לוטו פרטית" : "Private Lottery Platform"}</p>
               </div>
             </div>
           </Link>
