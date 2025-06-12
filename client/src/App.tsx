@@ -36,19 +36,22 @@ function AppContent() {
           <>
             <Route path="/" component={Landing} />
             <Route path="/admin" component={AdminLogin} />
+            <Route path="/admin/*" component={AdminLogin} />
           </>
         ) : (
           <>
             {(user as any)?.isAdmin ? (
               <>
-                <Route path="/" component={Admin} />
                 <Route path="/admin" component={Admin} />
+                <Route path="/admin/*" component={Admin} />
+                <Route path="/" component={Landing} />
               </>
             ) : (
               <>
                 <Route path="/" component={Home} />
                 <Route path="/personal" component={PersonalArea} />
                 <Route path="/chat" component={ChatSupport} />
+                <Route path="/admin" component={AdminLogin} />
               </>
             )}
           </>

@@ -32,12 +32,20 @@ const isAuthenticated = (req: any, res: Response, next: any) => {
 };
 
 const isAdmin = async (req: any, res: Response, next: any) => {
-  if (!req.user?.claims?.sub) {
+  // Check if user is authenticated first
+  if (!req.session?.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
   
-  // Check if user is admin based on session or user ID
-  if (req.user.isAdmin || req.user.claims.sub === 'admin_bracha_vehatzlacha') {
+  // Check if user has admin privileges
+  if (req.session.user.isAdmin === true) {
+    req.user = req.session.user;
+    return next();
+  }
+  
+  // Also check by user ID for specific admin account
+  if (req.session.user.claims?.sub === 'admin_bracha_vehatzlacha') {
+    req.user = req.session.user;
     return next();
   }
   
@@ -581,6 +589,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error submitting results:", error);
       res.status(500).json({ message: "Failed to submit results" });
+    }
+  });
+
+  app.get('/api/admin/draws', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const draws = await storage.getAllDraws();
+      res.json(draws);
+    } catch (error) {
+      console.error("Error fetching all draws:", error);
+      res.status(500).json({ message: "Failed to fetch draws" });
     }
   });
 
