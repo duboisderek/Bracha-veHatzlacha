@@ -16,37 +16,30 @@ export const translations = {
     // Home Screen
     welcomeMessage: "Welcome to Bracha veHatzlacha Lottery",
     participateInLottery: "Participate in Lottery",
-    selectNumbers: "Select Your Numbers",
-    participationAmount: "Participation Amount",
-    nextDrawInfo: "Next Draw",
-    nextDrawDate: "Next draw on",
-    standardLotterySuggestion: "Try our Standard Lottery too!",
-    reuseNumbers: "Re-use Previous Numbers",
-    submitParticipation: "Submit Participation",
-    drawCountdown: "Draw starts in",
-    participationLocked: "Participation locked - Draw starting soon",
-    
-    // Jackpot & Prizes
+    selectNumbers: "Select Numbers",
+    selectAmount: "Select Amount",
+    nextDraw: "Next Draw",
+    timeUntilDraw: "Time Until Draw",
+    jackpotAmount: "Jackpot Amount",
+    quickPick: "Quick Pick",
+    mustSelect6Numbers: "Must select 6 numbers",
     currentJackpot: "Current Jackpot",
-    lastUpdated: "Last updated",
-    jackpotAmount: "₪{amount}",
+    drawNumber: "Draw #",
+    participationHistory: "Participation History",
+    yourNumbers: "Your Numbers",
+    result: "Result",
+    winnings: "Winnings",
     
-    // Personal Area (Dashboard)
-    personalArea: "Personal Area",
-    accountBalance: "Account Balance",
+    // Personal Area
+    currentBalance: "Current Balance",
     topupHistory: "Top-up History",
     userStatus: "User Status",
-    participationHistory: "Participation History",
-    
-    // User Status/Ranks
-    statusNew: "New",
-    statusActive: "Active", 
+    statusNew: "New User",
+    statusActive: "Active",
     statusSilver: "Silver",
-    statusGold: "Gold",
+    statusGold: "Gold", 
     statusDiamond: "Diamond",
     statusVIP: "VIP",
-    
-    // Status Requirements
     silverRequirement: "10 participations for Silver status",
     goldRequirement: "100 participations for Gold status", 
     diamondRequirement: "500 participations for Diamond status",
@@ -128,14 +121,13 @@ export const translations = {
     deposit: "Deposit",
     username: "Username",
     selectUser: "Select User",
-    createUserButton: "Create User",
-    drawNumber: "Draw #",
-    drawDate: "Draw Date",
-    
-    // Form Elements
-    submit: "Submit",
-    cancel: "Cancel",
+    comment: "Comment",
+    firstName: "First Name",
+    lastName: "Last Name",
+    password: "Password",
+    create: "Create",
     save: "Save",
+    cancel: "Cancel",
     edit: "Edit",
     delete: "Delete",
     confirm: "Confirm",
@@ -145,6 +137,7 @@ export const translations = {
     invalidInput: "Invalid input",
     error: "Error",
     success: "Success",
+    loginRequired: "Login required",
     
     // Time & Dates
     days: "days",
@@ -220,75 +213,62 @@ export const translations = {
     // Home Screen
     welcomeMessage: "ברוכים הבאים ללוטו ברכה והצלחה",
     participateInLottery: "השתתפות בלוטו",
-    selectNumbers: "בחר את המספרים שלך",
-    participationAmount: "סכום השתתפות",
-    nextDrawInfo: "הגרלה הבאה",
-    nextDrawDate: "הגרלה הבאה ב",
-    standardLotterySuggestion: "נסה גם את הלוטו הרגיל שלנו!",
-    reuseNumbers: "השתמש במספרים קודמים",
-    submitParticipation: "שלח השתתפות",
-    drawCountdown: "ההגרלה מתחילה בעוד",
-    participationLocked: "השתתפות נחסמה - ההגרלה מתחילה בקרוב",
+    selectNumbers: "בחירת מספרים",
+    selectAmount: "בחירת סכום",
+    nextDraw: "הגרלה הבאה",
+    timeUntilDraw: "זמן עד ההגרלה",
+    jackpotAmount: "סכום הג'קפוט",
+    quickPick: "בחירה מהירה",
+    mustSelect6Numbers: "יש לבחור 6 מספרים",
     
-    // Jackpot & Prizes
-    currentJackpot: "ג'קפוט נוכחי",
-    lastUpdated: "עודכן לאחרונה",
-    jackpotAmount: "₪{amount}",
-    
-    // Personal Area (Dashboard)
-    personalArea: "אזור אישי",
-    accountBalance: "יתרת חשבון",
+    // Personal Area
+    currentBalance: "יתרה נוכחית",
     topupHistory: "היסטוריית טעינות",
     userStatus: "סטטוס משתמש",
-    participationHistory: "היסטוריית השתתפות",
-    
-    // User Status/Ranks
-    statusNew: "חדש",
+    statusNew: "משתמש חדש",
     statusActive: "פעיל",
     statusSilver: "כסף",
-    statusGold: "זהב", 
+    statusGold: "זהב",
     statusDiamond: "יהלום",
-    statusVIP: "וי.איי.פי",
-    
-    // Status Requirements
+    statusVIP: "VIP",
     silverRequirement: "10 השתתפויות לסטטוס כסף",
     goldRequirement: "100 השתתפויות לסטטוס זהב",
     diamondRequirement: "500 השתתפויות לסטטוס יהלום",
     
     // Chat & Support
     liveChat: "צ'אט חי",
-    supportRequest: "פתח פנייה לתמיכה",
+    supportRequest: "פתיחת פנייה לתמיכה",
     chatWithSupport: "צ'אט עם התמיכה",
     typeMessage: "הקלד הודעה...",
     send: "שלח",
     newSupportRequest: "פנייה חדשה לתמיכה",
-    describeProblem: "תאר את הבעיה שלך",
+    describeProblem: "תאר את הבעיה",
     
     // Notifications
     drawImminent: "ההגרלה מתחילה בקרוב!",
-    winningNotification: "ברכותינו! זכית ב-₪{amount}",
+    winningNotification: "מזל טוב! זכית ב-₪{amount}",
     claimInstructions: "צור קשר עם התמיכה לקבלת הפרס",
     participationConfirmed: "השתתפות אושרה",
-    insufficientBalance: "יתרה לא מספקת",
+    insufficientBalance: "יתרה לא מספיקה",
     
     // Referral System
     referralProgram: "תוכנית הפניות",
     yourReferralLink: "קישור ההפניה שלך",
-    generateQRCode: "צור קוד QR",
+    generateQRCode: "יצירת קוד QR",
     referralBonus: "בונוס הפניה: ₪100",
-    bonusCondition: "כשהחבר טוען ₪1000+",
+    bonusCondition: "כאשר חבר טוען ₪1000+",
     copyLink: "העתק קישור",
     shareLink: "שתף קישור",
     
     // Winners Display
     recentWinners: "זוכים אחרונים",
     winnersCarousel: "זוכים אחרונים",
-    congratulations: "ברכותינו",
+    congratulations: "מזל טוב",
     winner: "זוכה",
     amount: "סכום",
     
     // Quick Contact
-    contactWhatsApp: "וואטסאפ",
+    contactWhatsApp: "ווטסאפ",
     contactTelegram: "טלגרם",
     contactChat: "צ'אט חי",
     
@@ -296,14 +276,14 @@ export const translations = {
     adminPanel: "פאנל ניהול",
     platformManagement: "ניהול פלטפורמת ברכה והצלחה",
     userManagement: "ניהול משתמשים",
-    createUser: "צור משתמש",
+    createUser: "יצירת משתמש",
     manualDeposit: "הפקדה ידנית",
     systemControls: "בקרות מערכת",
     currentDraw: "הגרלה נוכחית",
-    runDraw: "הפעל הגרלה",
+    runDraw: "הפעלת הגרלה",
     drawCompleted: "הגרלה הושלמה",
-    totalUsers: "סך כל המשתמשים",
-    totalDraws: "סך כל ההגרלות",
+    totalUsers: "סך משתמשים",
+    totalDraws: "סך הגרלות",
     usersList: "רשימת משתמשים",
     name: "שם",
     email: "אימייל",
@@ -329,17 +309,16 @@ export const translations = {
     connectionError: "שגיאת חיבור",
     
     // Admin Actions
-    deposit: "הפקד",
+    deposit: "הפקדה",
     username: "שם משתמש",
     selectUser: "בחר משתמש",
-    createUserButton: "צור משתמש",
-    drawNumber: "הגרלה מס'",
-    drawDate: "תאריך הגרלה",
-    
-    // Form Elements
-    submit: "שלח",
-    cancel: "בטל",
+    comment: "הערה",
+    firstName: "שם פרטי",
+    lastName: "שם משפחה",
+    password: "סיסמה",
+    create: "צור",
     save: "שמור",
+    cancel: "בטל",
     edit: "ערוך",
     delete: "מחק",
     confirm: "אשר",
@@ -349,11 +328,12 @@ export const translations = {
     invalidInput: "קלט לא תקין",
     error: "שגיאה",
     success: "הצלחה",
+    loginRequired: "נדרשת התחברות",
     
     // Time & Dates
     days: "ימים",
     hours: "שעות",
-    minutes: "דקות", 
+    minutes: "דקות",
     seconds: "שניות",
     
     // Currency
@@ -416,9 +396,11 @@ export const getTranslation = (key: TranslationKey, language: Language): string 
 };
 
 export const formatAmount = (amount: number, language: Language): string => {
-  return language === "he" ? `₪${amount.toLocaleString()}` : `₪${amount.toLocaleString()}`;
+  const currency = translations[language].currency;
+  return language === 'he' ? `${currency}${amount.toLocaleString()}` : `${currency}${amount.toLocaleString()}`;
 };
 
 export const formatJackpot = (amount: number, language: Language): string => {
-  return language === "he" ? `₪${amount.toLocaleString()}` : `₪${amount.toLocaleString()}`;
+  const currency = translations[language].currency;
+  return language === 'he' ? `${currency}${amount.toLocaleString()}` : `${currency}${amount.toLocaleString()}`;
 };
