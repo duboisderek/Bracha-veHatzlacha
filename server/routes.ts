@@ -91,7 +91,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             first_name: user.firstName,
             last_name: user.lastName,
           },
-          isAdmin: true
+          isAdmin: true,
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
         };
         
         res.json({ user: { ...user, isAdmin: true } });
