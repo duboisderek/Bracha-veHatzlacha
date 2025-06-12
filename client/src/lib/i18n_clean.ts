@@ -163,7 +163,44 @@ export const translations = {
     contact: "Contact",
     share: "Share",
     copy: "Copy",
-    copied: "Copied!"
+    copied: "Copied!",
+    
+    // User Status Levels
+    userLevel: "User Level",
+    levelProgress: "Level Progress",
+    nextLevelRequirement: "Next Level Requirement",
+    
+    // Previous Numbers History
+    previousDrawNumbers: "Previous Draw Numbers",
+    usePreviousDrawNumbers: "Use Previous Numbers",
+    selectFromDrawHistory: "Select from Draw History",
+    drawHistoryList: "Draw History",
+    pastWinningNumbers: "Past Winning Numbers",
+    
+    // Contact Widgets  
+    quickContactWidget: "Quick Contact",
+    whatsappContact: "WhatsApp",
+    telegramContact: "Telegram",
+    liveChatContact: "Live Chat",
+    
+    // Draw Lock System
+    drawLockWarning: "Draw starts soon",
+    lockMessage: "Participation locked 60 seconds before draw",
+    remainingTime: "Time remaining",
+    
+    // Notification System
+    notificationSettings: "Notification Settings",
+    drawStartNotification: "Draw is starting soon!",
+    winningNotificationText: "Congratulations! You won",
+    prizeClaimInstruction: "Claim your prize",
+    
+    // Referral Features
+    referralSystem: "Referral System",
+    myReferralCode: "My Referral Code",
+    referralEarnings: "Referral Earnings",
+    depositBonus: "100₪ bonus when referred user makes first deposit of 1000₪+",
+    createQRCode: "Create QR Code",
+    shareMyReferralLink: "Share My Referral Link"
   },
   
   he: {
@@ -330,7 +367,46 @@ export const translations = {
     contact: "צור קשר",
     share: "שתף",
     copy: "העתק",
-    copied: "הועתק!"
+    copied: "הועתק!",
+    
+    // User Levels & Requirements
+    silverRequirement: "השתתפות ב-10 הגרלות להגעה לכסף",
+    goldRequirement: "השתתפות ב-100 הגרלות להגעה לזהב", 
+    diamondRequirement: "השתתפות ב-500 הגרלות להגעה ליהלום",
+    participationCount: "השתתפויות",
+    nextLevel: "רמה הבאה",
+    
+    // Previous Numbers Selection
+    previousNumbers: "מספרים קודמים",
+    usePreviousNumbers: "השתמש במספרים קודמים",
+    selectFromHistory: "בחר מהיסטוריית הגרלות",
+    drawHistory: "היסטוריית הגרלות",
+    winningNumbers: "מספרים זוכים",
+    
+    // Quick Contact Widgets
+    quickContact: "יצירת קשר מהיר",
+    whatsappSupport: "תמיכה בווטסאפ",
+    telegramSupport: "תמיכה בטלגרם",
+    liveChatSupport: "תמיכה בצ'אט חי",
+    
+    // Automatic Lock System
+    drawStartsSoon: "ההגרלה מתחילה בקרוב",
+    participationLocked: "השתתפות נחסמה 60 שניות לפני ההגרלה",
+    timeRemaining: "זמן נותר",
+    
+    // SMS Notifications
+    smsNotifications: "התראות SMS",
+    drawStarting: "ההגרלה מתחילה בקרוב!",
+    youWon: "מזל טוב! זכית",
+    claimPrize: "אסוף את הפרס שלך",
+    
+    // Referral Program
+    referralProgram: "תוכנית הפניות",
+    yourReferralCode: "קוד ההפניה שלך",
+    referralBonus: "בונוס הפניה",
+    firstDepositBonus: "בונוס 100₪ כאשר המופנה מבצע הפקדה ראשונה של 1000₪+",
+    generateQRCode: "יצירת קוד QR",
+    shareReferralLink: "שתף קישור הפניה"
   }
 };
 
