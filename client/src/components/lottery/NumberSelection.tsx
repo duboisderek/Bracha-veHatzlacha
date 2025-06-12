@@ -30,8 +30,8 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
 
   // Auto-lock system: 60 seconds before draw
   useEffect(() => {
-    if (currentDraw && 'drawDate' in currentDraw) {
-      const drawTime = new Date(currentDraw.drawDate).getTime();
+    if (currentDraw && typeof currentDraw === 'object' && 'drawDate' in currentDraw) {
+      const drawTime = new Date(currentDraw.drawDate as string).getTime();
       const updateTimer = () => {
         const now = Date.now();
         const timeLeft = drawTime - now;
@@ -47,10 +47,12 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
 
   const purchaseTicketMutation = useMutation({
     mutationFn: async (numbers: number[]) => {
-      if (!currentDraw || !('id' in currentDraw)) throw new Error("No active draw");
+      if (!currentDraw || typeof currentDraw !== 'object' || !('id' in currentDraw)) {
+        throw new Error("No active draw");
+      }
       
       return apiRequest("POST", "/api/tickets", {
-        drawId: currentDraw.id,
+        drawId: (currentDraw as any).id,
         numbers,
         cost: "100.00",
       });
