@@ -481,7 +481,6 @@ export const translations = {
     
     // New MVP Features Hebrew
     chatSupport: "צ'אט תמיכה",
-    congratulations: "מזל טוב",
     referFriends: "הפנה חברים",
     referralDescription: "הזמן חברים וקבל 100₪ כשהם מבצעים הפקדה ראשונה של 1000₪+",
     progressToBonus: "התקדמות לבונוס",
