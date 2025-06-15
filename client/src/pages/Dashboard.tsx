@@ -7,6 +7,7 @@ import { TicketCard } from "@/components/lottery/TicketCard";
 import { ReferralCard } from "@/components/referral/ReferralCard";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { UserLevelDisplay } from "@/components/ui/user-level-display";
+import { UserRankDisplay } from "@/components/ui/user-rank-display";
 import { QuickContactWidgets } from "@/components/ui/quick-contact-widgets";
 import { WinnersCarousel } from "@/components/ui/winners-carousel";
 import { JackpotAutoUpdater } from "@/components/ui/jackpot-auto-updater";
@@ -180,10 +181,9 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* User Level Display */}
+            {/* User Rank Display (MVP Compliant) */}
             {user && (
-              <UserLevelDisplay 
-                participationCount={Array.isArray(myTickets) ? myTickets.length : 0} 
+              <UserRankDisplay 
                 className="shadow-xl border-0"
               />
             )}

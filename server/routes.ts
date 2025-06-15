@@ -525,19 +525,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Simple user registration endpoint (username only)
   app.post('/api/auth/simple-register', async (req, res) => {
     try {
-      const userData = req.body;
+      const { firstName } = req.body;
+      
+      if (!firstName || firstName.trim().length < 3) {
+        return res.status(400).json({ message: "Username must be at least 3 characters" });
+      }
       
       // Check if username already exists
       const existingUsers = await storage.getAllUsers();
       const usernameExists = existingUsers.some(user => 
-        user.firstName.toLowerCase() === userData.firstName.toLowerCase()
+        user.firstName && user.firstName.toLowerCase() === firstName.toLowerCase()
       );
       
       if (usernameExists) {
         return res.status(400).json({ message: "Username already exists" });
       }
       
-      const user = await storage.upsertUser(userData);
+      // Generate unique ID
+      const timestamp = Date.now().toString(36);
+      const random = Math.random().toString(36).substr(2, 5);
+      const userId = `user_${firstName.toLowerCase().replace(/[^a-z0-9]/g, '')}_${timestamp}_${random}`;
+      
+      // Generate referral code
+      const referralCode = firstName.toUpperCase().substr(0, 4) + Math.random().toString(36).substr(2, 4).toUpperCase();
+      
+      const userData = {
+        id: userId,
+        firstName: firstName,
+        lastName: "",
+        email: `${firstName.toLowerCase()}@brachavehatzlacha.com`,
+        referralCode: referralCode,
+        balance: "1000.00",
+        totalWinnings: "0.00",
+        referralBonus: "0.00",
+        referralCount: 0,
+        language: "en",
+        phoneNumber: null,
+        profileImageUrl: null,
+        isBlocked: false
+      };
+      
+      const user = await storage.upsertUser(userData as any);
       res.json(user);
     } catch (error) {
       console.error("Simple registration error:", error);
