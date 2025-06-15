@@ -222,7 +222,13 @@ export const translations = {
     matches: "matches",
     winners: "winners",
     each: "each",
-    myActiveTickets: "My Active Tickets"
+    myActiveTickets: "My Active Tickets",
+    
+    // Previous Numbers Selector
+    hotNumbers: "Hot Numbers",
+    coldNumbers: "Cold Numbers",
+    useTheseNumbers: "Use These Numbers",
+    recentDraws: "Recent Draws"
   },
   
   he: {
@@ -448,7 +454,13 @@ export const translations = {
     matches: "התאמות",
     winners: "זוכים",
     each: "כל אחד",
-    myActiveTickets: "הכרטיסים הפעילים שלי"
+    myActiveTickets: "הכרטיסים הפעילים שלי",
+    
+    // Previous Numbers Selector Hebrew
+    hotNumbers: "מספרים חמים",
+    coldNumbers: "מספרים קרים",
+    useTheseNumbers: "השתמש במספרים אלה",
+    recentDraws: "הגרלות אחרונות"
   }
 };
 
