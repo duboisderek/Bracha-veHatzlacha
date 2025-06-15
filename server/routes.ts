@@ -522,6 +522,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Simple user registration endpoint (username only)
+  app.post('/api/auth/simple-register', async (req, res) => {
+    try {
+      const userData = req.body;
+      
+      // Check if username already exists
+      const existingUsers = await storage.getAllUsers();
+      const usernameExists = existingUsers.some(user => 
+        user.firstName.toLowerCase() === userData.firstName.toLowerCase()
+      );
+      
+      if (usernameExists) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      
+      const user = await storage.upsertUser(userData);
+      res.json(user);
+    } catch (error) {
+      console.error("Simple registration error:", error);
+      res.status(500).json({ message: "Registration failed" });
+    }
+  });
+
+  // Admin simple user creation endpoint
+  app.post('/api/admin/create-simple-user', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userData = req.body;
+      
+      // Check if username already exists
+      const existingUsers = await storage.getAllUsers();
+      const usernameExists = existingUsers.some(user => 
+        user.firstName.toLowerCase() === userData.firstName.toLowerCase()
+      );
+      
+      if (usernameExists) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      
+      const user = await storage.upsertUser(userData);
+      res.json(user);
+    } catch (error) {
+      console.error("Admin user creation error:", error);
+      res.status(500).json({ message: "User creation failed" });
+    }
+  });
+
   // Admin endpoints
   app.get('/api/admin/users', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
