@@ -2,6 +2,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
+import { smsService } from "./sms-service";
 import { insertTicketSchema, insertTransactionSchema, insertChatMessageSchema, insertDrawSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -430,6 +431,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating user:", error);
       res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  // SMS Notification Routes
+  app.post('/api/admin/sms/test', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const result = await smsService.testSMSSystem();
+      res.json(result);
+    } catch (error) {
+      console.error("Error testing SMS system:", error);
+      res.status(500).json({ message: "Failed to test SMS system" });
+    }
+  });
+
+  app.post('/api/admin/sms/notify-draw/:drawId', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { drawId } = req.params;
+      await smsService.notifyDrawStarting(parseInt(drawId));
+      res.json({ message: "Draw starting notifications sent successfully" });
+    } catch (error) {
+      console.error("Error sending draw notifications:", error);
+      res.status(500).json({ message: "Failed to send draw notifications" });
+    }
+  });
+
+  app.post('/api/admin/sms/notify-winner', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId, amount, drawId } = req.body;
+      await smsService.notifyWinner(userId, amount, drawId);
+      res.json({ message: "Winner notification sent successfully" });
+    } catch (error) {
+      console.error("Error sending winner notification:", error);
+      res.status(500).json({ message: "Failed to send winner notification" });
     }
   });
 
