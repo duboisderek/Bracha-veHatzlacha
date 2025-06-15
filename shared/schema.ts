@@ -34,6 +34,7 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  phoneNumber: varchar("phone_number"),
   balance: decimal("balance", { precision: 10, scale: 2 }).default("0").notNull(),
   totalWinnings: decimal("total_winnings", { precision: 10, scale: 2 }).default("0").notNull(),
   referralCode: varchar("referral_code").unique().notNull(),
@@ -43,6 +44,7 @@ export const users = pgTable("users", {
   isAdmin: boolean("is_admin").default(false).notNull(),
   isBlocked: boolean("is_blocked").default(false).notNull(),
   language: varchar("language", { length: 5 }).default("en").notNull(),
+  smsNotifications: boolean("sms_notifications").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
