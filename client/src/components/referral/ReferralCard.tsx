@@ -6,6 +6,7 @@ import { Gift, Copy, Check, QrCode } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { QRCodeGenerator } from "@/components/ui/qr-code-generator";
 
 export function ReferralCard() {
   const [copied, setCopied] = useState(false);
@@ -45,11 +46,12 @@ export function ReferralCard() {
         
         <p className="text-sm text-gray-700 mb-4">{t("referralDescription")}</p>
         
-        {/* QR Code placeholder */}
+        {/* QR Code */}
         <div className="bg-white rounded-lg p-4 mb-4 flex justify-center">
-          <div className="w-24 h-24 bg-slate-900 rounded-lg flex items-center justify-center">
-            <QrCode className="text-white text-2xl" />
-          </div>
+          <QRCodeGenerator 
+            value={referralLink}
+            size={120}
+          />
         </div>
         
         {/* Referral Link */}

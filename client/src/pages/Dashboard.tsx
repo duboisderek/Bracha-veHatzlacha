@@ -263,12 +263,9 @@ export default function Dashboard() {
         )}
       </main>
 
-      {/* Chat Widget */}
-      <ChatWidget />
-
       {/* Background Elements */}
       <FloatingParticles count={30} />
-      {showConfetti && <Confetti onComplete={() => setShowConfetti(false)} />}
+      {showConfetti && <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />}
       
       {/* Chat Widget */}
       <ChatWidget />

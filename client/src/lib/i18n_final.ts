@@ -233,6 +233,10 @@ export const translations = {
     // New MVP Features
     chatSupport: "Chat Support",
     congratulations: "Congratulations",
+    referFriends: "Refer Friends",
+    referralDescription: "Invite friends and earn 100₪ when they make their first deposit of 1000₪+",
+    progressToBonus: "Progress to Bonus",
+    referralsCount: "Referrals Count",
     won: "Won",
     correct_numbers: "Correct Numbers",
     scan_qr_referral: "Scan QR code to join with your referral link",
@@ -479,6 +483,10 @@ export const translations = {
     // New MVP Features Hebrew
     chatSupport: "צ'אט תמיכה",
     congratulations: "מזל טוב",
+    referFriends: "הפנה חברים",
+    referralDescription: "הזמן חברים וקבל 100₪ כשהם מבצעים הפקדה ראשונה של 1000₪+",
+    progressToBonus: "התקדמות לבונוס",
+    referralsCount: "מספר הפניות",
     won: "זכה",
     correct_numbers: "מספרים נכונים",
     scan_qr_referral: "סרוק QR כדי להצטרף עם קישור ההפניה שלך",
