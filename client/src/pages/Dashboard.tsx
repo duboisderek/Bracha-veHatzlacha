@@ -6,6 +6,7 @@ import { NumberSelection } from "@/components/lottery/NumberSelection";
 import { TicketCard } from "@/components/lottery/TicketCard";
 import { ReferralCard } from "@/components/referral/ReferralCard";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { UserLevelDisplay } from "@/components/ui/user-level-display";
 import { Confetti } from "@/components/ui/confetti";
 import { FloatingParticles } from "@/components/ui/floating-particles";
 import { Card, CardContent } from "@/components/ui/card";

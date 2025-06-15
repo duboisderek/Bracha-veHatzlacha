@@ -165,9 +165,8 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
             <LotteryBall
               key={number}
               number={number}
-              isSelected={selectedNumbers.includes(number)}
+              selected={selectedNumbers.includes(number)}
               onClick={() => toggleNumber(number)}
-              animationDelay={index * 0.02}
               disabled={!selectedNumbers.includes(number) && selectedNumbers.length >= 6}
             />
           ))}
@@ -225,6 +224,9 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
           {purchaseTicketMutation.isPending ? "Processing..." : `${t("purchaseTicket")} - ₪100`}
         </Button>
       </CardContent>
+      
+      {/* Coin Rain Animation */}
+      <CoinRainAnimation trigger={showCoinRain} duration={3000} intensity={25} />
     </Card>
   );
 }
