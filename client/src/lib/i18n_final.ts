@@ -210,7 +210,19 @@ export const translations = {
     currentLevel: "Current Level",
     progressToNext: "Progress to Next Level",
     participationsLeft: "participations needed",
-    levelUpgrade: "Level Upgrade!"
+    levelUpgrade: "Level Upgrade!",
+    
+    // Dashboard Actions
+    quickActions: "Quick Actions",
+    addFunds: "Add Funds",
+    myHistory: "My History",
+    supportChat: "Support Chat",
+    lastDrawResults: "Last Draw Results",
+    draw: "Draw",
+    matches: "matches",
+    winners: "winners",
+    each: "each",
+    myActiveTickets: "My Active Tickets"
   },
   
   he: {
@@ -424,7 +436,19 @@ export const translations = {
     currentLevel: "רמה נוכחית",
     progressToNext: "התקדמות לרמה הבאה",
     participationsLeft: "השתתפויות נדרשות",
-    levelUpgrade: "שדרוג רמה!"
+    levelUpgrade: "שדרוג רמה!",
+    
+    // Dashboard Actions Hebrew
+    quickActions: "פעולות מהירות",
+    addFunds: "הוספת כספים",
+    myHistory: "ההיסטוריה שלי",
+    supportChat: "צ'אט תמיכה",
+    lastDrawResults: "תוצאות הגרלה אחרונה",
+    draw: "הגרלה",
+    matches: "התאמות",
+    winners: "זוכים",
+    each: "כל אחד",
+    myActiveTickets: "הכרטיסים הפעילים שלי"
   }
 };
 

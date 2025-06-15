@@ -84,7 +84,7 @@ export default function Dashboard() {
     );
   }
 
-  const lastDraw = completedDraws?.[0];
+  const lastDraw = Array.isArray(completedDraws) ? completedDraws[0] : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative overflow-hidden">
@@ -141,6 +141,14 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
+            {/* User Level Display */}
+            {user && (
+              <UserLevelDisplay 
+                participationCount={Array.isArray(myTickets) ? myTickets.length : 0} 
+                className="shadow-xl border-0"
+              />
+            )}
+
             {/* Referral Program */}
             <ReferralCard />
 
@@ -160,10 +168,9 @@ export default function Dashboard() {
                         <LotteryBall
                           key={index}
                           number={number}
-                          isSelected={true}
+                          selected={true}
                           size="sm"
                           disabled={true}
-                          className="bg-gradient-to-r from-red-400 to-red-600 text-white"
                         />
                       ))}
                     </div>
@@ -190,7 +197,7 @@ export default function Dashboard() {
         </div>
 
         {/* My Active Tickets */}
-        {myTickets && myTickets.length > 0 && (
+        {Array.isArray(myTickets) && myTickets.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -202,7 +209,7 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between mb-6" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
                   <h2 className="text-2xl font-bold text-slate-900">{t("myActiveTickets")}</h2>
                   <div className="text-sm text-gray-500">
-                    Next draw: {currentDraw ? new Date(currentDraw.drawDate).toLocaleDateString() : "TBD"}
+                    Next draw: {currentDraw && typeof currentDraw === 'object' && 'drawDate' in currentDraw ? new Date((currentDraw as any).drawDate).toLocaleDateString() : "TBD"}
                   </div>
                 </div>
 
