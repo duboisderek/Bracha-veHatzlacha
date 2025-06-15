@@ -63,28 +63,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // Admin login with email/password
+  // Universal login endpoint for all user types
+  app.post('/api/auth/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      // Define all user credentials
+      const credentials = {
+        // Admin accounts
+        'admin@brachavehatzlacha.com': { password: 'BrachaVeHatzlacha2024!', userId: 'admin_bracha_vehatzlacha' },
+        'admin.he@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_hebrew_test' },
+        'admin.en@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_english_test' },
+        
+        // VIP clients
+        'vip.he@brachavehatzlacha.com': { password: 'vip123', userId: 'client_vip_hebrew' },
+        'vip.en@brachavehatzlacha.com': { password: 'vip123', userId: 'client_vip_english' },
+        
+        // Standard clients
+        'standard.he@brachavehatzlacha.com': { password: 'standard123', userId: 'client_standard_hebrew' },
+        'standard.en@brachavehatzlacha.com': { password: 'standard123', userId: 'client_standard_english' },
+        
+        // New clients
+        'new.he@brachavehatzlacha.com': { password: 'new123', userId: 'client_new_hebrew' },
+        'new.en@brachavehatzlacha.com': { password: 'new123', userId: 'client_new_english' },
+        
+        // Existing clients
+        'demo@brachavehatzlacha.com': { password: 'demo123', userId: 'demo_client_bracha_vehatzlacha' },
+        'test@complete.com': { password: 'test123', userId: 'test_user_complete' },
+        'testuser@test.com': { password: 'test123', userId: 'testuser_test_com' },
+        'client8hxb9u@brachavehatzlacha.com': { password: 'client123', userId: 'client_8hxb9u' },
+        
+        // Blocked user (for testing)
+        'blocked@brachavehatzlacha.com': { password: 'blocked123', userId: 'client_blocked_test' }
+      };
+      
+      if (credentials[email] && credentials[email].password === password) {
+        const user = await storage.getUser(credentials[email].userId);
+        
+        if (!user) {
+          return res.status(401).json({ message: "Utilisateur non trouvé" });
+        }
+        
+        if (user.isBlocked) {
+          return res.status(403).json({ message: "Compte bloqué" });
+        }
+        
+        (req.session as any).user = {
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          isAdmin: user.isAdmin,
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          balance: user.balance,
+          language: user.language
+        };
+        
+        res.json({ user });
+      } else {
+        res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Erreur de connexion" });
+    }
+  });
+
+  // Admin login endpoint (legacy compatibility)
   app.post('/api/auth/admin-login', async (req, res) => {
     try {
       const { email, password } = req.body;
       
       // Verify admin credentials
       if (email === 'admin@brachavehatzlacha.com' && password === 'BrachaVeHatzlacha2024!') {
-        const adminData = {
-          id: 'admin_bracha_vehatzlacha',
-          email: 'admin@brachavehatzlacha.com',
-          firstName: 'Admin',
-          lastName: 'Bracha veHatzlacha',
-          profileImageUrl: null,
-          referralCode: 'ADMIN001',
-          balance: "50000.00",
-          totalWinnings: "0.00",
-          referralBonus: "0.00",
-          referralCount: 0,
-          language: "he",
-        };
+        const user = await storage.getUser('admin_bracha_vehatzlacha');
         
-        const user = await storage.upsertUser(adminData as any);
+        if (!user) {
+          return res.status(401).json({ message: "Admin non trouvé" });
+        }
         
         (req.session as any).user = {
           claims: {
