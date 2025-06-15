@@ -25,7 +25,7 @@ export function QuickContactWidgets({ className = "" }: QuickContactWidgetsProps
       textColor: "text-white"
     },
     {
-      name: t("chat_support"),
+      name: t("chatSupport"),
       icon: MessageCircle,
       url: "/chat-support",
       color: "bg-amber-500 hover:bg-amber-600",

@@ -229,7 +229,9 @@ export const translations = {
     coldNumbers: "Cold Numbers",
     useTheseNumbers: "Use These Numbers",
     recentDraws: "Recent Draws",
-    chat_support: "Chat Support",
+    
+    // New MVP Features
+    chatSupport: "Chat Support",
     congratulations: "Congratulations",
     won: "Won",
     correct_numbers: "Correct Numbers",
@@ -473,7 +475,9 @@ export const translations = {
     coldNumbers: "מספרים קרים",
     useTheseNumbers: "השתמש במספרים אלה",
     recentDraws: "הגרלות אחרונות",
-    chat_support: "צ'אט תמיכה",
+    
+    // New MVP Features Hebrew
+    chatSupport: "צ'אט תמיכה",
     congratulations: "מזל טוב",
     won: "זכה",
     correct_numbers: "מספרים נכונים",

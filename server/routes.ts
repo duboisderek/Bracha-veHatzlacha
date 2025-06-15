@@ -446,6 +446,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get recent winners for carousel
+  app.get('/api/draws/recent-winners', async (req: any, res) => {
+    try {
+      const completedDraws = await storage.getCompletedDraws();
+      const recentWinners = [];
+      
+      for (const draw of completedDraws.slice(0, 5)) {
+        const winners = await storage.getDrawWinners(draw.id);
+        for (const winner of winners) {
+          recentWinners.push({
+            id: `${draw.id}-${winner.user.id}`,
+            name: `${winner.user.firstName} ${winner.user.lastName}`,
+            amount: `₪${winner.winningAmount}`,
+            date: new Date(draw.drawDate).toLocaleDateString(),
+            matchCount: winner.matchCount
+          });
+        }
+      }
+      
+      res.json({ winners: recentWinners.slice(0, 10) });
+    } catch (error) {
+      console.error("Error fetching recent winners:", error);
+      res.json({ winners: [] });
+    }
+  });
+
+  // Update jackpot automatically
+  app.post('/api/draws/update-jackpot', isAdmin, async (req: any, res) => {
+    try {
+      const { incrementAmount } = req.body;
+      const currentDraw = await storage.getCurrentDraw();
+      
+      if (!currentDraw) {
+        return res.status(404).json({ message: "No current draw found" });
+      }
+      
+      await storage.updateDrawJackpot(currentDraw.id, incrementAmount);
+      const updatedDraw = await storage.getCurrentDraw();
+      
+      res.json({ 
+        newJackpot: updatedDraw?.jackpotAmount,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error updating jackpot:", error);
+      res.status(500).json({ message: "Failed to update jackpot" });
+    }
+  });
+
+  // Check draw lock status
+  app.get('/api/draws/lock-status', async (req: any, res) => {
+    try {
+      const currentDraw = await storage.getCurrentDraw();
+      
+      if (!currentDraw) {
+        return res.json({ isLocked: false, timeUntilDraw: null });
+      }
+      
+      const drawTime = new Date(currentDraw.drawDate);
+      const lockTime = new Date(drawTime.getTime() - 60000); // 60 seconds before
+      const now = new Date();
+      
+      const isLocked = now >= lockTime && now < drawTime;
+      const timeUntilDraw = Math.max(0, drawTime.getTime() - now.getTime());
+      
+      res.json({ 
+        isLocked,
+        timeUntilDraw,
+        drawStartTime: drawTime.toISOString()
+      });
+    } catch (error) {
+      console.error("Error checking lock status:", error);
+      res.status(500).json({ message: "Failed to check lock status" });
+    }
+  });
+
   // Admin endpoints
   app.get('/api/admin/users', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
