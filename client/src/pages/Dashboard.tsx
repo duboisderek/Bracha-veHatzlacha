@@ -7,6 +7,12 @@ import { TicketCard } from "@/components/lottery/TicketCard";
 import { ReferralCard } from "@/components/referral/ReferralCard";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 import { UserLevelDisplay } from "@/components/ui/user-level-display";
+import { QuickContactWidgets } from "@/components/ui/quick-contact-widgets";
+import { WinnersCarousel } from "@/components/ui/winners-carousel";
+import { JackpotAutoUpdater } from "@/components/ui/jackpot-auto-updater";
+import { DrawLockSystem } from "@/components/ui/draw-lock-system";
+import { StandardLotteryWidget } from "@/components/ui/standard-lottery-widget";
+import { QRCodeGenerator } from "@/components/ui/qr-code-generator";
 import { Confetti } from "@/components/ui/confetti";
 import { FloatingParticles } from "@/components/ui/floating-particles";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +26,7 @@ import { LotteryBall } from "@/components/ui/lottery-ball";
 
 export default function Dashboard() {
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isDrawLocked, setIsDrawLocked] = useState(false);
   const { t, isRTL } = useLanguage();
   const { user, isLoading } = useAuth();
   const { toast } = useToast();
@@ -35,6 +42,11 @@ export default function Dashboard() {
 
   const { data: completedDraws } = useQuery({
     queryKey: ["/api/draws/completed"],
+  });
+
+  const { data: lockStatus } = useQuery({
+    queryKey: ["/api/draws/lock-status"],
+    refetchInterval: 1000,
   });
 
   const handleTicketPurchased = () => {
@@ -88,16 +100,43 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative overflow-hidden">
+      {/* Winners Carousel */}
+      <WinnersCarousel />
+      
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Draw Lock Warning */}
+        {lockStatus && (lockStatus as any).drawStartTime && (
+          <DrawLockSystem 
+            drawStartTime={new Date((lockStatus as any).drawStartTime)}
+            onLockStatusChange={setIsDrawLocked}
+            className="mb-6"
+          />
+        )}
+        
         {/* Stats Cards */}
         <StatsCards />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Number Selection */}
-          <div className="lg:col-span-2">
-            <NumberSelection onTicketPurchased={handleTicketPurchased} />
+          <div className="lg:col-span-2 space-y-6">
+            <NumberSelection 
+              onTicketPurchased={handleTicketPurchased}
+            />
+            
+            {/* Jackpot Auto Updater */}
+            {currentDraw && (currentDraw as any).jackpotAmount && (
+              <JackpotAutoUpdater 
+                currentJackpot={(currentDraw as any).jackpotAmount}
+                onJackpotUpdate={(newAmount) => {
+                  // Update current draw data
+                }}
+              />
+            )}
+            
+            {/* Standard Lottery Widget */}
+            <StandardLotteryWidget />
           </div>
 
           {/* Sidebar */}
@@ -227,8 +266,15 @@ export default function Dashboard() {
       {/* Chat Widget */}
       <ChatWidget />
 
-      {/* Confetti Animation */}
-      <Confetti isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
+      {/* Background Elements */}
+      <FloatingParticles count={30} />
+      {showConfetti && <Confetti onComplete={() => setShowConfetti(false)} />}
+      
+      {/* Chat Widget */}
+      <ChatWidget />
+      
+      {/* Quick Contact Widgets */}
+      <QuickContactWidgets />
     </div>
   );
 }
