@@ -213,6 +213,38 @@ export class DatabaseStorage implements IStorage {
   // Transaction operations
   async createTransaction(transactionData: InsertTransaction): Promise<Transaction> {
     const [transaction] = await db.insert(transactions).values(transactionData).returning();
+    
+    // Check for first deposit tracking for referral bonuses
+    if (transactionData.type === 'deposit') {
+      const user = await this.getUser(transactionData.userId);
+      if (user && user.referredBy) {
+        // Check if this is the first deposit
+        const previousDeposits = await db.select()
+          .from(transactions)
+          .where(and(
+            eq(transactions.userId, transactionData.userId),
+            eq(transactions.type, 'deposit')
+          ));
+        
+        // If this is the first deposit and amount >= 1000₪
+        if (previousDeposits.length === 1 && parseFloat(transactionData.amount) >= 1000) {
+          // Award referral bonus
+          const referrer = await this.getUser(user.referredBy);
+          if (referrer) {
+            await this.updateUserBalance(user.referredBy, "100");
+            
+            // Create referral bonus transaction
+            await db.insert(transactions).values({
+              userId: user.referredBy,
+              type: 'referral_bonus',
+              amount: "100",
+              description: `First deposit referral bonus for ${user.firstName} ${user.lastName} (₪${transactionData.amount})`,
+            });
+          }
+        }
+      }
+    }
+    
     return transaction;
   }
 

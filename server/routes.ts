@@ -678,6 +678,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Phone number update endpoint
+  app.put('/api/users/:userId/phone', isAuthenticated, async (req: any, res) => {
+    try {
+      const { userId } = req.params;
+      const { phoneNumber } = req.body;
+      
+      if (req.user.claims.sub !== userId && !req.user.isAdmin) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      await db.update(users)
+        .set({ phoneNumber, updatedAt: new Date() })
+        .where(eq(users.id, userId));
+      
+      res.json({ message: "Phone number updated successfully" });
+    } catch (error) {
+      console.error("Error updating phone number:", error);
+      res.status(500).json({ message: "Failed to update phone number" });
+    }
+  });
+
   // Admin endpoints
   app.get('/api/admin/users', isAuthenticated, isAdmin, async (req: any, res) => {
     try {

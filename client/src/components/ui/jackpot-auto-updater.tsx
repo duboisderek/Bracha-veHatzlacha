@@ -103,6 +103,10 @@ export function JackpotAutoUpdater({
         <div className="text-green-600 dark:text-green-400">
           {t("auto_update_in")}: {formatTime(timeUntilUpdate)}
         </div>
+        
+        <div className="text-xs text-green-500 dark:text-green-500 mt-1">
+          {t("full_timestamp")}: {lastUpdateTime.toLocaleDateString()} {lastUpdateTime.toLocaleTimeString()}
+        </div>
       </div>
     </div>
   );
