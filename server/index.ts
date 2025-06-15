@@ -4,6 +4,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { drawScheduler } from "./scheduler";
 import { initializeCache } from "./cache";
+import { logger, performanceMiddleware, errorLoggingMiddleware } from "./logger";
 
 const app = express();
 app.use(express.json());
