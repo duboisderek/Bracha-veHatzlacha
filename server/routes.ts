@@ -109,6 +109,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo client login endpoint
+  app.post('/api/auth/demo-login', async (req, res) => {
+    try {
+      const { demoUser } = req.body;
+      
+      let userData;
+      
+      if (demoUser === 'client1') {
+        userData = {
+          id: 'demo_client1_bracha_vehatzlacha',
+          email: 'client1@brachavehatzlacha.com',
+          firstName: 'Client',
+          lastName: 'One',
+          profileImageUrl: null,
+          referralCode: 'CLIENT1',
+          balance: "1500.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 0,
+          language: "en",
+        };
+      } else if (demoUser === 'client2') {
+        userData = {
+          id: 'demo_client2_bracha_vehatzlacha',
+          email: 'client2@brachavehatzlacha.com',
+          firstName: 'Client',
+          lastName: 'Two',
+          profileImageUrl: null,
+          referralCode: 'CLIENT2',
+          balance: "2000.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 1,
+          language: "he",
+        };
+      } else if (demoUser === 'client3') {
+        userData = {
+          id: 'demo_client3_bracha_vehatzlacha',
+          email: 'client3@brachavehatzlacha.com',
+          firstName: 'Client',
+          lastName: 'Three',
+          profileImageUrl: null,
+          referralCode: 'CLIENT3',
+          balance: "1000.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 3,
+          language: "en",
+        };
+      } else {
+        return res.status(400).json({ message: "Invalid demo user" });
+      }
+
+      const user = await storage.upsertUser(userData as any);
+      
+      (req.session as any).user = {
+        claims: {
+          sub: user.id,
+          email: user.email,
+          first_name: user.firstName,
+          last_name: user.lastName,
+        },
+        isAdmin: false,
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        balance: user.balance
+      };
+      
+      res.json({ user: { ...user, isAdmin: false } });
+    } catch (error) {
+      console.error("Demo login error:", error);
+      res.status(500).json({ message: "Demo login failed" });
+    }
+  });
+
   // Client demo login endpoint
   app.post('/api/auth/login', async (req, res) => {
     try {
