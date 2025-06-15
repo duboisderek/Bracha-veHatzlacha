@@ -201,7 +201,16 @@ export const translations = {
     yourSelectedNumbers: "Your Selected Numbers",
     selected: "Selected",
     costPerTicket: "Cost per Ticket",
-    purchaseTicket: "Purchase Ticket"
+    purchaseTicket: "Purchase Ticket",
+    previousNumbers: "Previous Numbers",
+    manualSelection: "Manual Selection",
+    fromHistory: "From History",
+    
+    // User Level Progression
+    currentLevel: "Current Level",
+    progressToNext: "Progress to Next Level",
+    participationsLeft: "participations needed",
+    levelUpgrade: "Level Upgrade!"
   },
   
   he: {
@@ -406,7 +415,16 @@ export const translations = {
     yourSelectedNumbers: "המספרים שבחרת",
     selected: "נבחר",
     costPerTicket: "עלות כרטיס",
-    purchaseTicket: "רכישת כרטיס"
+    purchaseTicket: "רכישת כרטיס",
+    previousNumbers: "מספרים קודמים",
+    manualSelection: "בחירה ידנית",
+    fromHistory: "מההיסטוריה",
+    
+    // User Level Progression Hebrew
+    currentLevel: "רמה נוכחית",
+    progressToNext: "התקדמות לרמה הבאה",
+    participationsLeft: "השתתפויות נדרשות",
+    levelUpgrade: "שדרוג רמה!"
   }
 };
 

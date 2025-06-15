@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { LotteryBall } from "@/components/ui/lottery-ball";
 import { PreviousNumbersSelector } from "./PreviousNumbersSelector";
-import { Dice6, Ticket, Clock, AlertTriangle } from "lucide-react";
+import { CoinRainAnimation } from "@/components/ui/coin-rain-animation";
+import { Dice6, Ticket, Clock, AlertTriangle, History, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,10 +22,16 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [isLocked, setIsLocked] = useState(false);
   const [timeUntilDraw, setTimeUntilDraw] = useState<number>(0);
+  const [showCoinRain, setShowCoinRain] = useState(false);
+  const [activeTab, setActiveTab] = useState("manual");
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
   const queryClient = useQueryClient();
+
+  const { data: completedDraws } = useQuery({
+    queryKey: ["/api/draws/completed"],
+  });
 
   const { data: currentDraw } = useQuery({
     queryKey: ["/api/draws/current"],
@@ -58,6 +67,7 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
       });
     },
     onSuccess: () => {
+      setShowCoinRain(true);
       toast({
         title: t("congratulations"),
         description: "Ticket purchased successfully!",
@@ -66,6 +76,8 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/tickets/my"] });
       onTicketPurchased?.();
+      
+      setTimeout(() => setShowCoinRain(false), 3000);
     },
     onError: (error) => {
       toast({
@@ -98,6 +110,15 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
     setSelectedNumbers(numbers.sort((a, b) => a - b));
   };
 
+  const handlePreviousNumbersSelected = (numbers: number[]) => {
+    setSelectedNumbers(numbers);
+    setActiveTab("manual");
+    toast({
+      title: t("success"),
+      description: t("previousNumbers") + " " + t("selected"),
+    });
+  };
+
   const purchaseTicket = () => {
     if (selectedNumbers.length !== 6) {
       toast({
@@ -117,7 +138,8 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
       return;
     }
 
-    if (parseFloat(user.balance) < 100) {
+    const userBalance = user && typeof user === 'object' && 'balance' in user ? parseFloat(user.balance as string) : 0;
+    if (userBalance < 100) {
       toast({
         title: "Error",
         description: t("insufficientBalance"),
