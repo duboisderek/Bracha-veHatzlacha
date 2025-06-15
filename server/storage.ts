@@ -288,6 +288,55 @@ export class DatabaseStorage implements IStorage {
   // Referral operations
   async createReferral(referralData: InsertReferral): Promise<Referral> {
     const [referral] = await db.insert(referrals).values(referralData).returning();
+    
+    // Award referral bonus to referrer
+    const referrer = await this.getUser(referralData.referrerId);
+    if (referrer) {
+      const bonusAmount = 100; // 100₪ bonus per referral
+      await this.updateUserBalance(referralData.referrerId, bonusAmount.toString());
+      
+      // Create transaction for referral bonus
+      await this.createTransaction({
+        userId: referralData.referrerId,
+        type: 'referral_bonus',
+        amount: bonusAmount.toString(),
+        description: `Referral bonus for inviting ${referralData.referredId}`,
+      });
+      
+      // Check if referrer now has 5 or more referrals for 1000₪ bonus
+      const referrerReferrals = await this.getUserReferrals(referralData.referrerId);
+      const totalReferrals = referrerReferrals.length;
+      
+      // Award 1000₪ bonus after 5th referral (only once)
+      if (totalReferrals === 5) {
+        const bigBonusAmount = 1000; // 1000₪ bonus after 5 referrals
+        await this.updateUserBalance(referralData.referrerId, bigBonusAmount.toString());
+        
+        // Create transaction for big referral bonus
+        await this.createTransaction({
+          userId: referralData.referrerId,
+          type: 'referral_milestone_bonus',
+          amount: bigBonusAmount.toString(),
+          description: `Milestone bonus for reaching 5 referrals - ₪1000`,
+        });
+        
+        // Update user's referral bonus total
+        await db.update(users)
+          .set({ 
+            referralBonus: (parseFloat(referrer.referralBonus || '0') + bigBonusAmount).toString(),
+            referralCount: totalReferrals
+          })
+          .where(eq(users.id, referralData.referrerId));
+      } else {
+        // Update referral count
+        await db.update(users)
+          .set({ 
+            referralCount: totalReferrals
+          })
+          .where(eq(users.id, referralData.referrerId));
+      }
+    }
+    
     return referral;
   }
 

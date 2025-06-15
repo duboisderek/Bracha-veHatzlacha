@@ -232,7 +232,6 @@ export const translations = {
     
     // New MVP Features
     chatSupport: "Chat Support",
-    congratulations: "Congratulations",
     referFriends: "Refer Friends",
     referralDescription: "Invite friends and earn 100₪ when they make their first deposit of 1000₪+",
     progressToBonus: "Progress to Bonus",
