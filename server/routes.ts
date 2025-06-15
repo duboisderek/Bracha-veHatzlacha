@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { smsService } from "./sms-service";
+import { cache, cacheMiddleware } from "./cache";
 import { insertTicketSchema, insertTransactionSchema, insertChatMessageSchema, insertDrawSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -261,26 +262,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Draw endpoints
-  app.get('/api/draws/current', async (req, res) => {
+  app.get('/api/draws/current', cacheMiddleware('short'), async (req, res) => {
     try {
-      const currentDraw = await storage.getCurrentDraw();
-      if (!currentDraw) {
-        // Get highest existing draw number to avoid duplicates
-        const existingDraws = await storage.getCompletedDraws();
-        const allDraws = [...existingDraws];
-        const highestDrawNumber = allDraws.length > 0 
-          ? Math.max(...allDraws.map(d => d.drawNumber))
-          : 1000;
-        
-        const newDraw = await storage.createDraw({
-          drawNumber: highestDrawNumber + 1,
-          drawDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
-          jackpotAmount: "87340.00",
-          isActive: true,
-          isCompleted: false,
-        });
-        return res.json(newDraw);
-      }
+      const currentDraw = await cache.wrap('current-draw', async () => {
+        const draw = await storage.getCurrentDraw();
+        if (!draw) {
+          const existingDraws = await storage.getCompletedDraws();
+          const allDraws = [...existingDraws];
+          const highestDrawNumber = allDraws.length > 0 
+            ? Math.max(...allDraws.map(d => d.drawNumber))
+            : 1000;
+          
+          return await storage.createDraw({
+            drawNumber: highestDrawNumber + 1,
+            drawDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+            jackpotAmount: "87340.00",
+            isActive: true,
+            isCompleted: false,
+          });
+        }
+        return draw;
+      }, 'short');
+      
       res.json(currentDraw);
     } catch (error) {
       console.error("Error fetching current draw:", error);

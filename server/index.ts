@@ -3,6 +3,7 @@ import session from "express-session";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { drawScheduler } from "./scheduler";
+import { initializeCache } from "./cache";
 
 const app = express();
 app.use(express.json());
@@ -51,6 +52,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  console.log("Initializing Redis cache...");
+  await initializeCache();
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
