@@ -228,7 +228,19 @@ export const translations = {
     hotNumbers: "Hot Numbers",
     coldNumbers: "Cold Numbers",
     useTheseNumbers: "Use These Numbers",
-    recentDraws: "Recent Draws"
+    recentDraws: "Recent Draws",
+    chat_support: "Chat Support",
+    congratulations: "Congratulations",
+    won: "Won",
+    correct_numbers: "Correct Numbers",
+    scan_qr_referral: "Scan QR code to join with your referral link",
+    draw_locked: "Draw Locked",
+    participation_locked: "New participations are locked 60 seconds before draw",
+    standard_lottery: "Standard Lottery",
+    join_standard_lottery: "Join Standard Lottery",
+    jackpot_updated: "Jackpot Updated",
+    last_update: "Last Update",
+    auto_update_in: "Auto update in"
   },
   
   he: {
@@ -460,7 +472,19 @@ export const translations = {
     hotNumbers: "מספרים חמים",
     coldNumbers: "מספרים קרים",
     useTheseNumbers: "השתמש במספרים אלה",
-    recentDraws: "הגרלות אחרונות"
+    recentDraws: "הגרלות אחרונות",
+    chat_support: "צ'אט תמיכה",
+    congratulations: "מזל טוב",
+    won: "זכה",
+    correct_numbers: "מספרים נכונים",
+    scan_qr_referral: "סרוק QR כדי להצטרף עם קישור ההפניה שלך",
+    draw_locked: "הגרלה נעולה",
+    participation_locked: "השתתפות חדשה נעולה 60 שניות לפני ההגרלה",
+    standard_lottery: "לוטו רגיל",
+    join_standard_lottery: "הצטרף ללוטו רגיל",
+    jackpot_updated: "הקופה עודכנה",
+    last_update: "עדכון אחרון",
+    auto_update_in: "עדכון אוטומטי תוך"
   }
 };
 
