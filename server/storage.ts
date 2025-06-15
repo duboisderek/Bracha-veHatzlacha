@@ -29,6 +29,7 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   getUserByReferralCode(referralCode: string): Promise<User | undefined>;
   updateUserBalance(userId: string, amount: string): Promise<void>;
+  updateUserPhone(userId: string, phoneNumber: string): Promise<void>;
   
   // Draw operations
   getCurrentDraw(): Promise<Draw | undefined>;
@@ -110,6 +111,16 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ 
         balance: sql`${users.balance} + ${amount}`,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async updateUserPhone(userId: string, phoneNumber: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        phoneNumber,
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));

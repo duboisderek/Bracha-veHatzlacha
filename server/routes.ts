@@ -688,9 +688,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Unauthorized" });
       }
       
-      await db.update(users)
-        .set({ phoneNumber, updatedAt: new Date() })
-        .where(eq(users.id, userId));
+      await storage.updateUserPhone(userId, phoneNumber);
       
       res.json({ message: "Phone number updated successfully" });
     } catch (error) {
@@ -953,7 +951,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Complete the draw
       await storage.completeDraw(drawId);
       
-      res.json({ message: "Results submitted successfully" });
+      // Trigger automatic winner notifications
+      const drawWinners = await storage.getDrawWinners(drawId);
+      if (drawWinners.length > 0) {
+        try {
+          const { drawScheduler } = await import('./scheduler');
+          await drawScheduler.triggerWinnerNotifications(drawId);
+          console.log(`[AUTO-TRIGGER] Winner notifications sent for draw #${drawId} to ${drawWinners.length} winners`);
+        } catch (error) {
+          console.error(`[AUTO-TRIGGER] Failed to send winner notifications for draw #${drawId}:`, error);
+        }
+      }
+      
+      res.json({ 
+        message: "Results submitted successfully",
+        winnersNotified: drawWinners.length
+      });
     } catch (error) {
       console.error("Error submitting results:", error);
       res.status(500).json({ message: "Failed to submit results" });
