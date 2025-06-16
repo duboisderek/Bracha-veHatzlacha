@@ -22,10 +22,24 @@ declare global {
   }
 }
 
-// Simple auth middleware for this demo
+// Role definitions
+enum UserRole {
+  ADMIN = 'admin',
+  VIP_CLIENT = 'vip_client', 
+  STANDARD_CLIENT = 'standard_client',
+  NEW_CLIENT = 'new_client'
+}
+
+// Permission levels
+enum Permission {
+  READ = 'read',
+  WRITE = 'write', 
+  DELETE = 'delete',
+  ADMIN = 'admin'
+}
+
+// Authentication middleware
 const isAuthenticated = (req: any, res: Response, next: any) => {
-  // For development, we'll use a simple session check
-  // In production, this would use proper JWT verification
   if (req.session?.user) {
     req.user = req.session.user;
     return next();
@@ -33,25 +47,92 @@ const isAuthenticated = (req: any, res: Response, next: any) => {
   return res.status(401).json({ message: "Unauthorized" });
 };
 
+// Admin authorization middleware
 const isAdmin = async (req: any, res: Response, next: any) => {
-  // Check if user is authenticated first
   if (!req.session?.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
   
-  // Check if user has admin privileges
-  if (req.session.user.isAdmin === true) {
-    req.user = req.session.user;
-    return next();
-  }
+  const user = req.session.user;
   
-  // Also check by user ID for specific admin account
-  if (req.session.user.claims?.sub === 'admin_bracha_vehatzlacha') {
-    req.user = req.session.user;
+  // Check admin privileges
+  if (user.isAdmin === true || user.claims?.sub === 'admin_bracha_vehatzlacha') {
+    req.user = user;
     return next();
   }
   
   return res.status(403).json({ message: "Admin access required" });
+};
+
+// VIP client middleware
+const isVIP = async (req: any, res: Response, next: any) => {
+  if (!req.session?.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
+  const user = req.session.user;
+  const vipEmails = ['vip.he@brachavehatzlacha.com', 'vip.en@brachavehatzlacha.com'];
+  
+  if (user.isAdmin || vipEmails.includes(user.email)) {
+    req.user = user;
+    return next();
+  }
+  
+  return res.status(403).json({ message: "VIP access required" });
+};
+
+// Role-based access control
+const hasRole = (requiredRole: UserRole) => {
+  return (req: any, res: Response, next: any) => {
+    if (!req.session?.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const user = req.session.user;
+    const userRole = getUserRole(user);
+    
+    if (userRole === requiredRole || userRole === UserRole.ADMIN) {
+      req.user = user;
+      return next();
+    }
+    
+    return res.status(403).json({ message: `${requiredRole} access required` });
+  };
+};
+
+// Helper function to determine user role
+const getUserRole = (user: any): UserRole => {
+  if (user.isAdmin || user.claims?.sub === 'admin_bracha_vehatzlacha') {
+    return UserRole.ADMIN;
+  }
+  
+  const vipEmails = ['vip.he@brachavehatzlacha.com', 'vip.en@brachavehatzlacha.com'];
+  if (vipEmails.includes(user.email)) {
+    return UserRole.VIP_CLIENT;
+  }
+  
+  const standardEmails = ['standard.he@brachavehatzlacha.com', 'standard.en@brachavehatzlacha.com'];
+  if (standardEmails.includes(user.email)) {
+    return UserRole.STANDARD_CLIENT;
+  }
+  
+  return UserRole.NEW_CLIENT;
+};
+
+// Helper function to get permissions for a role
+const getPermissionsForRole = (role: UserRole): string[] => {
+  switch (role) {
+    case UserRole.ADMIN:
+      return ['read', 'write', 'delete', 'admin', 'manage_users', 'manage_draws', 'view_stats'];
+    case UserRole.VIP_CLIENT:
+      return ['read', 'write', 'vip_bonuses', 'priority_tickets', 'exclusive_draws'];
+    case UserRole.STANDARD_CLIENT:
+      return ['read', 'write', 'standard_features'];
+    case UserRole.NEW_CLIENT:
+      return ['read', 'write', 'basic_features'];
+    default:
+      return ['read'];
+  }
 };
 
 // Global credentials store (in production, this would be in database)
