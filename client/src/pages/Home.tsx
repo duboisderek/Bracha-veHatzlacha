@@ -45,7 +45,7 @@ function WinnersCarousel() {
 
   return (
     <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 p-4 rounded-lg shadow-lg mb-6">
-      <div className="flex items-center justify-center space-x-4">
+      <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse">
         <Trophy className="w-6 h-6 text-white animate-bounce" />
         <div className="text-center text-white">
           <h3 className="font-bold text-lg">{t("winnersCarousel")}</h3>

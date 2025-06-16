@@ -154,13 +154,13 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
   return (
     <Card className="shadow-xl border-0">
       <CardContent className="p-8">
-        <div className="flex items-center justify-between mb-6" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
+        <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
           <h2 className="text-2xl font-bold text-slate-900">{t("selectYourLuckyNumbers")}</h2>
           <div className="text-sm text-gray-500">{t("chooseNumbers")}</div>
         </div>
 
         {/* Number Grid */}
-        <div className="grid grid-cols-6 sm:grid-cols-7 md:grid-cols-8 gap-3 mb-8">
+        <div className="grid grid-cols-6 sm:grid-cols-7 md:grid-cols-8 gap-3 mb-8 number-grid">
           {Array.from({ length: 37 }, (_, i) => i + 1).map((number, index) => (
             <LotteryBall
               key={number}
@@ -174,7 +174,7 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
 
         {/* Selected Numbers Display */}
         <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-6 mb-6">
-          <div className="flex items-center justify-between mb-4" style={{ flexDirection: isRTL ? "row-reverse" : "row" }}>
+          <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <h3 className="text-lg font-semibold text-slate-900">{t("yourSelectedNumbers")}</h3>
             <span className="text-sm text-gray-500">{selectedNumbers.length}/6 {t("selected")}</span>
           </div>
