@@ -72,14 +72,14 @@ export function Header() {
           {/* User Info & Actions */}
           <div className="flex items-center space-x-4">
             {/* Balance Display */}
-            {user && (
+            {user ? (
               <div className="flex items-center space-x-2 bg-white bg-opacity-20 px-3 py-1 rounded-full">
-                <span className="text-sm font-medium">{t('balance')}:</span>
+                <span className="text-sm font-medium">{t('currentBalance')}:</span>
                 <span className="text-sm font-bold">
                   ₪{parseFloat((user as any).balance || "0").toLocaleString()}
                 </span>
               </div>
-            )}
+            ) : null}
 
             {/* Client Login Button - visible only when not logged in */}
             {!user && (

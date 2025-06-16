@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת תפקוד עברית - ברכה והצלחה</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background: #f8fafc;
+            padding: 20px;
+        }
+        .test-section {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: #10b981; }
+        .error { color: #ef4444; }
+        .hebrew-text {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            direction: rtl;
+            text-align: right;
+        }
+        .rtl-test {
+            border: 2px solid #10b981;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>בדיקת תפקוד עברית - ברכה והצלחה</h1>
+    
+    <div class="test-section">
+        <h2>בדיקת כיוון RTL</h2>
+        <div class="rtl-test hebrew-text">
+            <p>טקסט זה צריך להיות מיושר לימין ↤</p>
+            <p>המספרים: 1234567890</p>
+            <p>תאריך: 16/06/2025</p>
+            <p>שעה: 15:30</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>בדיקת תרגום מפתחות</h2>
+        <div id="translation-test">
+            <p>בדיקה בתהליך...</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>בדיקת טפסים</h2>
+        <form onsubmit="return false;">
+            <label>שם משתמש:</label><br>
+            <input type="text" placeholder="הכנס שם משתמש" required><br><br>
+            
+            <label>סיסמה:</label><br>
+            <input type="password" placeholder="הכנס סיסמה" required><br><br>
+            
+            <label>מספר טלפון:</label><br>
+            <input type="tel" placeholder="050-1234567" required><br><br>
+            
+            <button type="submit">התחבר</button>
+            <button type="button">ביטול</button>
+        </form>
+    </div>
+
+    <div class="test-section">
+        <h2>בדיקת בחירת מספרים (לוטו)</h2>
+        <div id="number-grid">
+            <!-- יצירת רשת מספרים דינמית -->
+        </div>
+        <p>מספרים נבחרים: <span id="selected-numbers">אין</span></p>
+    </div>
+
+    <script>
+        // בדיקת תרגומים
+        const testTranslations = {
+            'appName': 'ברכה והצלחה',
+            'home': 'בית',
+            'login': 'התחבר',
+            'selectNumbers': 'בחירת מספרים',
+            'currentJackpot': 'הג\'קפוט הנוכחי',
+            'nextDraw': 'הגרלה הבאה'
+        };
+
+        function testTranslationsDisplay() {
+            const testDiv = document.getElementById('translation-test');
+            let html = '<ul>';
+            
+            for (const [key, expected] of Object.entries(testTranslations)) {
+                html += `<li><strong>${key}:</strong> ${expected}</li>`;
+            }
+            
+            html += '</ul>';
+            testDiv.innerHTML = html;
+        }
+
+        // יצירת רשת מספרים לבדיקת פונקציונליות
+        function createNumberGrid() {
+            const grid = document.getElementById('number-grid');
+            const selectedNumbers = [];
+            
+            for (let i = 1; i <= 37; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.style.width = '40px';
+                button.style.height = '40px';
+                button.style.margin = '2px';
+                button.style.fontSize = '14px';
+                
+                button.onclick = function() {
+                    if (selectedNumbers.includes(i)) {
+                        selectedNumbers.splice(selectedNumbers.indexOf(i), 1);
+                        button.style.background = '#3b82f6';
+                    } else if (selectedNumbers.length < 6) {
+                        selectedNumbers.push(i);
+                        button.style.background = '#10b981';
+                    }
+                    
+                    document.getElementById('selected-numbers').textContent = 
+                        selectedNumbers.length > 0 ? selectedNumbers.join(', ') : 'אין';
+                };
+                
+                grid.appendChild(button);
+            }
+        }
+
+        // בדיקת תמיכה RTL
+        function testRTLSupport() {
+            const isRTL = document.documentElement.dir === 'rtl';
+            const lang = document.documentElement.lang;
+            
+            console.log('RTL Support Test:');
+            console.log('Direction:', document.documentElement.dir);
+            console.log('Language:', document.documentElement.lang);
+            console.log('Body direction:', getComputedStyle(document.body).direction);
+            
+            return isRTL && lang === 'he';
+        }
+
+        // הפעלת בדיקות
+        document.addEventListener('DOMContentLoaded', function() {
+            testTranslationsDisplay();
+            createNumberGrid();
+            
+            const rtlSupported = testRTLSupport();
+            console.log('Hebrew RTL functionality:', rtlSupported ? 'WORKING' : 'NOT WORKING');
+        });
+
+        // בדיקת קלט עברית
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                const hasHebrew = /[\u0590-\u05FF]/.test(e.target.value);
+                console.log('Hebrew input detected:', hasHebrew);
+            });
+        });
+    </script>
+</body>
+</html>

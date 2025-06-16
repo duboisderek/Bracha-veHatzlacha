@@ -259,7 +259,7 @@ function NumberSelection() {
             Random Numbers
           </Button>
           
-          {previousNumbers && Array.isArray(previousNumbers) && previousNumbers.length > 0 && (
+          {previousNumbers && Array.isArray(previousNumbers) && previousNumbers.length > 0 ? (
             <Button
               onClick={reusePreviousNumbers}
               variant="outline"
@@ -269,7 +269,7 @@ function NumberSelection() {
               <Repeat className="w-4 h-4" />
               {t("reuseNumbers")}
             </Button>
-          )}
+          ) : null}
         </div>
 
         {/* Participation Amount */}
@@ -293,7 +293,7 @@ function NumberSelection() {
             <span className="text-xl font-bold text-blue-900">₪{participationAmount}</span>
           </div>
           <div className="text-sm text-blue-600">
-            Your balance: ₪{user?.balance || 0}
+            {t("currentBalance")}: ₪{(user as any)?.balance || 0}
           </div>
         </div>
 
