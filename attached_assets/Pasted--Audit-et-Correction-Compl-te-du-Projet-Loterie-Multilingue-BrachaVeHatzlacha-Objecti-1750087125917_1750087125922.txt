@@ -1,0 +1,52 @@
+# 🚀 Audit et Correction Complète du Projet Loterie Multilingue – BrachaVeHatzlacha
+
+## 🎯 Objectif
+Effectuer une **vérification complète et détaillée du système**, sans aucune exception. L’objectif est de garantir un projet **100 % fonctionnel**, **sans bug**, prêt pour une **mise en ligne en production réelle**.
+
+## ✅ Ce que je demande
+- Analyse complète du **backend** (Python Flask ou FastAPI + PostgreSQL)
+- Analyse complète du **frontend** (React + Framer Motion + multilingue + WebSocket)
+- Vérification des **bases de données** : structure, relations, intégrité, contraintes, index
+- Vérification de la **logique métier** :  
+  - Achats de tickets  
+  - Gestion des tirages  
+  - Calcul des gains  
+  - Solde et transactions  
+  - CRM admin  
+  - Système de parrainage  
+  - Notifications (SMS, alertes)  
+- Vérification complète de la **sécurité** :  
+  - Authentification (sessions, tokens)  
+  - Validation côté client et serveur  
+  - CSRF, protection WebSocket  
+  - HTTPS (préparation)  
+- Vérification du **multilingue et RTL** :  
+  - Français, Anglais, Hébreu  
+  - Basculement dynamique, formats localisés  
+- Vérification des **animations** et de l’UX : fluidité, transitions, cohérence
+
+## 🔧 Ce que tu dois livrer
+- Correction de **tous les bugs et incohérences** identifiés
+- Optimisation du code pour la **performance**, la **stabilité** et la **sécurité**
+- Code propre et bien structuré, prêt pour **production**
+- Documentation minimale (commentaires, structure des fichiers)
+- **Résumé des actions réalisées** (ce qui a été corrigé, amélioré, optimisé)
+
+## 💻 Plateforme
+- Application Web (compatible desktop et mobile)
+- Fonctionnement en ligne
+
+## 🌐 Hébergement
+- Préparation pour un déploiement cloud (Docker, AWS, Azure ou équivalent)
+
+## 🎨 Style
+- Application moderne, interactive, multilingue
+
+## 🌍 Langue de l’interface application
+- Multilingue : Français, Anglais, Hébreu (support RTL)
+
+## ⚠️ Instructions finales
+Passe **en revue tout le système**, sans exception : backend, frontend, BDD, WebSocket, logique métier, sécurité.  
+Corrige **absolument tous les problèmes**, propose des optimisations si utiles.  
+Prépare le code pour une **mise en ligne en production réelle**.  
+Fournis le **code final corrigé + résumé clair des actions réalisées**.
