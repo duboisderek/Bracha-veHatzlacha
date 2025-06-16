@@ -82,7 +82,7 @@ export function Header() {
             ) : null}
 
             {/* Client Login Button - visible only when not logged in */}
-            {!user && (
+{!user && (
               <Button
                 onClick={() => window.location.href = '/client-auth'}
                 className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg transition-all duration-200"

@@ -11,6 +11,7 @@ import {
   decimal,
   unique,
   uuid,
+  type PgColumn,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -38,7 +39,7 @@ export const users = pgTable("users", {
   balance: decimal("balance", { precision: 10, scale: 2 }).default("0").notNull(),
   totalWinnings: decimal("total_winnings", { precision: 10, scale: 2 }).default("0").notNull(),
   referralCode: varchar("referral_code").unique().notNull(),
-  referredBy: varchar("referred_by").references(() => users.id),
+  referredBy: varchar("referred_by"),
   referralBonus: decimal("referral_bonus", { precision: 10, scale: 2 }).default("0").notNull(),
   referralCount: integer("referral_count").default(0).notNull(),
   isAdmin: boolean("is_admin").default(false).notNull(),
