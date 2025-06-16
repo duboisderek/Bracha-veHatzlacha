@@ -7,19 +7,20 @@ import { Badge } from "@/components/ui/badge";
 import { FloatingParticles } from "@/components/ui/floating-particles";
 import { LotteryBall } from "@/components/ui/lottery-ball";
 import { 
+  Trophy, 
+  Clock, 
+  Coins, 
+  Star, 
   Globe, 
+  Shield,
+  Users,
+  Zap,
+  Crown,
+  Gift,
   Phone,
   MessageCircle,
   UserCheck,
-  Settings,
-  Crown,
-  Clock,
-  Coins,
-  Star,
-  Gift,
-  Trophy,
-  Shield,
-  Users
+  Settings
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
@@ -30,8 +31,6 @@ export default function Landing() {
 
   const { data: currentDraw } = useQuery({
     queryKey: ["/api/draws/current"],
-    staleTime: 30000, // Cache for 30 seconds
-    refetchOnWindowFocus: false,
   });
 
   const handleLogin = async (type: 'admin' | 'client') => {
