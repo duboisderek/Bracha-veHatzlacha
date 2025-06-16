@@ -205,30 +205,20 @@ export default function Landing() {
                 <h3 className="text-2xl font-bold text-white mb-4">Choose Your Access</h3>
                 
                 <div className="grid gap-4">
-                  {/* Client Demo Login */}
+                  {/* Client Authentication */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <Button
-                      onClick={() => handleLogin('client')}
-                      disabled={isLoggingIn}
+                      onClick={() => window.location.href = '/client-auth'}
                       size="lg"
                       className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-8 rounded-xl shadow-2xl text-lg transition-all duration-200"
-                      id="demo-login-button"
+                      id="client-auth-button"
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
-                      {isLoggingIn ? (
-                        <div className="flex items-center">
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          {t("loading")}
-                        </div>
-                      ) : (
-                        <>
-                          {t("loginAsClient")}
-                          <span className="text-sm ml-2 opacity-90">(Demo Account)</span>
-                        </>
-                      )}
+                      {t("clientLogin")}
+                      <span className="text-sm ml-2 opacity-90">(Connexion / Inscription)</span>
                     </Button>
                   </motion.div>
 

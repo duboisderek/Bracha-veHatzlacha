@@ -171,6 +171,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Registration endpoint
+  app.post('/api/auth/register', async (req, res) => {
+    try {
+      const { firstName, lastName, email, phoneNumber, password, language } = req.body;
+      
+      // Validate required fields
+      if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({ message: 'Tous les champs obligatoires doivent être remplis' });
+      }
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: 'Format d\'email invalide' });
+      }
+      
+      // Validate password length
+      if (password.length < 6) {
+        return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 6 caractères' });
+      }
+      
+      // Check if user already exists
+      const users = await storage.getAllUsers();
+      const existingUser = users.find(user => user.email === email);
+      if (existingUser) {
+        return res.status(400).json({ message: 'Un compte avec cet email existe déjà' });
+      }
+      
+      // Generate unique user ID and referral code
+      const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const referralCode = `${firstName.substring(0, 3).toUpperCase()}${lastName.substring(0, 3).toUpperCase()}${Math.floor(Math.random() * 1000)}`;
+      
+      // Create new user
+      const newUser = await storage.upsertUser({
+        id: userId,
+        email,
+        firstName,
+        lastName,
+        profileImageUrl: null,
+        phoneNumber: phoneNumber || null,
+        balance: '100.00', // Welcome bonus
+        totalWinnings: '0.00',
+        referralCode,
+        referredBy: null,
+        referralBonus: '0.00',
+        referralCount: 0,
+        isAdmin: false,
+        isBlocked: false,
+        language: language || 'en',
+        smsNotifications: true,
+      });
+      
+      console.log('New user registered:', { 
+        userId: newUser.id, 
+        email: newUser.email,
+        name: `${newUser.firstName} ${newUser.lastName}`
+      });
+      
+      res.status(201).json({ 
+        message: 'Compte créé avec succès',
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName
+        }
+      });
+    } catch (error) {
+      console.error('Registration error:', error);
+      res.status(500).json({ message: 'Erreur lors de la création du compte' });
+    }
+  });
+
   // Demo client login endpoint
   app.post('/api/auth/demo-login', async (req, res) => {
     try {
