@@ -539,6 +539,280 @@ export const translations = {
     jackpot_updated: "הקופה עודכנה",
     last_update: "עדכון אחרון",
     auto_update_in: "עדכון אוטומטי תוך"
+  },
+  
+  fr: {
+    // Application Name
+    appName: "Bracha veHatzlacha",
+    appNameShort: "Bracha",
+    
+    // Navigation & General
+    home: "Accueil",
+    dashboard: "Espace Personnel",
+    chat: "Chat et Support",
+    admin: "Panneau Admin",
+    logout: "Déconnexion",
+    login: "Connexion",
+    loginAsClient: "Entrer comme Client",
+    
+    // Home Screen
+    welcomeMessage: "Bienvenue au Loto Bracha veHatzlacha",
+    participateInLottery: "Participer au Loto",
+    selectNumbers: "Sélectionner Numéros",
+    selectAmount: "Sélectionner Montant",
+    nextDraw: "Prochain Tirage",
+    timeUntilDraw: "Temps jusqu'au Tirage",
+    jackpotAmount: "Montant Jackpot",
+    quickPick: "Sélection Rapide",
+    mustSelect6Numbers: "Vous devez sélectionner 6 numéros",
+    currentJackpot: "Jackpot Actuel",
+    drawNumber: "Tirage #",
+    participationHistory: "Historique Participation",
+    yourNumbers: "Vos Numéros",
+    result: "Résultat",
+    winnings: "Gains",
+    
+    // Personal Area
+    currentBalance: "Solde Actuel",
+    topupHistory: "Historique Recharges",
+    userStatus: "Statut Utilisateur",
+    statusNew: "Nouvel Utilisateur",
+    statusActive: "Actif",
+    statusSilver: "Argent",
+    statusGold: "Or",
+    statusDiamond: "Diamant",
+    statusVIP: "VIP",
+    silverRequirement: "10 participations pour statut Argent",
+    goldRequirement: "100 participations pour statut Or",
+    diamondRequirement: "500 participations pour statut Diamant",
+    
+    // Chat & Support
+    liveChat: "Chat en Direct",
+    supportRequest: "Ouvrir Demande Support",
+    chatWithSupport: "Chat avec Support",
+    typeMessage: "Tapez votre message...",
+    send: "Envoyer",
+    newSupportRequest: "Nouvelle Demande Support",
+    describeProblem: "Décrivez votre problème",
+    
+    // Notifications
+    drawImminent: "Le tirage commence bientôt!",
+    winningNotification: "Félicitations! Vous avez gagné ₪{amount}",
+    claimInstructions: "Contactez le support pour réclamer votre prix",
+    participationConfirmed: "Participation confirmée",
+    insufficientBalance: "Solde insuffisant",
+    
+    // Referral System
+    referralProgram: "Programme de Parrainage",
+    yourReferralLink: "Votre Lien de Parrainage",
+    generateQRCode: "Générer Code QR",
+    referralBonus: "Bonus Parrainage: ₪100",
+    bonusCondition: "Quand l'ami recharge ₪1000+",
+    copyLink: "Copier Lien",
+    shareLink: "Partager Lien",
+    
+    // Winners Display
+    recentWinners: "Gagnants Récents",
+    winnersCarousel: "Gagnants Récents",
+    congratulations: "Félicitations",
+    winner: "Gagnant",
+    amount: "Montant",
+    
+    // Quick Contact
+    contactWhatsApp: "WhatsApp",
+    contactTelegram: "Telegram",
+    contactChat: "Chat Direct",
+    
+    // Admin Panel
+    adminPanel: "Panneau Admin",
+    platformManagement: "Gestion Plateforme Bracha veHatzlacha",
+    userManagement: "Gestion Utilisateurs",
+    createUser: "Créer Utilisateur",
+    manualDeposit: "Dépôt Manuel",
+    systemControls: "Contrôles Système",
+    currentDraw: "Tirage Actuel",
+    runDraw: "Lancer Tirage",
+    drawCompleted: "Tirage Terminé",
+    totalUsers: "Total Utilisateurs",
+    totalDraws: "Total Tirages",
+    usersList: "Liste Utilisateurs",
+    name: "Nom",
+    email: "Email",
+    balance: "Solde",
+    status: "Statut",
+    actions: "Actions",
+    active: "Actif",
+    blocked: "Bloqué",
+    block: "Bloquer",
+    unblock: "Débloquer",
+    loading: "Chargement...",
+    
+    // Admin Messages
+    userCreated: "Utilisateur créé avec succès",
+    depositSuccess: "Dépôt effectué avec succès",
+    userBlocked: "Utilisateur bloqué avec succès",
+    userUnblocked: "Utilisateur débloqué avec succès",
+    errorLoading: "Erreur de chargement",
+    errorCreating: "Erreur création utilisateur",
+    errorDeposit: "Erreur traitement dépôt",
+    errorBlocking: "Erreur blocage utilisateur",
+    errorDraw: "Erreur lancement tirage",
+    connectionError: "Erreur de connexion",
+    
+    // Admin Actions
+    deposit: "Dépôt",
+    username: "Nom d'utilisateur",
+    selectUser: "Sélectionner Utilisateur",
+    comment: "Commentaire",
+    firstName: "Prénom",
+    lastName: "Nom de famille",
+    password: "Mot de passe",
+    create: "Créer",
+    save: "Sauvegarder",
+    cancel: "Annuler",
+    edit: "Modifier",
+    delete: "Supprimer",
+    confirm: "Confirmer",
+    
+    // Validation & Errors
+    required: "Champ requis",
+    invalidInput: "Saisie invalide",
+    error: "Erreur",
+    success: "Succès",
+    loginRequired: "Connexion requise",
+    
+    // Time & Dates
+    days: "jours",
+    hours: "heures",
+    minutes: "minutes",
+    seconds: "secondes",
+    
+    // Currency
+    currency: "₪",
+    shekel: "Shekel",
+    
+    // Actions
+    participate: "Participer",
+    topUp: "Recharger",
+    claim: "Réclamer Prix",
+    contact: "Contact",
+    share: "Partager",
+    copy: "Copier",
+    copied: "Copié!",
+    
+    // User Status Levels
+    userLevel: "Niveau Utilisateur",
+    levelProgress: "Progression Niveau",
+    nextLevelRequirement: "Exigence Niveau Suivant",
+    
+    // Previous Numbers History
+    previousDrawNumbers: "Numéros Tirages Précédents",
+    usePreviousDrawNumbers: "Utiliser Numéros Précédents",
+    selectFromDrawHistory: "Sélectionner depuis Historique",
+    drawHistoryList: "Liste Historique Tirages",
+    pastWinningNumbers: "Numéros Gagnants Passés",
+    
+    // Contact Widgets
+    quickContactWidget: "Contact Rapide",
+    whatsappContact: "WhatsApp",
+    telegramContact: "Telegram",
+    liveChatContact: "Chat Direct",
+    
+    // Draw Lock System
+    drawLockWarning: "Le tirage commence bientôt",
+    lockMessage: "Participation verrouillée 60 secondes avant tirage",
+    remainingTime: "Temps restant",
+    
+    // Notification System
+    notificationSettings: "Paramètres Notifications",
+    drawStartNotification: "Le tirage commence bientôt!",
+    winningNotificationText: "Félicitations! Vous avez gagné",
+    prizeClaimInstruction: "Réclamez votre prix",
+    
+    // Referral Features
+    referralSystem: "Système de Parrainage",
+    myReferralCode: "Mon Code de Parrainage",
+    referralEarnings: "Gains de Parrainage",
+    depositBonus: "Bonus 100₪ quand l'invité fait premier dépôt 1000₪+",
+    createQRCode: "Créer Code QR",
+    shareMyReferralLink: "Partager Mon Lien de Parrainage",
+    
+    // Missing translations for NumberSelection
+    selectYourLuckyNumbers: "Sélectionnez Vos Numéros Porte-bonheur",
+    chooseNumbers: "Choisissez 6 numéros de 1 à 37",
+    yourSelectedNumbers: "Vos Numéros Sélectionnés",
+    selected: "Sélectionné",
+    costPerTicket: "Coût par Ticket",
+    purchaseTicket: "Acheter Ticket",
+    previousNumbers: "Numéros Précédents",
+    manualSelection: "Sélection Manuelle",
+    fromHistory: "Depuis Historique",
+    
+    // User Level Progression
+    currentLevel: "Niveau Actuel",
+    progressToNext: "Progression vers Suivant",
+    participationsLeft: "participations nécessaires",
+    levelUpgrade: "Mise à Niveau!",
+    
+    // Dashboard Actions
+    quickActions: "Actions Rapides",
+    addFunds: "Ajouter Fonds",
+    myHistory: "Mon Historique",
+    supportChat: "Chat Support",
+    lastDrawResults: "Résultats Dernier Tirage",
+    draw: "Tirage",
+    matches: "correspondances",
+    winners: "gagnants",
+    each: "chacun",
+    myActiveTickets: "Mes Tickets Actifs",
+    
+    // Previous Numbers Selector
+    hotNumbers: "Numéros Chauds",
+    coldNumbers: "Numéros Froids",
+    useTheseNumbers: "Utiliser Ces Numéros",
+    recentDraws: "Tirages Récents",
+    
+    // Missing Landing Page translations
+    clientLogin: "Connexion Client",
+    backToHome: "Retour Accueil",
+    clientAccess: "Accès Client",
+    welcomeToLottery: "Bienvenue au Loto",
+    register: "S'inscrire",
+    phoneNumber: "Numéro Téléphone",
+    confirmPassword: "Confirmer Mot de Passe",
+    createAccount: "Créer Compte",
+    
+    // Missing Home Page translations
+    lastUpdated: "Dernière Mise à Jour",
+    reuseNumbers: "Réutiliser Numéros",
+    participationAmount: "Montant Participation",
+    participationLocked: "Participation Verrouillée",
+    nextDrawInfo: "Info Prochain Tirage",
+    drawCountdown: "Compte à Rebours Tirage",
+    standardLotterySuggestion: "Suggestion Loto Standard",
+    
+    // Missing Admin translations
+    drawCreated: "Tirage créé avec succès",
+    resultsSubmitted: "Résultats soumis avec succès",
+    createUserButton: "Créer Utilisateur",
+    drawDate: "Date Tirage",
+    
+    // New MVP Features
+    chatSupport: "Support Chat",
+    referFriends: "Parrainer Amis",
+    referralDescription: "Invitez des amis et gagnez 100₪ quand ils font leur premier dépôt de 1000₪+",
+    progressToBonus: "Progression vers Bonus",
+    referralsCount: "Nombre de Parrainages",
+    won: "Gagné",
+    correct_numbers: "Numéros Corrects",
+    scan_qr_referral: "Scanner QR pour rejoindre avec votre lien de parrainage",
+    draw_locked: "Tirage Verrouillé",
+    participation_locked: "Nouvelle participation verrouillée 60 secondes avant tirage",
+    standard_lottery: "Loto Standard",
+    join_standard_lottery: "Rejoindre Loto Standard",
+    jackpot_updated: "Jackpot Mis à Jour",
+    last_update: "Dernière Mise à Jour",
+    auto_update_in: "Mise à jour auto dans"
   }
 };
 
