@@ -166,27 +166,10 @@ export const referralsRelations = relations(referrals, ({ one }) => ({
   }),
 }));
 
-// Insert schemas
+// Insert schemas - Corrected types
 export const insertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
   updatedAt: true,
-}).extend({
-  id: z.string(),
-  email: z.string().optional(),
-  firstName: z.string().optional(), 
-  lastName: z.string().optional(),
-  profileImageUrl: z.string().nullable().optional(),
-  phoneNumber: z.string().nullable().optional(),
-  balance: z.string(),
-  totalWinnings: z.string(),
-  referralCode: z.string(),
-  referredBy: z.string().nullable().optional(),
-  referralBonus: z.string(),
-  referralCount: z.number(),
-  isAdmin: z.boolean(),
-  isBlocked: z.boolean(),
-  language: z.string(),
-  smsNotifications: z.boolean(),
 });
 
 export const insertDrawSchema = createInsertSchema(draws).omit({

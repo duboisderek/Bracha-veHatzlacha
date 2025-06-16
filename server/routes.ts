@@ -296,14 +296,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       Object.assign(globalCredentials, tempCredentials);
 
       // Create new user
-      const newUser = await storage.upsertUser({
+      const userData: any = {
         id: userId,
         email: email,
         firstName: firstName,
         lastName: lastName,
         profileImageUrl: null,
         phoneNumber: phoneNumber || null,
-        balance: '100.00', // Welcome bonus
+        balance: '100.00',
         totalWinnings: '0.00',
         referralCode: referralCode,
         referredBy: null,
@@ -313,7 +313,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isBlocked: false,
         language: language || 'en',
         smsNotifications: true,
-      });
+      };
+      
+      const newUser = await storage.upsertUser(userData);
       
       console.log('New user registered:', { 
         userId: newUser.id, 
