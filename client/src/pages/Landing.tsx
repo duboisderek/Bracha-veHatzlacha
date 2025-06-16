@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useState, memo, useMemo, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FloatingParticles } from "@/components/ui/floating-particles";
-import { LotteryBall } from "@/components/ui/lottery-ball";
 import { 
   Trophy, 
   Clock, 
@@ -25,13 +23,35 @@ import {
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 
-export default function Landing() {
+// Lazy load des composants non-critiques
+const FloatingParticles = lazy(() => import("@/components/ui/floating-particles").then(m => ({ default: m.FloatingParticles })));
+const LotteryBall = lazy(() => import("@/components/ui/lottery-ball").then(m => ({ default: m.LotteryBall })));
+
+// Skeleton pour les composants en chargement
+const ComponentSkeleton = memo(() => (
+  <div className="animate-pulse bg-white bg-opacity-10 rounded-lg h-8 w-full" />
+));
+
+const Landing = memo(() => {
   const { language, setLanguage, t } = useLanguage();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const { data: currentDraw } = useQuery({
     queryKey: ["/api/draws/current"],
+    staleTime: 5 * 60 * 1000, // Cache pour 5 minutes
   });
+
+  // Memoize les données calculées
+  const jackpotDisplay = useMemo(() => {
+    const draw = currentDraw as any;
+    if (!draw?.jackpotAmount) return "40,030";
+    return parseInt(draw.jackpotAmount).toLocaleString();
+  }, [currentDraw]);
+
+  const drawNumber = useMemo(() => {
+    const draw = currentDraw as any;
+    return draw?.drawNumber || 1254;
+  }, [currentDraw]);
 
   const handleLogin = async (type: 'admin' | 'client') => {
     setIsLoggingIn(true);
@@ -78,7 +98,9 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
-      <FloatingParticles count={60} />
+      <Suspense fallback={<ComponentSkeleton />}>
+        <FloatingParticles count={60} />
+      </Suspense>
       
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -399,4 +421,8 @@ export default function Landing() {
       </main>
     </div>
   );
-}
+});
+
+Landing.displayName = 'Landing';
+
+export default Landing;
