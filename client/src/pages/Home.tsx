@@ -279,8 +279,8 @@ function NumberSelection() {
             type="number"
             value={participationAmount}
             onChange={(e) => setParticipationAmount(Number(e.target.value))}
-            min="50"
-            step="50"
+            min="100"
+            step="100"
             disabled={isParticipationLocked}
             className="w-full"
           />

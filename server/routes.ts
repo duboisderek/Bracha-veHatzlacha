@@ -539,11 +539,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No active draw available" });
       }
       
+      // Validation du montant minimum
+      if (!amount || parseFloat(amount) < 100) {
+        return res.status(400).json({ message: "Minimum ticket cost is ₪100" });
+      }
+      
       const ticketData = insertTicketSchema.parse({
         userId,
         drawId: currentDraw.id,
         numbers,
-        cost: amount || "10.00"
+        cost: amount.toString()
       });
       
       // Check if user already has a ticket for this draw
@@ -572,7 +577,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId,
         type: "ticket_purchase",
         amount: `-${ticketData.cost}`,
-        description: `Ticket purchase for draw #${ticketData.drawId} (₪50 to house, ₪50 to jackpot)`,
+        description: `Ticket purchase for draw #${ticketData.drawId} (₪${(parseFloat(amount)/2).toFixed(2)} to house, ₪${(parseFloat(amount)/2).toFixed(2)} to jackpot)`,
         ticketId: ticket.id,
       });
       
