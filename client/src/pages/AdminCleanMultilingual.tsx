@@ -460,6 +460,8 @@ export default function AdminCleanMultilingual() {
       </div>
       )}
 
+      {activeTab === "users" && (
+      <>
       {/* Users List */}
       <Card className="mt-8">
         <CardHeader>
@@ -504,7 +506,7 @@ export default function AdminCleanMultilingual() {
           </div>
         </CardContent>
       </Card>
-      </div>
+      </>
       )}
 
       {activeTab === "draws" && (
