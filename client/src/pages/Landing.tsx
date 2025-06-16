@@ -213,7 +213,7 @@ const Landing = memo(() => {
                   </div>
                   <div className="text-lg opacity-90 flex items-center justify-center gap-2">
                     <Clock className="w-5 h-5" />
-                    Next draw in 2 days 5 hours
+                    {t("nextDrawLabel")} - {t("fridayAt8PM")}
                   </div>
                 </CardContent>
               </Card>
@@ -227,7 +227,7 @@ const Landing = memo(() => {
               className="space-y-4"
             >
               <div className="text-center lg:text-left">
-                <h3 className="text-2xl font-bold text-white mb-4">Choose Your Access</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">{t("chooseYourRole")}</h3>
                 
                 <div className="grid gap-4">
                   {/* Client Authentication */}
@@ -243,7 +243,7 @@ const Landing = memo(() => {
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
                       {t("clientLogin")}
-                      <span className="text-sm ml-2 opacity-90">(Connexion / Inscription)</span>
+                      <span className="text-sm ml-2 opacity-90">({t("loginButton")} / {t("registerButton")})</span>
                     </Button>
                   </motion.div>
 
@@ -259,7 +259,7 @@ const Landing = memo(() => {
                       className="w-full bg-white bg-opacity-10 border-white border-opacity-30 text-white hover:bg-white hover:bg-opacity-20 font-bold py-4 px-8 rounded-xl shadow-xl text-lg transition-all duration-200"
                     >
                       <Settings className="w-6 h-6 mr-3" />
-                      Admin Access
+{t("loginAsAdmin")}
                     </Button>
                   </motion.div>
                 </div>

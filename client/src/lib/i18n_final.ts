@@ -270,7 +270,67 @@ export const translations = {
     join_standard_lottery: "Join Standard Lottery",
     jackpot_updated: "Jackpot Updated",
     last_update: "Last Update",
-    auto_update_in: "Auto update in"
+    auto_update_in: "Auto update in",
+    
+    // Landing Page
+    landingWelcome: "Welcome to the Ultimate Lottery Experience",
+    landingSubtitle: "Join thousands of players worldwide",
+    currentJackpotLabel: "Current Jackpot",
+    nextDrawLabel: "Next Draw",
+    drawsEveryWeek: "Draws Every Week",
+    fridayAt8PM: "Friday at 8:00 PM",
+    joinNow: "Join Now",
+    loginAsAdmin: "Admin Access",
+    demoAccess: "Demo Access",
+    chooseYourRole: "Choose Your Access",
+    
+    // Features
+    secureAndTrusted: "Secure & Trusted",
+    weeklyDraws: "Weekly Draws",
+    instantPayouts: "Instant Payouts",
+    multiLanguage: "Multi-Language",
+    
+    // Stats
+    totalPlayers: "Total Players",
+    weeklyJackpot: "Weekly Jackpot",
+    winnersToDate: "Winners to Date",
+    
+    // Auth Forms
+    enterCredentials: "Enter Your Credentials",
+    emailAddress: "Email Address",
+    passwordField: "Password",
+    loginButton: "Login",
+    registerButton: "Register",
+    alreadyHaveAccount: "Already have an account?",
+    dontHaveAccount: "Don't have an account?",
+    
+    // Admin Interface
+    adminDashboard: "Admin Dashboard",
+    managePlatform: "Manage Platform Operations",
+    totalTickets: "Total Tickets",
+    totalRevenue: "Total Revenue",
+    activeUsers: "Active Users",
+    completedDraws: "Completed Draws",
+    
+    // Demo Messages
+    demoMode: "Demo Mode",
+    demoModeDescription: "This is a demonstration with sample data",
+    
+    // Error Messages
+    loginFailed: "Login failed. Please try again.",
+    networkError: "Network error. Please check your connection.",
+    unexpectedError: "An unexpected error occurred.",
+    
+    // Success Messages
+    loginSuccess: "Login successful",
+    accountCreated: "Account created successfully",
+    passwordChanged: "Password changed successfully",
+    
+    // Navigation
+    backToLogin: "Back to Login",
+    goToHome: "Go to Home",
+    viewProfile: "View Profile",
+    accountSettings: "Account Settings"
   },
   
   he: {
@@ -544,7 +604,67 @@ export const translations = {
     drawCreated: "הגרלה נוצרה בהצלחה",
     resultsSubmitted: "תוצאות נשלחו בהצלחה",
     createUserButton: "צור משתמש",
-    drawDate: "תאריך הגרלה"
+    drawDate: "תאריך הגרלה",
+    
+    // Landing Page Hebrew
+    landingWelcome: "ברוכים הבאים לחוויית הלוטו המושלמת",
+    landingSubtitle: "הצטרפו לאלפי שחקנים ברחבי העולם",
+    currentJackpotLabel: "הג'קפוט הנוכחי",
+    nextDrawLabel: "הגרלה הבאה",
+    drawsEveryWeek: "הגרלות כל שבוע",
+    fridayAt8PM: "יום שישי בשעה 20:00",
+    joinNow: "הצטרף עכשיו",
+    loginAsAdmin: "גישת מנהל",
+    demoAccess: "גישת הדגמה",
+    chooseYourRole: "בחר את הגישה שלך",
+    
+    // Features Hebrew
+    secureAndTrusted: "מאובטח ואמין",
+    weeklyDraws: "הגרלות שבועיות",
+    instantPayouts: "תשלומים מיידיים",
+    multiLanguage: "רב לשוני",
+    
+    // Stats Hebrew
+    totalPlayers: "סך השחקנים",
+    weeklyJackpot: "ג'קפוט שבועי",
+    winnersToDate: "זוכים עד כה",
+    
+    // Auth Forms Hebrew
+    enterCredentials: "הזן את פרטי הגישה שלך",
+    emailAddress: "כתובת אימייל",
+    passwordField: "סיסמה",
+    loginButton: "התחבר",
+    registerButton: "הירשם",
+    alreadyHaveAccount: "יש לך כבר חשבון?",
+    dontHaveAccount: "אין לך חשבון?",
+    
+    // Admin Interface Hebrew
+    adminDashboard: "לוח בקרה מנהל",
+    managePlatform: "ניהול פעולות הפלטפורמה",
+    totalTickets: "סך הכרטיסים",
+    totalRevenue: "סך ההכנסות",
+    activeUsers: "משתמשים פעילים",
+    completedDraws: "הגרלות שהושלמו",
+    
+    // Demo Messages Hebrew
+    demoMode: "מצב הדגמה",
+    demoModeDescription: "זוהי הדגמה עם נתונים לדוגמה",
+    
+    // Error Messages Hebrew
+    loginFailed: "ההתחברות נכשלה. אנא נסה שוב.",
+    networkError: "שגיאת רשת. אנא בדוק את החיבור שלך.",
+    unexpectedError: "אירעה שגיאה בלתי צפויה.",
+    
+    // Success Messages Hebrew
+    loginSuccess: "התחברות מוצלחת",
+    accountCreated: "החשבון נוצר בהצלחה",
+    passwordChanged: "הסיסמה שונתה בהצלחה",
+    
+    // Navigation Hebrew
+    backToLogin: "חזרה להתחברות",
+    goToHome: "עבור לבית",
+    viewProfile: "צפה בפרופיל",
+    accountSettings: "הגדרות חשבון"
   },
   
   fr: {
@@ -818,7 +938,67 @@ export const translations = {
     join_standard_lottery: "Rejoindre Loto Standard",
     jackpot_updated: "Jackpot Mis à Jour",
     last_update: "Dernière Mise à Jour",
-    auto_update_in: "Mise à jour auto dans"
+    auto_update_in: "Mise à jour auto dans",
+    
+    // Landing Page French
+    landingWelcome: "Bienvenue dans l'Expérience Ultime de Loto",
+    landingSubtitle: "Rejoignez des milliers de joueurs dans le monde",
+    currentJackpotLabel: "Jackpot Actuel",
+    nextDrawLabel: "Prochain Tirage",
+    drawsEveryWeek: "Tirages Chaque Semaine",
+    fridayAt8PM: "Vendredi à 20h00",
+    joinNow: "Rejoindre Maintenant",
+    loginAsAdmin: "Accès Administrateur",
+    demoAccess: "Accès Démonstration",
+    chooseYourRole: "Choisissez Votre Accès",
+    
+    // Features French
+    secureAndTrusted: "Sécurisé et Fiable",
+    weeklyDraws: "Tirages Hebdomadaires",
+    instantPayouts: "Paiements Instantanés",
+    multiLanguage: "Multi-Langue",
+    
+    // Stats French
+    totalPlayers: "Total Joueurs",
+    weeklyJackpot: "Jackpot Hebdomadaire",
+    winnersToDate: "Gagnants à ce Jour",
+    
+    // Auth Forms French
+    enterCredentials: "Entrez Vos Identifiants",
+    emailAddress: "Adresse Email",
+    passwordField: "Mot de Passe",
+    loginButton: "Connexion",
+    registerButton: "S'inscrire",
+    alreadyHaveAccount: "Vous avez déjà un compte?",
+    dontHaveAccount: "Vous n'avez pas de compte?",
+    
+    // Admin Interface French
+    adminDashboard: "Tableau de Bord Admin",
+    managePlatform: "Gérer les Opérations de la Plateforme",
+    totalTickets: "Total Tickets",
+    totalRevenue: "Revenus Totaux",
+    activeUsers: "Utilisateurs Actifs",
+    completedDraws: "Tirages Terminés",
+    
+    // Demo Messages French
+    demoMode: "Mode Démonstration",
+    demoModeDescription: "Ceci est une démonstration avec des données d'exemple",
+    
+    // Error Messages French
+    loginFailed: "Échec de la connexion. Veuillez réessayer.",
+    networkError: "Erreur réseau. Veuillez vérifier votre connexion.",
+    unexpectedError: "Une erreur inattendue s'est produite.",
+    
+    // Success Messages French
+    loginSuccess: "Connexion réussie",
+    accountCreated: "Compte créé avec succès",
+    passwordChanged: "Mot de passe modifié avec succès",
+    
+    // Navigation French
+    backToLogin: "Retour à la Connexion",
+    goToHome: "Aller à l'Accueil",
+    viewProfile: "Voir le Profil",
+    accountSettings: "Paramètres du Compte"
   }
 };
 
