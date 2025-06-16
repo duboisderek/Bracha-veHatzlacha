@@ -217,6 +217,12 @@ export const translations = {
     nextDrawInfo: "Next Draw Info",
     drawCountdown: "Draw Countdown",
     standardLotterySuggestion: "Standard Lottery Suggestion",
+    
+    // Missing Admin translations
+    drawCreated: "Draw created successfully",
+    resultsSubmitted: "Results submitted successfully",
+    createUserButton: "Create User",
+    drawDate: "Draw Date",
     yourSelectedNumbers: "Your Selected Numbers",
     selected: "Selected",
     costPerTicket: "Cost per Ticket",

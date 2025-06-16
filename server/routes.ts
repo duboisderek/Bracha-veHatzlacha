@@ -825,6 +825,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin draw management endpoints
+  app.post('/api/admin/draws', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { jackpotAmount, drawDate } = req.body;
+      
+      if (!jackpotAmount || parseFloat(jackpotAmount) <= 0) {
+        return res.status(400).json({ message: "Invalid jackpot amount" });
+      }
+      
+      // Get next draw number
+      const allDraws = await storage.getAllDraws();
+      const nextDrawNumber = allDraws.length > 0 
+        ? Math.max(...allDraws.map(d => d.drawNumber)) + 1 
+        : 1;
+      
+      const drawData = {
+        drawNumber: nextDrawNumber,
+        drawDate: drawDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        jackpotAmount: jackpotAmount.toString(),
+        winningNumbers: null,
+        isActive: true,
+        isCompleted: false
+      };
+      
+      const draw = await storage.createDraw(drawData);
+      res.json(draw);
+    } catch (error) {
+      console.error("Error creating draw:", error);
+      res.status(500).json({ message: "Failed to create draw" });
+    }
+  });
+
+  app.post('/api/admin/draws/:drawId/results', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { drawId } = req.params;
+      const { winningNumbers } = req.body;
+      
+      if (!winningNumbers || !Array.isArray(winningNumbers) || winningNumbers.length !== 6) {
+        return res.status(400).json({ message: "Must provide exactly 6 winning numbers" });
+      }
+      
+      // Validate numbers are between 1-37
+      const validNumbers = winningNumbers.every(num => 
+        Number.isInteger(num) && num >= 1 && num <= 37
+      );
+      
+      if (!validNumbers) {
+        return res.status(400).json({ message: "Numbers must be between 1 and 37" });
+      }
+      
+      // Update draw with winning numbers
+      await storage.updateDrawWinningNumbers(parseInt(drawId), winningNumbers);
+      
+      // Mark draw as completed
+      await storage.completeDraw(parseInt(drawId));
+      
+      // Calculate winnings for all tickets in this draw
+      const tickets = await storage.getDrawTickets(parseInt(drawId));
+      
+      for (const ticket of tickets) {
+        const ticketNumbers = ticket.numbers as number[];
+        const matches = ticketNumbers.filter(num => winningNumbers.includes(num)).length;
+        
+        let winningAmount = "0.00";
+        if (matches >= 3) {
+          // Simple payout structure
+          const payouts = {
+            3: 50,   // 3 matches = ₪50
+            4: 500,  // 4 matches = ₪500
+            5: 5000, // 5 matches = ₪5,000
+            6: 50000 // 6 matches = ₪50,000 (jackpot portion)
+          };
+          winningAmount = payouts[matches as keyof typeof payouts].toString();
+        }
+        
+        // Update ticket results
+        await storage.updateTicketResults(ticket.id, matches, winningAmount);
+        
+        // If user won, add to their balance and total winnings
+        if (parseFloat(winningAmount) > 0) {
+          await storage.updateUserBalance(ticket.userId, winningAmount);
+          
+          // Create winning transaction
+          await storage.createTransaction({
+            userId: ticket.userId,
+            type: "winnings",
+            amount: winningAmount,
+            description: `Lottery winnings - ${matches} matches`,
+            ticketId: ticket.id
+          });
+        }
+      }
+      
+      res.json({ message: "Draw results submitted successfully" });
+    } catch (error) {
+      console.error("Error submitting draw results:", error);
+      res.status(500).json({ message: "Failed to submit results" });
+    }
+  });
+
   // Admin comprehensive stats endpoint
   app.get('/api/admin/stats', isAuthenticated, isAdmin, async (req: any, res) => {
     try {

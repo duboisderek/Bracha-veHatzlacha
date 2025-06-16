@@ -34,6 +34,10 @@ export default function AdminCleanMultilingual() {
   const [newUsername, setNewUsername] = useState("");
   const [selectedUserId, setSelectedUserId] = useState("");
   const [depositAmount, setDepositAmount] = useState("");
+  const [selectedDrawId, setSelectedDrawId] = useState("");
+  const [manualNumbers, setManualNumbers] = useState<number[]>([]);
+  const [newDrawJackpot, setNewDrawJackpot] = useState("");
+  const [activeTab, setActiveTab] = useState("users");
 
   const showMessage = (msg: string) => {
     setMessage(msg);
@@ -189,6 +193,68 @@ export default function AdminCleanMultilingual() {
     }
   };
 
+  const createNewDraw = async () => {
+    if (!newDrawJackpot.trim()) return;
+    
+    try {
+      const res = await fetch("/api/admin/draws", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          jackpotAmount: parseFloat(newDrawJackpot),
+          drawDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        }),
+      });
+
+      if (res.ok) {
+        showMessage(t("drawCreated"));
+        setNewDrawJackpot("");
+        loadData();
+      } else {
+        showMessage(t("errorDraw"));
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showMessage(t("errorDraw"));
+    }
+  };
+
+  const submitDrawResults = async () => {
+    if (!selectedDrawId || manualNumbers.length !== 6) return;
+    
+    try {
+      const res = await fetch(`/api/admin/draws/${selectedDrawId}/results`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          winningNumbers: manualNumbers
+        }),
+      });
+
+      if (res.ok) {
+        showMessage(t("resultsSubmitted"));
+        setSelectedDrawId("");
+        setManualNumbers([]);
+        loadData();
+      } else {
+        showMessage(t("errorDraw"));
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showMessage(t("errorDraw"));
+    }
+  };
+
+  const handleNumberClick = (num: number) => {
+    if (manualNumbers.includes(num)) {
+      setManualNumbers(manualNumbers.filter(n => n !== num));
+    } else if (manualNumbers.length < 6) {
+      setManualNumbers([...manualNumbers, num]);
+    }
+  };
+
   if (loading) {
     return (
       <div className={`min-h-screen bg-gray-50 p-6 ${isRTL ? 'rtl' : 'ltr'}`}>
@@ -261,6 +327,35 @@ export default function AdminCleanMultilingual() {
         </Card>
       </div>
 
+      {/* Navigation Tabs */}
+      <div className="mb-6">
+        <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+          <button
+            onClick={() => setActiveTab("users")}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              activeTab === "users" 
+                ? "bg-white text-blue-600 shadow-sm" 
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            <Users className="w-4 h-4 inline mr-2" />
+            {t("userManagement")}
+          </button>
+          <button
+            onClick={() => setActiveTab("draws")}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              activeTab === "draws" 
+                ? "bg-white text-blue-600 shadow-sm" 
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            <Trophy className="w-4 h-4 inline mr-2" />
+            Gestion des Tirages
+          </button>
+        </div>
+      </div>
+
+      {activeTab === "users" && (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* User Management */}
         <Card>
@@ -363,6 +458,7 @@ export default function AdminCleanMultilingual() {
           </CardContent>
         </Card>
       </div>
+      )}
 
       {/* Users List */}
       <Card className="mt-8">
@@ -408,6 +504,178 @@ export default function AdminCleanMultilingual() {
           </div>
         </CardContent>
       </Card>
+      </div>
+      )}
+
+      {activeTab === "draws" && (
+      <div className="space-y-8">
+        {/* Draw Management Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Create New Draw */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Trophy className="w-5 h-5 mr-2" />
+                Créer Nouveau Tirage
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-900 mb-3">Nouveau Tirage</h4>
+                <div className="space-y-3">
+                  <Input
+                    type="number"
+                    placeholder="Montant Jackpot (₪)"
+                    value={newDrawJackpot}
+                    onChange={(e) => setNewDrawJackpot(e.target.value)}
+                  />
+                  <Button 
+                    onClick={createNewDraw} 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                  >
+                    Créer Tirage
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Manual Results Entry */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Settings className="w-5 h-5 mr-2" />
+                Saisie Manuelle Résultats
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-900 mb-3">Entrer Résultats Manuellement</h4>
+                <div className="space-y-3">
+                  <select
+                    value={selectedDrawId}
+                    onChange={(e) => setSelectedDrawId(e.target.value)}
+                    className="w-full p-2 border rounded-md"
+                  >
+                    <option value="">Sélectionner un tirage</option>
+                    {draws.filter(draw => !draw.isCompleted).map((draw) => (
+                      <option key={draw.id} value={draw.id}>
+                        Tirage #{draw.drawNumber} - ₪{parseFloat(draw.jackpotAmount).toLocaleString()}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  {selectedDrawId && (
+                    <div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Sélectionnez 6 numéros (1-37): {manualNumbers.length}/6
+                      </p>
+                      <div className="grid grid-cols-6 gap-2 mb-4">
+                        {Array.from({ length: 37 }, (_, i) => i + 1).map(num => (
+                          <button
+                            key={num}
+                            onClick={() => handleNumberClick(num)}
+                            className={`p-2 text-sm rounded border ${
+                              manualNumbers.includes(num)
+                                ? 'bg-green-500 text-white border-green-500'
+                                : 'bg-white hover:bg-gray-50 border-gray-300'
+                            }`}
+                          >
+                            {num}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      {manualNumbers.length > 0 && (
+                        <div className="mb-3">
+                          <p className="text-sm font-medium">Numéros sélectionnés:</p>
+                          <div className="flex gap-2 mt-1">
+                            {manualNumbers.sort((a, b) => a - b).map(num => (
+                              <span key={num} className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">
+                                {num}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <Button 
+                        onClick={submitDrawResults}
+                        disabled={manualNumbers.length !== 6}
+                        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400"
+                      >
+                        Valider Résultats ({manualNumbers.length}/6)
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Draws List */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Liste des Tirages</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-3">Numéro</th>
+                    <th className="text-left p-3">Date</th>
+                    <th className="text-left p-3">Jackpot</th>
+                    <th className="text-left p-3">Numéros Gagnants</th>
+                    <th className="text-left p-3">Statut</th>
+                    <th className="text-left p-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {draws.map((draw) => (
+                    <tr key={draw.id} className="border-b hover:bg-gray-50">
+                      <td className="p-3">#{draw.drawNumber}</td>
+                      <td className="p-3">{new Date(draw.drawDate).toLocaleDateString()}</td>
+                      <td className="p-3">₪{parseFloat(draw.jackpotAmount).toLocaleString()}</td>
+                      <td className="p-3">
+                        {draw.winningNumbers ? (
+                          <div className="flex gap-1">
+                            {(draw.winningNumbers as number[]).map(num => (
+                              <span key={num} className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">
+                                {num}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-gray-500">En attente</span>
+                        )}
+                      </td>
+                      <td className="p-3">
+                        <Badge variant={draw.isCompleted ? "default" : "secondary"}>
+                          {draw.isCompleted ? "Terminé" : "En cours"}
+                        </Badge>
+                      </td>
+                      <td className="p-3">
+                        {!draw.isCompleted && !draw.winningNumbers && (
+                          <Button 
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedDrawId(draw.id.toString())}
+                          >
+                            Saisir Résultats
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      )}
     </div>
   );
 }
