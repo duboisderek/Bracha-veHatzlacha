@@ -63,42 +63,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
+  // Global credentials store (in production, this would be in database)
+  const globalCredentials = {
+    // Admin accounts
+    'admin@brachavehatzlacha.com': { password: 'BrachaVeHatzlacha2024!', userId: 'admin_bracha_vehatzlacha' },
+    'admin.he@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_hebrew_test' },
+    'admin.en@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_english_test' },
+    
+    // VIP clients
+    'vip.he@brachavehatzlacha.com': { password: 'vip123', userId: 'client_vip_hebrew' },
+    'vip.en@brachavehatzlacha.com': { password: 'vip123', userId: 'client_vip_english' },
+    
+    // Standard clients
+    'standard.he@brachavehatzlacha.com': { password: 'standard123', userId: 'client_standard_hebrew' },
+    'standard.en@brachavehatzlacha.com': { password: 'standard123', userId: 'client_standard_english' },
+    
+    // New clients
+    'new.he@brachavehatzlacha.com': { password: 'new123', userId: 'client_new_hebrew' },
+    'new.en@brachavehatzlacha.com': { password: 'new123', userId: 'client_new_english' },
+    
+    // Existing clients
+    'demo@brachavehatzlacha.com': { password: 'demo123', userId: 'demo_client_bracha_vehatzlacha' },
+    'test@complete.com': { password: 'test123', userId: 'test_user_complete' },
+    'testuser@test.com': { password: 'test123', userId: 'testuser_test_com' },
+    'client8hxb9u@brachavehatzlacha.com': { password: 'client123', userId: 'client_8hxb9u' },
+    
+    // Blocked user (for testing)
+    'blocked@brachavehatzlacha.com': { password: 'blocked123', userId: 'client_blocked_test' }
+  };
+
   // Universal login endpoint for all user types
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { email, password } = req.body;
       
-      // Define all user credentials
-      const credentials = {
-        // Admin accounts
-        'admin@brachavehatzlacha.com': { password: 'BrachaVeHatzlacha2024!', userId: 'admin_bracha_vehatzlacha' },
-        'admin.he@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_hebrew_test' },
-        'admin.en@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_english_test' },
-        
-        // VIP clients
-        'vip.he@brachavehatzlacha.com': { password: 'vip123', userId: 'client_vip_hebrew' },
-        'vip.en@brachavehatzlacha.com': { password: 'vip123', userId: 'client_vip_english' },
-        
-        // Standard clients
-        'standard.he@brachavehatzlacha.com': { password: 'standard123', userId: 'client_standard_hebrew' },
-        'standard.en@brachavehatzlacha.com': { password: 'standard123', userId: 'client_standard_english' },
-        
-        // New clients
-        'new.he@brachavehatzlacha.com': { password: 'new123', userId: 'client_new_hebrew' },
-        'new.en@brachavehatzlacha.com': { password: 'new123', userId: 'client_new_english' },
-        
-        // Existing clients
-        'demo@brachavehatzlacha.com': { password: 'demo123', userId: 'demo_client_bracha_vehatzlacha' },
-        'test@complete.com': { password: 'test123', userId: 'test_user_complete' },
-        'testuser@test.com': { password: 'test123', userId: 'testuser_test_com' },
-        'client8hxb9u@brachavehatzlacha.com': { password: 'client123', userId: 'client_8hxb9u' },
-        
-        // Blocked user (for testing)
-        'blocked@brachavehatzlacha.com': { password: 'blocked123', userId: 'client_blocked_test' }
-      };
-      
-      if (credentials[email] && credentials[email].password === password) {
-        const user = await storage.getUser(credentials[email].userId);
+      if (globalCredentials[email] && globalCredentials[email].password === password) {
+        const user = await storage.getUser(globalCredentials[email].userId);
         
         if (!user) {
           return res.status(401).json({ message: "Utilisateur non trouvé" });
@@ -203,6 +203,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const referralCode = `${firstName.substring(0, 3).toUpperCase()}${lastName.substring(0, 3).toUpperCase()}${Math.floor(Math.random() * 1000)}`;
       
+      // Store password temporarily for authentication system
+      const tempCredentials = {
+        [email]: {
+          password: password,
+          userId: userId
+        }
+      };
+      
+      // Add to existing credentials (in production, this would be in a secure database)
+      Object.assign(globalCredentials, tempCredentials);
+
       // Create new user
       const newUser = await storage.upsertUser({
         id: userId,
