@@ -538,7 +538,13 @@ export const translations = {
     join_standard_lottery: "הצטרף ללוטו רגיל",
     jackpot_updated: "הקופה עודכנה",
     last_update: "עדכון אחרון",
-    auto_update_in: "עדכון אוטומטי תוך"
+    auto_update_in: "עדכון אוטומטי תוך",
+    
+    // Missing Admin translations
+    drawCreated: "הגרלה נוצרה בהצלחה",
+    resultsSubmitted: "תוצאות נשלחו בהצלחה",
+    createUserButton: "צור משתמש",
+    drawDate: "תאריך הגרלה"
   },
   
   fr: {
