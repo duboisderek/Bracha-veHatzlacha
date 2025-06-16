@@ -36,22 +36,42 @@ export default function Landing() {
   const handleLogin = async (type: 'admin' | 'client') => {
     setIsLoggingIn(true);
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ type })
-      });
+      let response;
+      
+      if (type === 'client') {
+        // Use demo login for client access
+        response = await fetch('/api/auth/demo-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ demoUser: 'client1' })
+        });
+      } else {
+        // Use regular login for admin
+        response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ 
+            email: 'demo@brachavehatzlacha.com', 
+            password: 'demo123' 
+          })
+        });
+      }
       
       if (response.ok) {
         window.location.reload();
       } else {
-        throw new Error('Login failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Login failed');
       }
     } catch (error) {
       console.error("Login error:", error);
+      alert(error instanceof Error ? error.message : 'Login failed. Please try again.');
       setIsLoggingIn(false);
     }
   };
@@ -181,7 +201,7 @@ export default function Landing() {
                 <h3 className="text-2xl font-bold text-white mb-4">Choose Your Access</h3>
                 
                 <div className="grid gap-4">
-                  {/* Client Login Only */}
+                  {/* Client Demo Login */}
                   <motion.div
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -190,11 +210,37 @@ export default function Landing() {
                       onClick={() => handleLogin('client')}
                       disabled={isLoggingIn}
                       size="lg"
-                      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-8 rounded-xl shadow-2xl text-lg"
+                      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-8 rounded-xl shadow-2xl text-lg transition-all duration-200"
+                      id="demo-login-button"
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
-                      {isLoggingIn ? t("loading") : t("loginAsClient")}
-                      <span className="text-sm ml-2 opacity-90">(Demo Account)</span>
+                      {isLoggingIn ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          {t("loading")}
+                        </div>
+                      ) : (
+                        <>
+                          {t("loginAsClient")}
+                          <span className="text-sm ml-2 opacity-90">(Demo Account)</span>
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
+
+                  {/* Admin Login */}
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      onClick={() => window.location.href = '/admin'}
+                      variant="outline"
+                      size="lg"
+                      className="w-full bg-white bg-opacity-10 border-white border-opacity-30 text-white hover:bg-white hover:bg-opacity-20 font-bold py-4 px-8 rounded-xl shadow-xl text-lg transition-all duration-200"
+                    >
+                      <Settings className="w-6 h-6 mr-3" />
+                      Admin Access
                     </Button>
                   </motion.div>
                 </div>
