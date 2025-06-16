@@ -54,17 +54,8 @@ const isAdmin = async (req: any, res: Response, next: any) => {
   return res.status(403).json({ message: "Admin access required" });
 };
 
-export async function registerRoutes(app: Express): Promise<Server> {
-  // Session configuration
-  app.use((req: any, res, next) => {
-    if (!req.session) {
-      req.session = {};
-    }
-    next();
-  });
-
-  // Global credentials store (in production, this would be in database)
-  const globalCredentials = {
+// Global credentials store (in production, this would be in database)
+const globalCredentials: Record<string, { password: string; userId: string }> = {
     // Admin accounts
     'admin@brachavehatzlacha.com': { password: 'BrachaVeHatzlacha2024!', userId: 'admin_bracha_vehatzlacha' },
     'admin.he@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_hebrew_test' },
@@ -91,6 +82,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Blocked user (for testing)
     'blocked@brachavehatzlacha.com': { password: 'blocked123', userId: 'client_blocked_test' }
   };
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Session configuration
+  app.use((req: any, res, next) => {
+    if (!req.session) {
+      req.session = {};
+    }
+    next();
+  });
 
   // Universal login endpoint for all user types
   app.post('/api/auth/login', async (req, res) => {
