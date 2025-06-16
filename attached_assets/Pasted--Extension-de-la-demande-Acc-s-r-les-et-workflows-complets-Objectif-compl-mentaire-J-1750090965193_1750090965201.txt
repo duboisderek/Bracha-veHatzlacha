@@ -1,0 +1,50 @@
+# ➕ Extension de la demande : Accès, rôles et workflows complets
+
+## 🎯 Objectif complémentaire
+Je souhaite que tu me prépares **l’ensemble des accès et des fonctionnalités développées**, sans aucune exception, pour une mise en ligne réelle.  
+Tu dois :  
+
+✅ Me générer **tous les accès utilisateur** :  
+- Accès administrateur  
+- Accès client standard  
+- Accès VIP (si défini)  
+- Accès prospects / leads (si applicable)  
+
+✅ Me fournir :  
+- **Les rôles complets** (avec leurs droits, restrictions et permissions)  
+- **Les menus et sous-menus** visibles pour chaque rôle  
+- **Les options et actions** disponibles par rôle (ajouter, modifier, supprimer, consulter, générer rapports, etc.)  
+- **Le workflow complet** de chaque type d’utilisateur :  
+  - Étapes et parcours des clients (inscription, achat ticket, suivi ticket, réception notification)  
+  - Étapes et parcours des administrateurs (gestion clients, tirages, transactions, CRM, statistiques, modération)  
+
+✅ Me fournir :  
+- **Le code ou les définitions des rôles (back-end)**  
+- **Le code ou les fichiers de configuration des menus et options (front-end et back-end)**  
+- **Les règles d’accès (guard, middleware, decorators, etc.)**  
+
+✅ Tout cela doit être :  
+- Exhaustif (aucune fonction ni option oubliée)  
+- Documenté au minimum (liste des menus, explication des workflows)  
+- Prêt pour intégration et mise en production  
+
+---
+
+## ⚠️ Important
+Tout ce qui a été développé dans le projet doit être inclus, sans exception.  
+Si des parties sont manquantes, merci de les identifier clairement pour que je puisse valider les compléments à produire.
+
+---
+
+## 🗣️ Langue Replit Agent
+Français
+
+## 🌍 Langue de l’application
+Multilingue : Français, Anglais, Hébreu (RTL)
+
+---
+
+## 💡 Résultats attendus
+- Un **dossier organisé** avec les fichiers et codes générés  
+- Une **documentation synthétique** : rôles, menus, workflows  
+- Code prêt à être intégré et testé en environnement réel
