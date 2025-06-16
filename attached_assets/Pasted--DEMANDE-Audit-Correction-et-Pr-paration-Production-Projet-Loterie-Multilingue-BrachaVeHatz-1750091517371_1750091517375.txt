@@ -1,0 +1,71 @@
+# 🚀 DEMANDE : Audit, Correction et Préparation Production Projet Loterie Multilingue – BrachaVeHatzlacha
+
+## 🎯 Objectif global
+Je souhaite une **revue complète**, une **correction exhaustive** et une **préparation pour mise en ligne réelle** du projet, avec ces exigences :
+
+✅ **0 bug restant**  
+✅ **100 % fonctionnel et réel**  
+✅ **Code prêt pour une mise en production professionnelle**  
+
+---
+
+## ✅ Ce que je demande
+
+### 🔍 Vérification complète (sans aucune exception)
+- **Backend (Python Flask/FastAPI + PostgreSQL)**  
+- **Frontend (React + animations + multilingue + WebSocket)**  
+- **Base de données : structure, relations, intégrité, contraintes, index**  
+- **Logique métier :**
+  - Achats de tickets
+  - Gestion des tirages
+  - Calcul des gains
+  - Solde / transactions / historique
+  - CRM admin
+  - Système de parrainage
+  - Notifications (SMS, alertes, résultats)  
+- **Sécurité :**
+  - Authentification (sessions, tokens, double validation)
+  - CSRF, XSS, WebSocket sécurisé
+  - Préparation HTTPS
+- **Multilingue / RTL :**
+  - Français, Anglais, Hébreu (RTL)
+  - Basculement dynamique, formats localisés
+- **UX / UI :**
+  - Menus, transitions, animations, fluidité
+  - Compatibilité desktop / mobile  
+
+---
+
+### 🛠️ Correction et amélioration
+- Correction **de tous les bugs** et incohérences identifiés
+- Optimisation des performances et de la structure
+- Préparation pour hébergement cloud (Docker, AWS ou équivalent)
+
+---
+
+### 🔑 Préparation des accès et rôles
+- Génération de **tous les accès** : admin, client standard, VIP, prospect
+- Fourniture des **codes de rôles**, menus, options, droits
+- Définition des **workflows complets** pour chaque rôle
+- Production des **fichiers ou configurations nécessaires**
+
+---
+
+### 📤 Résultats attendus
+- Un **code complet, propre, sécurisé et prêt à déployer**
+- Un **rapport des actions réalisées** (vérifications, corrections, optimisations)
+- Une **documentation des rôles, menus et workflows**
+
+---
+
+## 🗣️ Langue Replit Agent
+Français
+
+## 🌍 Langue interface appli
+Multilingue : Français, Anglais, Hébreu (RTL)
+
+---
+
+## ⚠️ Notes
+Merci de passer **en revue tout le système sans aucune exception**. Si des éléments manquent, merci de le signaler.  
+Le résultat doit être un projet **100 % prêt pour la production**, sans défaut.
