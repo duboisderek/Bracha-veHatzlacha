@@ -112,16 +112,20 @@ export default function Landing() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-40 bg-white bg-opacity-20 border-white border-opacity-30 text-white">
+            <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'he')}>
+              <SelectTrigger className="w-40 bg-white bg-opacity-20 border-white border-opacity-30 text-white" id="language-selector">
                 <div className="flex items-center space-x-2">
                   <Globe className="w-4 h-4" />
-                  <SelectValue />
+                  <SelectValue placeholder={language === 'he' ? 'עברית' : 'English'} />
                 </div>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="he">עברית</SelectItem>
+              <SelectContent className="bg-white border border-gray-300">
+                <SelectItem value="en" className="cursor-pointer hover:bg-gray-100">
+                  English
+                </SelectItem>
+                <SelectItem value="he" className="cursor-pointer hover:bg-gray-100">
+                  עברית
+                </SelectItem>
               </SelectContent>
             </Select>
           </motion.div>

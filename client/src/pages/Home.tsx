@@ -286,6 +286,17 @@ function NumberSelection() {
           />
         </div>
 
+        {/* Ticket Cost Display */}
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <div className="flex justify-between items-center mb-2">
+            <span className="font-medium text-blue-800">Ticket Cost:</span>
+            <span className="text-xl font-bold text-blue-900">₪{participationAmount}</span>
+          </div>
+          <div className="text-sm text-blue-600">
+            Your balance: ₪{user?.balance || 0}
+          </div>
+        </div>
+
         {/* Submit Button */}
         {isParticipationLocked ? (
           <div className="text-center text-red-600 font-medium">
@@ -295,11 +306,28 @@ function NumberSelection() {
           <Button
             onClick={handleParticipate}
             disabled={selectedNumbers.length !== 6 || participateMutation.isPending}
-            className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-3"
+            className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 text-lg shadow-lg"
+            id="buy-ticket-button"
           >
-            {participateMutation.isPending ? t("loading") : t("submitParticipation")}
+            <Coins className="w-5 h-5 mr-2" />
+            {participateMutation.isPending ? (
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                {t("loading")}
+              </div>
+            ) : (
+              `Buy Lottery Ticket - ₪${participationAmount}`
+            )}
           </Button>
         )}
+
+        {/* Help Text */}
+        <div className="text-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+          <div className="font-medium mb-1">How to play:</div>
+          <div>1. Select 6 numbers (1-37)</div>
+          <div>2. Choose your ticket amount</div>
+          <div>3. Click "Buy Lottery Ticket" to participate</div>
+        </div>
       </CardContent>
     </Card>
   );

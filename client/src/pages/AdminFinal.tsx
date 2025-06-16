@@ -231,6 +231,34 @@ export default function AdminFinal() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Admin Dashboard</h1>
           <p className="text-gray-600">Manage Bracha veHatzlacha Platform</p>
+          
+          {/* Quick Navigation Menu */}
+          <nav className="mt-6 flex flex-wrap gap-4" id="admin-menu">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => document.getElementById('draw-management')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <Trophy className="w-4 h-4" />
+              Draw Management
+            </Button>
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => document.getElementById('user-management')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <Users className="w-4 h-4" />
+              User Management
+            </Button>
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => document.getElementById('results-submission')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Submit Results
+            </Button>
+          </nav>
         </div>
 
         {/* Statistics Cards */}
@@ -288,9 +316,67 @@ export default function AdminFinal() {
           </Card>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Submit Results Card */}
+        {/* Draw Management Section */}
+        <div id="draw-management" className="mb-12">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">Draw Management</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Create New Draw */}
+            <Card className="shadow-xl border-0">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">Create New Draw</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="new-draw-date">Draw Date</Label>
+                    <Input
+                      id="new-draw-date"
+                      type="datetime-local"
+                      value={newDrawDate}
+                      onChange={(e) => setNewDrawDate(e.target.value)}
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleCreateDraw}
+                    disabled={createDrawMutation.isPending}
+                    className="w-full"
+                  >
+                    {createDrawMutation.isPending ? "Creating..." : "Create Draw"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Active Draws List */}
+            <Card className="shadow-xl border-0">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">Active Draws</h3>
+                <div className="space-y-3">
+                  {Array.isArray(draws) && draws.length > 0 ? (
+                    draws.slice(0, 5).map((draw: any) => (
+                      <div key={draw.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <div className="font-medium">Draw #{draw.drawNumber}</div>
+                          <div className="text-sm text-gray-600">
+                            {new Date(draw.drawDate).toLocaleDateString()}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-green-600">₪{draw.jackpotAmount}</div>
+                          <div className="text-xs text-gray-500">{draw.status}</div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-gray-500 text-center py-4">No active draws</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Results Submission Section */}
+        <div id="results-submission" className="mb-12">
+          <h2 className="text-2xl font-bold text-slate-900 mb-6">Submit Draw Results</h2>
           <Card className="shadow-xl border-0">
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-6">Submit Draw Results</h2>

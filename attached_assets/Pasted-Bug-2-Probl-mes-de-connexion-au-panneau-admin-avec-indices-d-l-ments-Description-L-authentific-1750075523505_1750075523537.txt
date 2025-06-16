@@ -1,0 +1,176 @@
+Bug 2 : Problèmes de connexion au panneau admin avec indices d'éléments
+Description : L'authentification au panneau admin échoue lorsque les champs sont identifiés par indices (8 pour email, aucun pour mot de passe). Le champ mot de passe n'est pas détecté comme interactif.
+Étapes pour reproduire :
+Accéder à https://lotto-exchange-duboisderek7.replit.app/admin.
+Saisir les identifiants (ex. : admin@brachavehatzlacha.com / BrachaVeHatzlacha2024!) via indices d'éléments.
+Priorité : Majeur
+Impact : Empêche une connexion fiable pour les administrateurs, affectant la gestion de la plateforme.
+Correction suggérée :
+Vérifier le formulaire de connexion dans admin.html ou fichier équivalent.
+S'assurer que les champs email et mot de passe ont des identifiants uniques (ex. : id="admin-email" et id="admin-password").
+Exemple :
+<form id="admin-login-form">
+  <input id="admin-email" type="email" name="email" required />
+  <input id="admin-password" type="password" name="password" required />
+  <button type="submit">Login</button>
+</form>
+Mettre à jour le script de soumission pour gérer les champs correctement :
+document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('admin-email').value;
+  const password = document.getElementById('admin-password').value;
+  await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+});
+Tester la connexion avec les 3 comptes admin.
+Bug 3 : Changement de langue incohérent
+Description : Le bouton de changement de langue ne permet pas de revenir à l'anglais après sélection de l'hébreu, car l'élément pour l'anglais n'est pas trouvé.
+Étapes pour reproduire :
+Accéder à https://lotto-exchange-duboisderek7.replit.app/.
+Passer en hébreu (RTL).
+Tenter de revenir à l'anglais (LTR).
+Priorité : Majeur
+Impact : Dégrade l'expérience utilisateur, surtout pour les utilisateurs multilingues.
+Correction suggérée :
+Vérifier le composant de changement de langue dans le frontend (ex. : fichier i18n.js ou équivalent).
+S'assurer que les options de langue (hébreu, anglais) sont toujours disponibles dans le DOM.
+Exemple :
+// Dans i18n.js ou fichier similaire
+const languageSelector = document.querySelector('#language-selector');
+languageSelector.innerHTML = `
+  <option value="he">Hébreu</option>
+  <option value="en">Anglais</option>
+`;
+languageSelector.addEventListener('change', (e) => {
+  const lang = e.target.value;
+  document.documentElement.setAttribute('lang', lang);
+  document.documentElement.setAttribute('dir', lang === 'he' ? 'rtl' : 'ltr');
+  // Mettre à jour les traductions via l'API ou fichier JSON
+  loadTranslations(lang);
+});
+Vérifier les fichiers de traduction (he.json, en.json) pour s'assurer que toutes les clés sont présentes.
+Redéployer et tester le changement de langue avec les comptes vip.he et vip.en.
+Bug 4 : Flux de lancement de jeu/achat de ticket peu clair
+Description : Après connexion, l'interface client ne rend pas évident comment lancer un jeu ou acheter un ticket. Le bouton "Ticket Cost" est cliqué, mais son effet est flou.
+Étapes pour reproduire :
+Se connecter avec un compte client (ex. : standard.he@brachavehatzlacha.com / standard123).
+Naviguer sur la page principale.
+Cliquer sur "Ticket Cost" et observer le résultat.
+Priorité : Majeur
+Impact : Confusion pour les utilisateurs, pouvant réduire l'engagement.
+Correction suggérée :
+Ajouter un bouton clair et visible pour "Lancer un jeu" ou "Acheter un ticket" sur la page principale.
+Exemple :
+<div id="game-actions">
+  <button id="buy-ticket" class="btn btn-primary">Acheter un ticket</button>
+  <button id="start-game" class="btn btn-primary">Lancer un jeu</button>
+</div>
+Implémenter une logique backend pour gérer l'achat de ticket :
+app.post('/api/ticket/purchase', async (req, res) => {
+  const { userId, ticketCost } = req.body;
+  const user = await User.findById(userId);
+  if (user.balance >= ticketCost) {
+    user.balance -= ticketCost;
+    await user.save();
+    return res.status(200).json({ message: 'Ticket acheté avec succès' });
+  }
+  return res.status(400).json({ error: 'Solde insuffisant' });
+});
+Ajouter un message de confirmation ou une redirection après clic sur "Ticket Cost".
+Tester avec les comptes Standard et VIP.
+Bug 5 : Gestion des tirages inaccessible dans le panneau admin
+Description : Les fonctionnalités de gestion des tirages ne sont pas clairement visibles ou accessibles dans le panneau admin.
+Étapes pour reproduire :
+Se connecter avec un compte admin (ex. : admin@brachavehatzlacha.com).
+Naviguer dans le panneau admin.
+Priorité : Majeur
+Impact : Empêche les administrateurs de gérer les tirages, fonctionnalité critique.
+Correction suggérée :
+Ajouter un menu ou une section dédiée à la gestion des tirages dans admin.html.
+Exemple :
+<nav id="admin-menu">
+  <a href="/admin/draws">Gestion des tirages</a>
+  <a href="/admin/users">Gestion des utilisateurs</a>
+</nav>
+Implémenter un endpoint API pour la gestion des tirages :
+app.get('/api/admin/draws', async (req, res) => {
+  if (!req.user.isAdmin) return res.status(403).json({ error: 'Accès refusé' });
+  const draws = await Draw.find();
+  return res.status(200).json(draws);
+});
+Tester l'accès avec les 3 comptes admin.
+Bug 6 : Fonctionnalité de chat non entièrement vérifiable
+Description : Le chat WebSocket s'affiche, mais l'envoi/réception de messages et la modération admin n'ont pas pu être testés sans utilisateurs simultanés.
+Étapes pour reproduire :
+Accéder à la page "Chat & Support".
+Tenter d'envoyer un message.
+Priorité : Mineur
+Impact : Limite la validation complète de la fonctionnalité chat.
+Correction suggérée :
+Ajouter un environnement de test avec des utilisateurs simulés dans Replit.
+Exemple de test WebSocket :
+const ws = new WebSocket('wss://lotto-exchange-duboisderek7.replit.app/chat');
+ws.onopen = () => ws.send(JSON.stringify({ user: 'testuser', message: 'Test' }));
+ws.onmessage = (event) => console.log('Message reçu:', event.data);
+Permettre aux admins de simuler des messages via le panneau admin.
+Tester avec deux comptes (ex. : standard.he et standard.en) en parallèle.
+Bug 7 : Liens de parrainage et affichage des rangs non visibles
+Description : Les fonctionnalités de création de lien de parrainage et d'affichage des rangs ne sont pas directement visibles dans l'espace personnel.
+Étapes pour reproduire :
+Se connecter avec un compte client.
+Accéder à l'espace personnel.
+Priorité : Mineur
+Impact : Réduit l'engagement des utilisateurs pour le système de parrainage.
+Correction suggérée :
+Ajouter une section visible dans l'espace personnel :
+<div id="referral-section">
+  <h3>Votre lien de parrainage</h3>
+  <input type="text" value="https://lotto-exchange-duboisderek7.replit.app/ref/{userId}" readonly />
+  <p>Votre rang : <span id="user-rank">{rank}</span></p>
+</div>
+Implémenter un endpoint pour récupérer le lien de parrainage :
+app.get('/api/user/referral', async (req, res) => {
+  const userId = req.user.id;
+  return res.status(200).json({ referralLink: `https://lotto-exchange-duboisderek7.replit.app/ref/${userId}` });
+});
+Tester avec les comptes VIP et Standard.
+Bug 8 : Alertes d'accessibilité WAVE
+Description : L'outil WAVE a signalé 3 alertes : absence de structure de titres, absence de régions de page, et une fonctionnalité de langue non optimisée.
+Étapes pour reproduire :
+Exécuter WAVE sur https://lotto-exchange-duboisderek7.replit.app/.
+Priorité : Mineur
+Impact : Réduit la conformité WCAG 2.1, affectant les utilisateurs avec des besoins d'accessibilité.
+Correction suggérée :
+Ajouter une structure de titres :
+<h1>Bracha veHatzlacha</h1>
+<section>
+  <h2>Connexion</h2>
+  <!-- Contenu -->
+</section>
+Définir des régions de page :
+<header role="banner">...</header>
+<main role="main">...</main>
+<footer role="contentinfo">...</footer>
+S'assurer que l'attribut lang est correctement défini :
+<html lang="he" dir="rtl"> <!-- pour hébreu -->
+Retester avec WAVE après modification.
+Validation des comptes
+Résultat : Tous les 14 comptes testés fonctionnent correctement :
+Admins (3 comptes) : Connexion réussie.
+VIP, Standard, Nouveaux, Legacy : Connexion réussie.
+Compte bloqué : Message "Compte bloqué" affiché.
+Identifiants invalides : Message "Email ou mot de passe incorrect" affiché.
+Action : Aucune correction nécessaire pour l'authentification.
+Instructions pour Replit AI / Équipe de développement
+Prioriser les corrections :
+Critique : Bug 1 (bouton de connexion client).
+Majeurs : Bugs 2, 3, 4, 5 (admin login, langue, jeu/ticket, tirages).
+Mineurs : Bugs 6, 7, 8 (chat, parrainage, accessibilité).
+Implémenter les corrections dans l'ordre indiqué, en modifiant les fichiers frontend (HTML/JS) et backend (Node.js/Express, si applicable).
+Redéployer après chaque correction via Replit Deployments.
+Retester chaque bug avec les étapes fournies, en utilisant les comptes de test.
+Documenter les changements dans un changelog (ex. : CHANGELOG.md).
+Rapport final : Confirmer la résolution de tous les bugs ou signaler les problèmes persistants.

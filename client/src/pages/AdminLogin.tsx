@@ -20,7 +20,8 @@ export default function AdminLogin() {
     setIsLoggingIn(true);
     
     try {
-      const response = await fetch('/api/auth/admin-login', {
+      // Try universal auth endpoint first, then fallback to admin-specific
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +31,16 @@ export default function AdminLogin() {
       });
       
       if (response.ok) {
-        window.location.href = '/admin';
+        const userData = await response.json();
+        if (userData.user && userData.user.isAdmin) {
+          window.location.href = '/admin';
+        } else {
+          toast({
+            title: "Access Denied",
+            description: "Admin privileges required",
+            variant: "destructive"
+          });
+        }
       } else {
         const errorData = await response.json();
         toast({
