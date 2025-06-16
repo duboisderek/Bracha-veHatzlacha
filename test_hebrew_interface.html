@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת ממשק עברית - ברכה והצלחה</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            text-align: right;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .lottery-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .number-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .number-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .number-btn.selected {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #374151;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            direction: rtl;
+            text-align: right;
+            box-sizing: border-box;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+        }
+        
+        .status-display {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .balance-display {
+            background: #ecfdf5;
+            border: 1px solid #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .rtl-test {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .error {
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .success {
+            color: #065f46;
+            background: #ecfdf5;
+            border: 1px solid #6ee7b7;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ברכה והצלחה</h1>
+            <p>פלטפורמת הלוטו המתקדמת</p>
+        </div>
+        
+        <div class="content">
+            <!-- Test RTL Layout -->
+            <div class="section">
+                <h2>בדיקת פריסה RTL</h2>
+                <div class="rtl-test">
+                    <p><strong>בדיקת כיוון טקסט:</strong> טקסט זה צריך להיות מיושר לימין</p>
+                    <p><strong>מספרים:</strong> 1234567890</p>
+                    <p><strong>תאריך:</strong> יום ראשון, 16 ביוני 2025</p>
+                    <p><strong>שעה:</strong> 15:30</p>
+                    <p><strong>כתובת דוא"ל:</strong> test@example.com</p>
+                </div>
+            </div>
+
+            <!-- Login Form Test -->
+            <div class="section">
+                <h2>טופס התחברות</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">כתובת דוא"ל:</label>
+                        <input type="email" id="email" name="email" placeholder="הכנס כתובת דוא״ל" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">סיסמה:</label>
+                        <input type="password" id="password" name="password" placeholder="הכנס סיסמה" required>
+                    </div>
+                    <button type="submit" class="btn">התחבר</button>
+                    <button type="button" class="btn btn-secondary">ביטול</button>
+                </form>
+            </div>
+
+            <!-- Lottery Number Selection -->
+            <div class="section">
+                <h2>בחירת מספרי לוטו</h2>
+                <p>בחר 6 מספרים (1-37):</p>
+                <div class="lottery-grid" id="lotteryGrid">
+                    <!-- Numbers will be generated by JavaScript -->
+                </div>
+                <div class="status-display">
+                    <strong>מספרים נבחרים:</strong> <span id="selectedNumbers">אין</span>
+                </div>
+                <button class="btn" onclick="clearSelection()">נקה בחירה</button>
+                <button class="btn" onclick="randomSelection()">בחירה אקראית</button>
+            </div>
+
+            <!-- Balance and Participation -->
+            <div class="section">
+                <h2>יתרה והשתתפות</h2>
+                <div class="balance-display">
+                    יתרה נוכחית: ₪<span id="balance">2,500</span>
+                </div>
+                <div class="form-group">
+                    <label for="amount">סכום השתתפות:</label>
+                    <input type="number" id="amount" name="amount" value="100" min="100" step="100">
+                </div>
+                <button class="btn" onclick="participate()">השתתף בהגרלה</button>
+            </div>
+
+            <!-- Status Messages -->
+            <div class="section">
+                <h2>הודעות מערכת</h2>
+                <div id="messages">
+                    <div class="success">✓ המערכת מוכנה לשימוש</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test functionality
+        let selectedNumbers = [];
+        let userBalance = 2500;
+
+        // Generate lottery grid
+        function generateLotteryGrid() {
+            const grid = document.getElementById('lotteryGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 1; i <= 37; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'number-btn';
+                btn.textContent = i;
+                btn.onclick = () => selectNumber(i, btn);
+                grid.appendChild(btn);
+            }
+        }
+
+        // Select lottery number
+        function selectNumber(num, btn) {
+            const messages = document.getElementById('messages');
+            
+            if (selectedNumbers.includes(num)) {
+                // Deselect
+                selectedNumbers = selectedNumbers.filter(n => n !== num);
+                btn.classList.remove('selected');
+            } else if (selectedNumbers.length < 6) {
+                // Select
+                selectedNumbers.push(num);
+                btn.classList.add('selected');
+            } else {
+                // Max reached
+                messages.innerHTML = '<div class="error">ניתן לבחור עד 6 מספרים בלבד</div>';
+                setTimeout(() => {
+                    messages.innerHTML = '<div class="success">✓ המערכת מוכנה לשימוש</div>';
+                }, 3000);
+                return;
+            }
+            
+            updateSelectedDisplay();
+        }
+
+        // Update selected numbers display
+        function updateSelectedDisplay() {
+            const display = document.getElementById('selectedNumbers');
+            if (selectedNumbers.length === 0) {
+                display.textContent = 'אין';
+            } else {
+                display.textContent = selectedNumbers.sort((a, b) => a - b).join(', ');
+            }
+        }
+
+        // Clear selection
+        function clearSelection() {
+            selectedNumbers = [];
+            document.querySelectorAll('.number-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            updateSelectedDisplay();
+        }
+
+        // Random selection
+        function randomSelection() {
+            clearSelection();
+            const numbers = [];
+            while (numbers.length < 6) {
+                const num = Math.floor(Math.random() * 37) + 1;
+                if (!numbers.includes(num)) {
+                    numbers.push(num);
+                }
+            }
+            
+            numbers.forEach(num => {
+                selectedNumbers.push(num);
+                document.querySelector(`.number-btn:nth-child(${num})`).classList.add('selected');
+            });
+            
+            updateSelectedDisplay();
+        }
+
+        // Participate in lottery
+        function participate() {
+            const messages = document.getElementById('messages');
+            const amount = parseInt(document.getElementById('amount').value);
+            
+            if (selectedNumbers.length !== 6) {
+                messages.innerHTML = '<div class="error">יש לבחור בדיוק 6 מספרים</div>';
+                return;
+            }
+            
+            if (amount < 100) {
+                messages.innerHTML = '<div class="error">הסכום המינימלי להשתתפות הוא 100₪</div>';
+                return;
+            }
+            
+            if (amount > userBalance) {
+                messages.innerHTML = '<div class="error">אין מספיק יתרה בחשבון</div>';
+                return;
+            }
+            
+            // Simulate participation
+            userBalance -= amount;
+            document.getElementById('balance').textContent = userBalance.toLocaleString();
+            messages.innerHTML = '<div class="success">✓ ההשתתפות נרשמה בהצלחה!</div>';
+            
+            clearSelection();
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messages = document.getElementById('messages');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                messages.innerHTML = '<div class="error">יש למלא את כל השדות</div>';
+                return;
+            }
+            
+            // Simulate login
+            messages.innerHTML = '<div class="success">✓ התחברת בהצלחה!</div>';
+        });
+
+        // Test RTL input
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                const hasHebrew = /[\u0590-\u05FF]/.test(this.value);
+                if (hasHebrew) {
+                    console.log('Hebrew input detected:', this.value);
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateLotteryGrid();
+            console.log('Hebrew interface test loaded');
+            console.log('Direction:', document.documentElement.dir);
+            console.log('Language:', document.documentElement.lang);
+        });
+    </script>
+</body>
+</html>
