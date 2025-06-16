@@ -22,7 +22,7 @@ export default function HebrewTestPage() {
 
   // Test translation functionality
   const testTranslations = () => {
-    const results = [];
+    const results: string[] = [];
     const testKeys = [
       'appName',
       'home',

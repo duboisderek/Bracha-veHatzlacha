@@ -13,6 +13,7 @@ import Home from "@/pages/Home";
 import PersonalArea from "@/pages/PersonalArea";
 import ChatSupport from "@/pages/ChatSupport";
 import Admin from "@/pages/AdminCleanMultilingual";
+import HebrewTestPage from "@/pages/HebrewTestPage";
 import { Header } from "@/components/layout/Header";
 
 function AppContent() {
@@ -58,6 +59,7 @@ function AppContent() {
             )}
           </>
         )}
+        <Route path="/hebrew-test" component={HebrewTestPage} />
         <Route component={NotFound} />
       </Switch>
     </div>
