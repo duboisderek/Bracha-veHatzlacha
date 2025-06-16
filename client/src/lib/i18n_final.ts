@@ -198,6 +198,25 @@ export const translations = {
     // Missing translations for NumberSelection
     selectYourLuckyNumbers: "Select Your Lucky Numbers",
     chooseNumbers: "Choose 6 numbers from 1 to 37",
+    
+    // Missing Landing Page translations
+    clientLogin: "Client Login",
+    backToHome: "Back to Home",
+    clientAccess: "Client Access",
+    welcomeToLottery: "Welcome to Lottery",
+    register: "Register",
+    phoneNumber: "Phone Number",
+    confirmPassword: "Confirm Password", 
+    createAccount: "Create Account",
+    
+    // Missing Home Page translations
+    lastUpdated: "Last Updated",
+    reuseNumbers: "Reuse Numbers",
+    participationAmount: "Participation Amount",
+    participationLocked: "Participation Locked",
+    nextDrawInfo: "Next Draw Info",
+    drawCountdown: "Draw Countdown",
+    standardLotterySuggestion: "Standard Lottery Suggestion",
     yourSelectedNumbers: "Your Selected Numbers",
     selected: "Selected",
     costPerTicket: "Cost per Ticket",
