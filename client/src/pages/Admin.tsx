@@ -37,15 +37,15 @@ export default function Admin() {
     },
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Draw results submitted successfully!",
+        title: t("success"),
+        description: t("resultsSubmitted"),
       });
       setWinningNumbers([]);
       queryClient.invalidateQueries();
     },
     onError: (error) => {
       toast({
-        title: "Error",
+        title: t("error"),
         description: error.message,
         variant: "destructive",
       });
