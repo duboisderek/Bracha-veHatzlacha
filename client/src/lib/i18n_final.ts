@@ -498,6 +498,25 @@ export const translations = {
     useTheseNumbers: "השתמש במספרים אלה",
     recentDraws: "הגרלות אחרונות",
     
+    // Missing Landing Page translations Hebrew
+    clientLogin: "כניסת לקוחות",
+    backToHome: "חזרה לבית",
+    clientAccess: "גישת לקוחות",
+    welcomeToLottery: "ברוכים הבאים ללוטו",
+    register: "הרשמה",
+    phoneNumber: "מספר טלפון",
+    confirmPassword: "אישור סיסמה",
+    createAccount: "יצירת חשבון",
+    
+    // Missing Home Page translations Hebrew
+    lastUpdated: "עודכן לאחרונה",
+    reuseNumbers: "שימוש חוזר במספרים",
+    participationAmount: "סכום השתתפות",
+    participationLocked: "השתתפות נעולה",
+    nextDrawInfo: "מידע הגרלה הבאה",
+    drawCountdown: "ספירה לאחור להגרלה",
+    standardLotterySuggestion: "הצעת לוטו רגיל",
+    
     // New MVP Features Hebrew
     chatSupport: "צ'אט תמיכה",
     referFriends: "הפנה חברים",
@@ -521,7 +540,7 @@ export type Language = keyof typeof translations;
 export type TranslationKey = keyof typeof translations.en;
 
 export const getTranslation = (key: TranslationKey, language: Language): string => {
-  return translations[language][key] || translations.en[key] || key;
+  return (translations[language] as any)[key] || translations.en[key] || key;
 };
 
 export const formatAmount = (amount: number, language: Language): string => {
