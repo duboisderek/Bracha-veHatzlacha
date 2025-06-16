@@ -50,13 +50,13 @@ export function Header() {
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location === item.path;
               return (
                 <Link key={item.path} href={item.path}>
-                  <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all cursor-pointer ${
+                  <div className={`flex items-center space-x-2 rtl:space-x-reverse px-3 py-2 rounded-lg transition-all cursor-pointer ${
                     isActive 
                       ? 'bg-white bg-opacity-20 text-white font-medium' 
                       : 'hover:bg-white hover:bg-opacity-10'
@@ -70,10 +70,10 @@ export function Header() {
           </nav>
 
           {/* User Info & Actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
             {/* Balance Display */}
             {user ? (
-              <div className="flex items-center space-x-2 bg-white bg-opacity-20 px-3 py-1 rounded-full">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse bg-white bg-opacity-20 px-3 py-1 rounded-full">
                 <span className="text-sm font-medium">{t('currentBalance')}:</span>
                 <span className="text-sm font-bold">
                   ₪{parseFloat((user as any).balance || "0").toLocaleString()}
@@ -82,12 +82,12 @@ export function Header() {
             ) : null}
 
             {/* Client Login Button - visible only when not logged in */}
-{!user && (
+            {!user && (
               <Button
                 onClick={() => window.location.href = '/client-auth'}
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg transition-all duration-200"
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg transition-all duration-200 button-with-icon"
               >
-                <UserCheck className="w-4 h-4 mr-2" />
+                <UserCheck className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
                 {t("clientLogin")}
               </Button>
             )}
@@ -95,7 +95,7 @@ export function Header() {
             {/* Language Selector */}
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="w-32 bg-white bg-opacity-20 border-white border-opacity-30 text-white">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <Globe className="w-4 h-4" />
                   <SelectValue />
                 </div>
