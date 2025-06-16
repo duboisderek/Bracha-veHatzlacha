@@ -298,14 +298,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create new user
       const newUser = await storage.upsertUser({
         id: userId,
-        email,
-        firstName,
-        lastName,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
         profileImageUrl: null,
         phoneNumber: phoneNumber || null,
         balance: '100.00', // Welcome bonus
         totalWinnings: '0.00',
-        referralCode,
+        referralCode: referralCode,
         referredBy: null,
         referralBonus: '0.00',
         referralCount: 0,
@@ -815,7 +815,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if username already exists
       const existingUsers = await storage.getAllUsers();
       const usernameExists = existingUsers.some(user => 
-        user.firstName.toLowerCase() === userData.firstName.toLowerCase()
+        user.firstName?.toLowerCase() === userData.firstName?.toLowerCase()
       );
       
       if (usernameExists) {
