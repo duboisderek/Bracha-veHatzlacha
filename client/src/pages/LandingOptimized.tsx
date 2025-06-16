@@ -223,6 +223,7 @@ const Landing = memo(() => {
               <div className="text-center lg:text-left">
                 <h3 className="text-2xl font-bold text-white mb-4">Choose Your Access</h3>
                 
+                {/* Bouton admin supprimé - accès uniquement via URL directe /admin */}
                 <div className="grid gap-4">
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button
@@ -232,19 +233,7 @@ const Landing = memo(() => {
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
                       {t("clientLogin")}
-                      <span className="text-sm ml-2 opacity-90">(Connexion / Inscription)</span>
-                    </Button>
-                  </motion.div>
-
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button
-                      onClick={() => window.location.href = '/admin'}
-                      variant="outline"
-                      size="lg"
-                      className="w-full bg-white bg-opacity-10 border-white border-opacity-30 text-white hover:bg-white hover:bg-opacity-20 font-bold py-4 px-8 rounded-xl shadow-xl text-lg transition-all duration-200"
-                    >
-                      <Settings className="w-6 h-6 mr-3" />
-                      Admin Access
+                      <span className="text-sm ml-2 opacity-90">({t("register")} / {t("login")})</span>
                     </Button>
                   </motion.div>
                 </div>

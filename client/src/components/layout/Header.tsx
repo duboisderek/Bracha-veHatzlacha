@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LogOut, User, Globe, Home, UserCircle, MessageCircle, Settings } from "lucide-react";
+import { LogOut, User, Globe, Home, UserCircle, MessageCircle, Settings, UserCheck } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -79,6 +79,17 @@ export function Header() {
                   ₪{parseFloat((user as any).balance || "0").toLocaleString()}
                 </span>
               </div>
+            )}
+
+            {/* Client Login Button - visible only when not logged in */}
+            {!user && (
+              <Button
+                onClick={() => window.location.href = '/client-auth'}
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg transition-all duration-200"
+              >
+                <UserCheck className="w-4 h-4 mr-2" />
+                {t("clientLogin")}
+              </Button>
             )}
 
             {/* Language Selector */}
