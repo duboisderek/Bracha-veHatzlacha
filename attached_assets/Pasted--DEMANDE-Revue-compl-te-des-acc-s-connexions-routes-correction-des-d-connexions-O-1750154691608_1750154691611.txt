@@ -1,0 +1,55 @@
+# 🚀 DEMANDE : Revue complète des accès, connexions, routes + correction des déconnexions
+
+## 🎯 Objectif
+Je souhaite que tu réalises une **revérification complète et une correction détaillée** des éléments suivants :  
+
+✅ Les **routes publiques / privées** : s’assurer que chaque page, bouton et menu redirige correctement selon le rôle et la connexion  
+✅ Les **workflows de connexion / déconnexion** :  
+- Impossible d’accéder à un espace privé sans authentification valide  
+- Déconnexion (`Logout`) fonctionnelle :  
+  - Termine bien la session (supprime token/session)  
+  - Redirige vers une page publique appropriée (par ex. accueil ou login)  
+  - Nettoie la barre de menu : aucun bouton ou menu privé ne reste affiché  
+
+✅ Les **barres de navigation / menus** : affichage correct selon le rôle et le statut de connexion (client / admin / visiteur)  
+✅ La **protection des routes sensibles** :  
+- Routes admin : accessibles uniquement après connexion admin  
+- Routes client : accessibles uniquement après connexion client  
+
+✅ Les **boutons d’action** :  
+- `Client Login / Register` → amène à la page de connexion / inscription client  
+- `Start Playing Now` → exige un login valide avant l’accès au compte  
+
+---
+
+## 🔍 Problèmes à corriger spécifiquement
+- Barre du haut sur page d’accueil : affiche options admin alors qu’aucune connexion  
+- Bouton **Client Login** mène à espace admin  
+- Bouton **Start Playing Now** donne accès au compte client sans login  
+- **Logout** : reste sur la même page, menus privés visibles, session non complètement détruite  
+
+---
+
+## ✅ Ce que je demande
+👉 Revoir et corriger tous les workflows d’accès, connexion et déconnexion  
+👉 Corriger les routes, menus et redirections  
+👉 Séparer et sécuriser strictement les espaces admin, client et public  
+👉 Livrer :  
+- Code sécurisé et corrigé  
+- Documentation des workflows d’accès mis en place  
+- Résumé des actions et corrections effectuées  
+
+---
+
+## 🌍 Langues
+Application : multilingue (FR / EN / HE avec RTL)  
+
+---
+
+## 💬 Langue Replit Agent
+Français  
+
+---
+
+## ⚠️ Important
+Merci de **reprendre le contrôle complet des accès, connexions, routes, redirections et menus**, sans laisser de faille ou incohérence.

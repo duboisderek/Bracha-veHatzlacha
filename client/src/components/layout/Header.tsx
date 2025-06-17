@@ -13,25 +13,49 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/logout", {
+      const response = await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });
-      window.location.href = "/";
+      
+      if (response.ok) {
+        // Clear any local storage
+        localStorage.clear();
+        // Force reload to clear all state and redirect to home
+        window.location.href = "/";
+        window.location.reload();
+      }
     } catch (error) {
       console.error("Logout error:", error);
+      // Force redirect even if logout fails
+      window.location.href = "/";
     }
   };
 
-  const navItems = [
-    { path: "/", label: t("home"), icon: Home },
-    { path: "/personal", label: t("dashboard"), icon: UserCircle },
-    { path: "/chat", label: t("chat"), icon: MessageCircle },
-  ];
-
-  if ((user as any)?.isAdmin) {
-    navItems.push({ path: "/admin", label: t("admin"), icon: Settings });
-  }
+  // Navigation items based on authentication status
+  const getNavItems = () => {
+    const publicItems = [
+      { path: "/", label: t("home"), icon: Home }
+    ];
+    
+    if (!user) {
+      return publicItems;
+    }
+    
+    const authenticatedItems = [
+      ...publicItems,
+      { path: "/personal", label: t("dashboard"), icon: UserCircle },
+      { path: "/chat", label: t("chat"), icon: MessageCircle },
+    ];
+    
+    if ((user as any)?.isAdmin) {
+      authenticatedItems.push({ path: "/admin", label: t("admin"), icon: Settings });
+    }
+    
+    return authenticatedItems;
+  };
+  
+  const navItems = getNavItems();
 
   return (
     <header className="border-b bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg">
@@ -85,7 +109,7 @@ export function Header() {
             {/* Client Login Button - visible only when not logged in */}
             {!user && (
               <Button
-                onClick={() => window.location.href = '/client-auth'}
+                onClick={() => window.location.href = '/login'}
                 className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg transition-all duration-200 button-with-icon"
               >
                 <UserCheck className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
