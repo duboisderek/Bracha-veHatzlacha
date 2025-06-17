@@ -9,6 +9,7 @@ import NotFound from "@/pages/not-found";
 import Landing from "@/pages/LandingOptimized";
 import AdminLogin from "@/pages/AdminLogin";
 import ClientAuth from "@/pages/ClientAuth";
+import Login from "@/pages/Login";
 import Home from "@/pages/Home";
 import PersonalArea from "@/pages/PersonalArea";
 import ChatSupport from "@/pages/ChatSupport";
@@ -37,9 +38,15 @@ function AppContent() {
         {!isAuthenticated ? (
           <>
             <Route path="/" component={Landing} />
+            <Route path="/login" component={Login} />
             <Route path="/client-auth" component={ClientAuth} />
+            <Route path="/admin-login" component={AdminLogin} />
+            {/* Redirect admin access to login page when not authenticated */}
             <Route path="/admin" component={AdminLogin} />
             <Route path="/admin/*" component={AdminLogin} />
+            {/* Redirect protected pages to login */}
+            <Route path="/personal" component={Login} />
+            <Route path="/chat" component={Login} />
           </>
         ) : (
           <>

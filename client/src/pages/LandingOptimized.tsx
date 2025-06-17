@@ -316,8 +316,7 @@ const Landing = memo(() => {
                   <div className="flex justify-center space-x-6">
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
-                        onClick={() => handleLogin('client')}
-                        disabled={isLoggingIn}
+                        onClick={() => window.location.href = '/login'}
                         size="lg"
                         className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-16 rounded-full shadow-2xl text-xl"
                       >

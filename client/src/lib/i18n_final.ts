@@ -220,8 +220,6 @@ export const translations = {
     adminCredentials: "Admin Credentials",
     adminAccess: "Admin access?",
     clientAccess: "Client access?",
-
-    clientAccess: "Client Access",
     welcomeToLottery: "Welcome to Lottery",
     register: "Register",
     phoneNumber: "Phone Number",

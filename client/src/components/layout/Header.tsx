@@ -110,7 +110,7 @@ export function Header() {
             {!user && (
               <Button
                 onClick={() => window.location.href = '/login'}
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg transition-all duration-200 button-with-icon"
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold px-4 py-2 rounded-lg shadow-lg transition-all duration-200"
               >
                 <UserCheck className="w-4 h-4 mr-2 rtl:ml-2 rtl:mr-0" />
                 {t("clientLogin")}
