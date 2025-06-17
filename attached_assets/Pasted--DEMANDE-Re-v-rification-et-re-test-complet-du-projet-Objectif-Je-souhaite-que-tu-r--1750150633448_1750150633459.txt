@@ -1,0 +1,53 @@
+# 🚀 DEMANDE : Re-vérification et re-test complet du projet
+
+## 🎯 Objectif
+Je souhaite que tu réalises une **revérification et un re-test complet du projet** du début à la fin, sans aucune exception.  
+Le but est de garantir que **tout le système est 100 % fonctionnel et prêt pour mise en ligne réelle**.
+
+---
+
+## ✅ Ce que je demande
+
+### 🔍 Vérification générale
+- Toutes les **routes et endpoints API** : accessibles et répondant correctement
+- Toutes les **connexions et authentifications** : client, admin, autres rôles si présents
+- Tous les **rôles et permissions** : droits appliqués correctement selon le rôle (client standard, VIP, admin...)
+- Tous les **espaces et interfaces** :  
+  - Espace **admin** : menus, sous-menus, actions, formulaires  
+  - Espace **client** : tableaux de bord, achats, historique, notifications, etc.
+- Tous les **boutons, menus, formulaires, liens, actions** : doivent fonctionner sans bug
+- Tous les **workflows** :  
+  - Parcours client complet : inscription > connexion > achat ticket > suivi > résultats > transactions  
+  - Parcours admin complet : gestion clients > gestion tirages > gestion transactions > CRM > statistiques
+
+---
+
+### 🛠️ Validation technique
+- Vérification du **multilingue complet** (FR / EN / HE + RTL pour hébreu)
+- Vérification des **formats locaux** (monnaie, dates, sens de lecture)
+- Vérification de la **sécurité** (auth, sessions, CSRF, HTTPS)
+- Vérification des **WebSockets** (chat temps réel, notifications)
+- Vérification de la **base de données** : cohérence des données et intégrité
+
+---
+
+## ⚠️ Contraintes
+- **Aucune fonctionnalité ou route ne doit être oubliée**
+- Signaler toute anomalie ou élément manquant
+- Corriger les problèmes détectés si possible ou bien les lister précisément
+
+---
+
+## 🌍 Langues
+- Application : multilingue (FR / EN / HE avec RTL)
+- Interaction Replit Agent : Français
+
+---
+
+## 📤 Résultat attendu
+- Un système **100 % opérationnel** testé de bout en bout
+- Un **rapport clair** :  
+  - Ce qui fonctionne  
+  - Ce qui a été corrigé  
+  - Ce qui reste éventuellement à corriger
+- Un code prêt pour **mise en ligne réelle**
