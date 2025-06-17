@@ -233,7 +233,7 @@ const Landing = memo(() => {
                     >
                       <UserCheck className="w-6 h-6 mr-3" />
                       {t("clientLogin")}
-                      <span className="text-sm ml-2 opacity-90">({t("register")} / {t("login")})</span>
+                      <span className="text-sm ml-2 opacity-90">({t("login")})</span>
                     </Button>
                   </motion.div>
                 </div>

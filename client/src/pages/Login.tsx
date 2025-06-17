@@ -44,32 +44,8 @@ export default function Login() {
     }
   };
 
-  const handleDemoLogin = async () => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch("/api/auth/demo-login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ demoUser: "client1" }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        window.location.href = "/personal";
-      } else {
-        setError(data.message || t("loginError"));
-      }
-    } catch (error) {
-      setError(t("loginError"));
-    } finally {
-      setIsLoading(false);
-    }
+  const handleCreateAccount = () => {
+    window.location.href = "/register";
   };
 
   return (
@@ -178,12 +154,12 @@ export default function Login() {
             </div>
 
             <Button
-              onClick={handleDemoLogin}
+              onClick={handleCreateAccount}
               variant="outline"
               className="w-full border-purple-200 text-purple-700 hover:bg-purple-50"
               disabled={isLoading}
             >
-              {t("tryDemo")}
+              {t("createAccount")}
             </Button>
           </CardContent>
 

@@ -11,6 +11,7 @@ import Landing from "@/pages/LandingOptimized";
 import AdminLogin from "@/pages/AdminLogin";
 import ClientAuth from "@/pages/ClientAuth";
 import Login from "@/pages/Login";
+import Register from "@/pages/Register";
 import Home from "@/pages/Home";
 import PersonalArea from "@/pages/PersonalArea";
 import ChatSupport from "@/pages/ChatSupport";
@@ -40,7 +41,7 @@ function AppContent() {
         {/* Public routes - accessible to everyone */}
         <Route path="/" component={Landing} />
         <Route path="/login" component={Login} />
-        <Route path="/client-auth" component={ClientAuth} />
+        <Route path="/register" component={Register} />
         <Route path="/admin-login" component={AdminLogin} />
         
         {/* Protected client routes - require authentication */}
