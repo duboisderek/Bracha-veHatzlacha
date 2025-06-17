@@ -43,8 +43,15 @@ function AppContent() {
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/admin-login" component={AdminLogin} />
+        <Route path="/client-auth" component={ClientAuth} />
         
         {/* Protected client routes - require authentication */}
+        <Route path="/home">
+          <ProtectedRoute requireAuth={true}>
+            <Home />
+          </ProtectedRoute>
+        </Route>
+        
         <Route path="/personal">
           <ProtectedRoute requireAuth={true}>
             <PersonalArea />
