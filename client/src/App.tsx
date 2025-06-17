@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/LandingOptimized";
 import AdminLogin from "@/pages/AdminLogin";
@@ -35,38 +36,42 @@ function AppContent() {
     <div className="min-h-screen">
       {isAuthenticated && <Header />}
       <Switch>
-        {!isAuthenticated ? (
-          <>
-            <Route path="/" component={Landing} />
-            <Route path="/login" component={Login} />
-            <Route path="/client-auth" component={ClientAuth} />
-            <Route path="/admin-login" component={AdminLogin} />
-            {/* Redirect admin access to login page when not authenticated */}
-            <Route path="/admin" component={AdminLogin} />
-            <Route path="/admin/*" component={AdminLogin} />
-            {/* Redirect protected pages to login */}
-            <Route path="/personal" component={Login} />
-            <Route path="/chat" component={Login} />
-          </>
-        ) : (
-          <>
-            {(user as any)?.isAdmin ? (
-              <>
-                <Route path="/admin" component={Admin} />
-                <Route path="/admin/*" component={Admin} />
-                <Route path="/" component={Landing} />
-              </>
-            ) : (
-              <>
-                <Route path="/" component={Home} />
-                <Route path="/personal" component={PersonalArea} />
-                <Route path="/chat" component={ChatSupport} />
-                <Route path="/admin" component={AdminLogin} />
-              </>
-            )}
-          </>
-        )}
+        {/* Public routes - accessible to everyone */}
+        <Route path="/" component={Landing} />
+        <Route path="/login" component={Login} />
+        <Route path="/client-auth" component={ClientAuth} />
+        <Route path="/admin-login" component={AdminLogin} />
+        
+        {/* Protected client routes - require authentication */}
+        <Route path="/personal">
+          <ProtectedRoute requireAuth={true}>
+            <PersonalArea />
+          </ProtectedRoute>
+        </Route>
+        
+        <Route path="/chat">
+          <ProtectedRoute requireAuth={true}>
+            <ChatSupport />
+          </ProtectedRoute>
+        </Route>
+        
+        {/* Protected admin routes - require admin authentication */}
+        <Route path="/admin">
+          <ProtectedRoute requireAdmin={true}>
+            <Admin />
+          </ProtectedRoute>
+        </Route>
+        
+        <Route path="/admin/*">
+          <ProtectedRoute requireAdmin={true}>
+            <Admin />
+          </ProtectedRoute>
+        </Route>
+        
+        {/* Development/Test routes */}
         <Route path="/hebrew-test" component={HebrewTestPage} />
+        
+        {/* Fallback route */}
         <Route component={NotFound} />
       </Switch>
     </div>
