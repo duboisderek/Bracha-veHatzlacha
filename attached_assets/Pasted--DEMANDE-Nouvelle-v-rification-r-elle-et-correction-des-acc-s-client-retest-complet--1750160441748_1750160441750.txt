@@ -1,0 +1,53 @@
+# 🚀 DEMANDE : Nouvelle vérification réelle et correction des accès client + retest complet
+
+## 🎯 Objectif
+Je demande que tu réalises une **nouvelle vérification complète, en conditions réelles**, car :  
+
+⚠ L’accès client fourni (`client.production@brachavehatzlacha.com / ClientProd2025!`) **ne fonctionne pas** : email ou mot de passe incorrect.  
+
+---
+
+## ✅ Ce que je demande
+
+### 🔐 Accès
+- Générer **un compte client réel et fonctionnel**
+- Générer **un compte admin réel et fonctionnel**
+- **Tester concrètement** ces accès sur l’interface avant de me les communiquer
+- **Me fournir les accès réels valides (login + mot de passe)** dans ta réponse
+
+---
+
+### 🔍 Retest complet (en conditions réelles)
+➡ Refaire tous les tests suivants :  
+- Authentification client : vérifier que la connexion fonctionne vraiment  
+- Authentification admin : vérifier que la connexion fonctionne vraiment  
+- Workflow client complet : connexion → choix des numéros → achat ticket → visualisation ticket → historique → logout  
+- Workflow admin complet : connexion → gestion clients → gestion tirages → transactions → logout  
+- Sécurité : routes protégées, logout qui supprime bien la session  
+- Redirections : cohérentes et correctes  
+- Achat ticket : grille active, choix des numéros, ticket généré avec ID, solde mis à jour  
+
+---
+
+### 🛠️ Résultats attendus
+✅ Accès client et admin fonctionnels fournis  
+✅ Rapport clair : ce qui a été testé et corrigé  
+✅ Preuve du fonctionnement (exemple : capture d’écran, log de test)  
+✅ Projet prêt à déployer réellement  
+
+---
+
+## 🌍 Langues
+Application : multilingue (FR / EN / HE + RTL)
+
+---
+
+## 💬 Langue Replit Agent
+Français  
+
+---
+
+## ⚠️ Remarque importante
+Merci de **ne fournir les accès qu’après vérification réelle de leur fonctionnement sur l’interface**.  
+Merci de **confirmer que les workflows client et admin ont été testés étape par étape sans erreur**.  
+Merci de **supprimer toute trace de compte démo**.
