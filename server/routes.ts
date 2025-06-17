@@ -1014,6 +1014,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User participation history endpoint
+  app.get('/api/user/participation-history', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const tickets = await storage.getUserTickets(userId);
+      
+      const participationHistory = tickets.map(ticket => ({
+        drawNumber: ticket.drawId,
+        numbers: ticket.numbers,
+        amount: ticket.cost,
+        winningAmount: ticket.winningAmount,
+        matchCount: ticket.matchCount,
+        createdAt: ticket.createdAt
+      }));
+      
+      res.json(participationHistory);
+    } catch (error) {
+      console.error("Error fetching participation history:", error);
+      res.status(500).json({ message: "Failed to fetch participation history" });
+    }
+  });
+
+  // User topup history endpoint  
+  app.get('/api/user/topup-history', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const transactions = await storage.getUserTransactions(userId);
+      
+      const topupHistory = transactions.filter(t => t.type === 'deposit').map(transaction => ({
+        amount: transaction.amount,
+        description: transaction.description,
+        createdAt: transaction.createdAt
+      }));
+      
+      res.json(topupHistory);
+    } catch (error) {
+      console.error("Error fetching topup history:", error);
+      res.status(500).json({ message: "Failed to fetch topup history" });
+    }
+  });
+
+  // User referral stats endpoint
+  app.get('/api/user/referral-stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const referralStats = {
+        referralCode: user.referralCode,
+        referralCount: user.referralCount || 0,
+        referralBonus: user.referralBonus || "0.00",
+        totalEarnings: user.referralBonus || "0.00"
+      };
+      
+      res.json(referralStats);
+    } catch (error) {
+      console.error("Error fetching referral stats:", error);
+      res.status(500).json({ message: "Failed to fetch referral stats" });
+    }
+  });
+
   // Phone number update endpoint
   app.put('/api/users/:userId/phone', isAuthenticated, async (req: any, res) => {
     try {
