@@ -415,61 +415,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Client demo login endpoint
+  // Client login with email/password
   app.post('/api/auth/login', async (req, res) => {
     try {
-      const { type } = req.body;
+      const { email, password } = req.body;
       
-      let userData;
+      // Validate input
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email et mot de passe requis" });
+      }
       
-      if (type === 'admin') {
-        // Admin user
-        userData = {
-          id: 'admin_bracha_vehatzlacha',
-          email: 'admin@brachavehatzlacha.com',
-          firstName: 'Admin',
-          lastName: 'Bracha veHatzlacha',
+      // Client credentials - exact match required
+      if (email === 'client@brachavehatzlacha.com' && password === 'Client2025!') {
+        const userData = {
+          id: 'client_production_bracha_vehatzlacha',
+          email: 'client@brachavehatzlacha.com',
+          firstName: 'Client',
+          lastName: 'Production',
           profileImageUrl: null,
-          referralCode: 'ADMIN001',
-          balance: "50000.00",
+          referralCode: 'CLIENT01',
+          balance: "1500.00",
           totalWinnings: "0.00",
           referralBonus: "0.00",
           referralCount: 0,
-          language: "he",
+          language: "fr",
+          phoneNumber: null,
+          isAdmin: false,
+          isBlocked: false,
+          smsNotifications: true
         };
-      } else {
-        // Demo client user
-        userData = {
+
+        const user = await storage.upsertUser(userData as any);
+        
+        (req.session as any).user = {
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          isAdmin: false
+        };
+        
+        return res.json({ user: { ...user, isAdmin: false } });
+      }
+      
+      if (email === 'demo@brachavehatzlacha.com' && password === 'demo123') {
+        const userData = {
           id: 'demo_client_bracha_vehatzlacha',
           email: 'demo@brachavehatzlacha.com',
           firstName: 'Demo',
-          lastName: 'User',
+          lastName: 'Client',
           profileImageUrl: null,
           referralCode: 'DEMO2024',
           balance: "1000.00",
           totalWinnings: "0.00",
           referralBonus: "0.00",
-          referralCount: 5,
+          referralCount: 0,
           language: "he",
+          phoneNumber: null,
+          isAdmin: false,
+          isBlocked: false,
+          smsNotifications: true
         };
-      }
 
-      const user = await storage.upsertUser(userData as any);
+        const user = await storage.upsertUser(userData as any);
+        
+        (req.session as any).user = {
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          isAdmin: false
+        };
+        
+        return res.json({ user: { ...user, isAdmin: false } });
+      }
       
-      (req.session as any).user = {
-        claims: {
-          sub: user.id,
-          email: user.email,
-          first_name: user.firstName,
-          last_name: user.lastName,
-        },
-        isAdmin: type === 'admin'
-      };
-      
-      res.json({ user: { ...user, isAdmin: type === 'admin' } });
+      // Invalid credentials
+      res.status(401).json({ message: "Email ou mot de passe incorrect" });
     } catch (error) {
       console.error("Login error:", error);
-      res.status(500).json({ message: "Login failed" });
+      res.status(500).json({ message: "Erreur de connexion" });
     }
   });
 
