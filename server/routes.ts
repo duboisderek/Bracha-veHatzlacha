@@ -160,6 +160,9 @@ const globalCredentials: Record<string, { password: string; userId: string }> = 
     'testuser@test.com': { password: 'test123', userId: 'testuser_test_com' },
     'client8hxb9u@brachavehatzlacha.com': { password: 'client123', userId: 'client_8hxb9u' },
     
+    // Real production client
+    'client.real@brachavehatzlacha.com': { password: 'ClientReal2025!', userId: 'user_1750160494039_i244sdrz7' },
+    
     // Blocked user (for testing)
     'blocked@brachavehatzlacha.com': { password: 'blocked123', userId: 'client_blocked_test' }
   };

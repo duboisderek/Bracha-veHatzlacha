@@ -1,0 +1,56 @@
+# 🚀 DEMANDE : Reprise complète du système — Vérification réelle, correction et preuve de fonctionnement
+
+## 🎯 Objectif
+Je demande une **reprise complète et une vérification réelle** du projet.  
+👉 **Les accès annoncés fonctionnels (ex : `client.real@brachavehatzlacha.com / ClientReal2025!`) ne permettent pas de se connecter.**
+👉 Il faut **reprendre tout le système sans aucune exception** : du login au logout, en conditions réelles.
+
+---
+
+## ✅ Ce que je demande
+
+### 🔐 Accès réel et fonctionnel
+- Créer un **compte client réel et fonctionnel**  
+- Créer un **compte admin réel et fonctionnel**  
+- **Tester concrètement la connexion sur l’interface `/login` ou équivalent**  
+- **Me fournir ces accès uniquement après vérification réelle**  
+
+---
+
+### 🔍 Retest complet en conditions réelles
+➡ Refais **tous les tests nécessaires**, étape par étape :  
+- Connexion client : login valide sur l’interface réelle  
+- Connexion admin : login valide sur l’interface réelle  
+- Workflow client complet :
+  - Connexion → choix des numéros → achat ticket → visualisation ticket → historique → logout  
+- Workflow admin complet :
+  - Connexion → gestion clients → gestion tirages → gestion transactions → logout  
+- Achat de ticket : grille fonctionnelle, choix des numéros, ticket généré avec ID, solde mis à jour  
+- Routes : toutes les routes publiques, client, admin sont testées et protégées  
+- Logout : supprime bien la session, redirige correctement  
+
+---
+
+### 🛠️ Résultats attendus
+✅ Code propre, testé, corrigé  
+✅ Accès client et admin valides et **réellement fonctionnels sur l’interface**  
+✅ **Preuve du fonctionnement réel** : capture d’écran ou log montrant la connexion réussie  
+✅ Rapport clair : ce qui a été testé, ce qui a été corrigé  
+✅ Projet prêt à déployer réellement  
+
+---
+
+## ⚠️ Remarques
+🚫 **Aucun compte démo ne doit exister ni être utilisé**  
+🚫 **Aucun accès ne doit être communiqué sans test réel et preuve**  
+🚫 **Aucune étape ne doit être supposée : tout doit être testé réellement sur l’interface finale**
+
+---
+
+## 🌍 Langues
+Application : multilingue (FR / EN / HE avec RTL)
+
+---
+
+## 💬 Langue Replit Agent
+Français  
