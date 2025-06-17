@@ -198,12 +198,7 @@ export default function Login() {
             </div>
             
             <div className="text-center text-xs text-gray-500">
-              {t("adminAccess")}{" "}
-              <Link href="/admin-login">
-                <span className="text-purple-600 hover:underline cursor-pointer">
-                  {t("adminLogin")}
-                </span>
-              </Link>
+              <span className="opacity-60">Accès administrateur via URL directe</span>
             </div>
           </CardFooter>
         </Card>

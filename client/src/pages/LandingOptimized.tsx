@@ -227,7 +227,7 @@ const Landing = memo(() => {
                 <div className="grid gap-4">
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button
-                      onClick={() => window.location.href = '/client-auth'}
+                      onClick={() => window.location.href = '/login'}
                       size="lg"
                       className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-8 rounded-xl shadow-2xl text-lg transition-all duration-200"
                     >

@@ -18,17 +18,20 @@ export function Header() {
         credentials: "include",
       });
       
-      if (response.ok) {
-        // Clear any local storage
-        localStorage.clear();
-        // Force reload to clear all state and redirect to home
-        window.location.href = "/";
-        window.location.reload();
-      }
+      // Clear all local storage and session data
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Clear React Query cache to force fresh data fetch
+      window.location.href = "/";
+      window.location.reload();
     } catch (error) {
       console.error("Logout error:", error);
-      // Force redirect even if logout fails
+      // Force complete cleanup even if server logout fails
+      localStorage.clear();
+      sessionStorage.clear();
       window.location.href = "/";
+      window.location.reload();
     }
   };
 

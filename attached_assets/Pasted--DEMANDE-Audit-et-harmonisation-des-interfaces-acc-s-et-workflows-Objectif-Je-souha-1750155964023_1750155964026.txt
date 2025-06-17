@@ -1,0 +1,55 @@
+# 🚀 DEMANDE : Audit et harmonisation des interfaces, accès et workflows
+
+## 🎯 Objectif
+Je souhaite que tu réalises une **revérification complète et un audit spécifique** des points suivants, avec corrections :  
+
+---
+
+## 🔍 Points à vérifier et corriger
+
+✅ **Barre de navigation / header sur page d’accueil :**
+- Vérifier et corriger l’affichage :  
+  - Un visiteur (non connecté) ne doit voir que les options publiques (ex : Home, Login/Register)
+  - Aucun affichage de : Personal Area, Chat & Support, Current Balance, Logout
+  - Les boutons comme "Client", "Logout", "Current Balance" doivent disparaître quand aucun login n’a été fait
+
+---
+
+✅ **Workflows de connexion :**
+- S’assurer qu’il existe **une seule page de connexion client** (même design, même logique)  
+- Que le bouton **Client Login** et le bouton **Start Playing Now** redirigent vers **cette même page unique**
+- Harmoniser le design et l’expérience utilisateur pour la connexion client  
+- S’assurer que l’admin a sa propre page de connexion séparée et cohérente  
+
+---
+
+✅ **Redirections / logout / session**
+- Vérifier que le logout nettoie bien la session et redirige vers la bonne page publique  
+- Aucun élément d’interface privée ne doit rester visible après déconnexion  
+- Vérifier que les redirections après connexion / déconnexion sont cohérentes  
+
+---
+
+✅ **Cohérence des routes**
+- Routes admin strictement réservées aux admins authentifiés  
+- Routes client strictement réservées aux clients authentifiés  
+- Pages publiques accessibles sans fuite d’information privée  
+
+---
+
+## 🌍 Langues
+Application : multilingue (FR / EN / HE + RTL)  
+
+---
+
+## 💬 Langue Replit Agent
+Français  
+
+---
+
+## ⚠️ Résultat attendu
+👉 Interface propre et logique selon le rôle et le statut connexion  
+👉 Pages de connexion unifiées et harmonisées pour les clients  
+👉 Workflow clair et cohérent du login au logout  
+👉 Résumé clair des corrections effectuées  
+👉 Code final prêt pour production  
