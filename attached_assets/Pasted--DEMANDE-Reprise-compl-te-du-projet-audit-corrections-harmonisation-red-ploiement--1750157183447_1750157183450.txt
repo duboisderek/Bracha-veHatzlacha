@@ -1,0 +1,64 @@
+# 🚀 DEMANDE : Reprise complète du projet, audit, corrections, harmonisation, redéploiement
+
+## 🎯 Objectif
+Je souhaite que tu reprennes **tout le système depuis le début** afin de :  
+
+✅ Refaire **tous les tests complets** :  
+- Fonctionnalités (tirages, achats tickets, transactions, CRM admin)  
+- Workflows client (inscription, connexion, achat, suivi, déconnexion)  
+- Workflows admin (gestion utilisateurs, tirages, transactions, statistiques)  
+- Sécurité (authentification, protection des routes, sessions, logout)  
+- Multilingue (FR / EN / HE + RTL)  
+
+✅ Identifier et corriger :  
+- **Toutes les incohérences** (UI/UX, workflows, routes)  
+- **Toutes les pages manquantes ou non fonctionnelles**  
+- **Les différences de design ou logique entre pages de même fonction**  
+- **Les redirections ou boutons incorrects**  
+
+✅ Harmoniser :  
+- Interface client (même design sur toutes les pages de même type)  
+- Interface admin  
+- Navigation et menus selon rôle  
+
+✅ Générer et me fournir :  
+- **Codes d’accès admin final** (login + mot de passe)  
+- **Codes d’accès client final** (login + mot de passe)  
+
+✅ Effectuer :  
+- Le **redéploiement complet** du système fonctionnel  
+- Me confirmer que le projet est prêt pour mise en production réelle  
+
+---
+
+## 🛠️ Exigences techniques
+👉 Les tests doivent couvrir :  
+- Tous les endpoints API  
+- Toutes les routes frontend  
+- Toutes les pages et composants  
+- Tous les boutons / menus / liens / actions  
+
+👉 Les corrections doivent :  
+- Garantir un code **propre, cohérent et sécurisé**  
+- Fournir un **workflow logique et harmonieux** du début à la fin  
+
+👉 Le redéploiement doit :  
+- Mettre en ligne une version **100 % fonctionnelle et prête pour production**  
+
+---
+
+## 🌍 Langues
+Application : multilingue (FR / EN / HE + RTL)  
+
+---
+
+## 💬 Langue Replit Agent
+Français  
+
+---
+
+## 📤 Résultat attendu
+- Code corrigé, finalisé, prêt pour production  
+- Accès admin et client fournis  
+- Documentation claire des accès + changements réalisés  
+- Application redéployée avec succès  
