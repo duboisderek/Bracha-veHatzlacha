@@ -381,6 +381,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = `user_${timestamp}_${randomId}`;
       const referralCode = (firstName.substring(0, 3) + lastName.substring(0, 3) + Math.floor(Math.random() * 1000)).toUpperCase();
       
+      // Store credentials for authentication
+      globalCredentials[email] = {
+        password: password,
+        userId: userId
+      };
+
       const userData = {
         id: userId,
         email: email,
