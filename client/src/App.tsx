@@ -17,6 +17,7 @@ import ChatSupport from "@/pages/ChatSupport";
 import Admin from "@/pages/AdminCleanMultilingual";
 import HebrewTestPage from "@/pages/HebrewTestPage";
 import { Header } from "@/components/layout/Header";
+import { PublicHeader } from "@/components/layout/PublicHeader";
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -34,7 +35,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen">
-      {isAuthenticated && <Header />}
+      {isAuthenticated ? <Header /> : <PublicHeader />}
       <Switch>
         {/* Public routes - accessible to everyone */}
         <Route path="/" component={Landing} />
