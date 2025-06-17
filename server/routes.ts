@@ -231,39 +231,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email et mot de passe requis" });
       }
       
-      // Production admin credentials
-      if (email === 'admin@brachavehatzlacha.com' && password === 'AdminBVH2025!') {
-        const adminData = {
-          id: 'admin_bracha_vehatzlacha',
-          email: 'admin@brachavehatzlacha.com',
-          firstName: 'Admin',
-          lastName: 'BrachaVeHatzlacha',
-          profileImageUrl: null,
-          referralCode: 'ADMIN001',
-          balance: "50000.00",
-          totalWinnings: "0.00",
-          referralBonus: "0.00",
-          referralCount: 0,
-          language: "fr",
-          phoneNumber: null,
-          isAdmin: true,
-          isBlocked: false,
-          smsNotifications: true
-        };
+      // Check admin credentials from global store
+      if (globalCredentials[email] && globalCredentials[email].password === password) {
+        const user = await storage.getUser(globalCredentials[email].userId);
         
-        const admin = await storage.upsertUser(adminData as any);
+        if (!user || !user.isAdmin) {
+          return res.status(401).json({ message: "Accès administrateur refusé" });
+        }
         
         (req.session as any).user = {
           claims: {
-            sub: admin.id,
-            email: admin.email,
-            first_name: admin.firstName,
-            last_name: admin.lastName,
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
           },
-          isAdmin: true
+          isAdmin: true,
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          balance: user.balance,
+          language: user.language
         };
         
-        res.json({ user: { ...admin, isAdmin: true } });
+        res.json({ user });
       } else {
         res.status(401).json({ message: "Identifiants administrateur incorrects" });
       }
