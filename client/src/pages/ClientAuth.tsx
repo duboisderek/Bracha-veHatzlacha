@@ -50,7 +50,12 @@ export default function ClientAuth() {
       if (response.ok) {
         const userData = await response.json();
         if (!userData.user.isAdmin) {
-          window.location.href = '/';
+          toast({
+            title: "Connexion réussie",
+            description: `Bienvenue ${userData.user.firstName}!`,
+          });
+          // Redirection vers l'interface client
+          window.location.href = '/home';
         } else {
           toast({
             title: "Erreur",

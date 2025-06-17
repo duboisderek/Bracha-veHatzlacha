@@ -163,6 +163,9 @@ const globalCredentials: Record<string, { password: string; userId: string }> = 
     // Real production client
     'client.real@brachavehatzlacha.com': { password: 'ClientReal2025!', userId: 'user_1750160494039_i244sdrz7' },
     
+    // Synchronized client
+    'client.sync@brachavehatzlacha.com': { password: 'ClientSync2025!', userId: 'client_sync_2025' },
+    
     // Blocked user (for testing)
     'blocked@brachavehatzlacha.com': { password: 'blocked123', userId: 'client_blocked_test' }
   };

@@ -1,0 +1,64 @@
+# 🚀 DEMANDE : Reprise complète du système — Synchronisation totale + correction des bugs persistants
+
+## 🎯 Objectif
+Je demande que tu réalises une **reprise complète et une synchronisation totale du système** car :  
+⚠ Des **bugs persistants sont toujours présents** malgré les précédentes corrections.  
+⚠ Le système n’est pas entièrement cohérent entre interfaces, API, base de données et workflows.
+
+---
+
+## ✅ Ce que je demande
+
+### 🔄 Synchronisation complète
+➡ Synchroniser :  
+- **Interface client** : routes, menus, workflows, affichage  
+- **Interface admin** : routes, menus, workflows, affichage  
+- **Base de données** : utilisateurs, tickets, tirages, transactions — cohérence des données avec les interfaces  
+- **API** : endpoints alignés avec la logique du frontend et la BDD  
+- **Sécurité** : sessions, authentifications, protections des routes  
+- **Multilingue** : cohérence sur toutes les pages et interfaces  
+
+---
+
+### 🔍 Retest complet en conditions réelles
+➡ Effectuer un **retest complet** après synchronisation :  
+- Connexion client + admin sur interface réelle  
+- Workflows complets client : connexion → choix numéros → achat ticket → visualisation → historique → logout  
+- Workflows complets admin : connexion → gestion clients → gestion tirages → gestion transactions → statistiques → logout  
+- Achat ticket : fonctionnement complet, solde mis à jour, ticket généré  
+- Redirections et logout : nettoyage des sessions + retour page publique  
+- Vérifier que la base de données reflète bien les actions effectuées  
+
+---
+
+### 🔐 Accès réel
+✅ Générer des **accès client et admin valides et fonctionnels**  
+✅ Les **tester concrètement sur l’interface finale**  
+✅ Me fournir les accès seulement après validation réelle  
+✅ Joindre une **preuve du bon fonctionnement** (capture ou log de connexion réussie)
+
+---
+
+## ⚠️ Contraintes
+🚫 Aucun compte démo  
+🚫 Aucun accès fourni sans test réel  
+🚫 Aucun workflow supposé : tout doit être réellement testé  
+🚫 Aucun décalage interface ↔ API ↔ BDD  
+
+---
+
+## 📤 Résultat attendu
+- Système synchronisé, propre, harmonisé  
+- Accès fonctionnels fournis (login + mot de passe client/admin valides)  
+- Rapport clair des actions et corrections  
+- Projet prêt pour production réelle  
+
+---
+
+## 🌍 Langues
+Application : multilingue (FR / EN / HE + RTL)
+
+---
+
+## 💬 Langue Replit Agent
+Français  
