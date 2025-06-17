@@ -420,13 +420,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { email, password } = req.body;
       
+      console.log('Login attempt:', { email, password });
+      
       // Validate input
       if (!email || !password) {
         return res.status(400).json({ message: "Email et mot de passe requis" });
       }
       
       // Client credentials - exact match required
-      if (email === 'client@brachavehatzlacha.com' && password === 'Client2025!') {
+      if (email === 'client@brachavehatzlacha.com' && password === 'client123') {
+        console.log('Client login successful');
+        const userData = {
+          id: 'client_production_bracha_vehatzlacha',
+          email: 'client@brachavehatzlacha.com',
+          firstName: 'Client',
+          lastName: 'Production',
+          profileImageUrl: null,
+          referralCode: 'CLIENT01',
+          balance: "1500.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 0,
+          language: "fr",
+          phoneNumber: null,
+          isAdmin: false,
+          isBlocked: false,
+          smsNotifications: true
+        };
+
+        const user = await storage.upsertUser(userData as any);
+        
+        (req.session as any).user = {
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          isAdmin: false,
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        };
+        
+        return res.json({ user: { ...user, isAdmin: false } });
+      }
+      
+      if (email === 'demo@brachavehatzlacha.com' && password === 'demo123') {
+        console.log('Demo login successful');
+        const userData = {
+          id: 'demo_client_bracha_vehatzlacha',
+          email: 'demo@brachavehatzlacha.com',
+          firstName: 'Demo',
+          lastName: 'Client',
+          profileImageUrl: null,
+          referralCode: 'DEMO2024',
+          balance: "1000.00",
+          totalWinnings: "0.00",
+          referralBonus: "0.00",
+          referralCount: 0,
+          language: "he",
+          phoneNumber: null,
+          isAdmin: false,
+          isBlocked: false,
+          smsNotifications: true
+        };
+
+        const user = await storage.upsertUser(userData as any);
+        
+        (req.session as any).user = {
+          claims: {
+            sub: user.id,
+            email: user.email,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          },
+          isAdmin: false,
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        };
+        
+        return res.json({ user: { ...user, isAdmin: false } });
+      }
+      
+      console.log('Invalid credentials provided');
+      res.status(401).json({ message: "Email ou mot de passe incorrect" });
+    } catch (error) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Erreur de connexion" });
+    }
+  });
+
+  // Client credentials endpoint for easy login
+  app.post('/api/auth/client-login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      // Primary client account
+      if (email === 'client@brachavehatzlacha.com' && password === 'client123') {
         const userData = {
           id: 'client_production_bracha_vehatzlacha',
           email: 'client@brachavehatzlacha.com',
@@ -460,45 +554,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json({ user: { ...user, isAdmin: false } });
       }
       
-      if (email === 'demo@brachavehatzlacha.com' && password === 'demo123') {
-        const userData = {
-          id: 'demo_client_bracha_vehatzlacha',
-          email: 'demo@brachavehatzlacha.com',
-          firstName: 'Demo',
-          lastName: 'Client',
-          profileImageUrl: null,
-          referralCode: 'DEMO2024',
-          balance: "1000.00",
-          totalWinnings: "0.00",
-          referralBonus: "0.00",
-          referralCount: 0,
-          language: "he",
-          phoneNumber: null,
-          isAdmin: false,
-          isBlocked: false,
-          smsNotifications: true
-        };
-
-        const user = await storage.upsertUser(userData as any);
-        
-        (req.session as any).user = {
-          claims: {
-            sub: user.id,
-            email: user.email,
-            first_name: user.firstName,
-            last_name: user.lastName,
-          },
-          isAdmin: false
-        };
-        
-        return res.json({ user: { ...user, isAdmin: false } });
-      }
-      
-      // Invalid credentials
-      res.status(401).json({ message: "Email ou mot de passe incorrect" });
+      res.status(401).json({ message: "Credentials incorrects" });
     } catch (error) {
-      console.error("Login error:", error);
-      res.status(500).json({ message: "Erreur de connexion" });
+      console.error("Client login error:", error);
+      res.status(500).json({ message: "Erreur de connexion client" });
     }
   });
 

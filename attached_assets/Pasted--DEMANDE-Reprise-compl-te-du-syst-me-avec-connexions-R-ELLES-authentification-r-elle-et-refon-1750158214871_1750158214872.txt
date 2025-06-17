@@ -1,0 +1,71 @@
+# 🚀 DEMANDE : Reprise complète du système avec connexions RÉELLES, authentification réelle et refonte des accès
+
+## 🎯 Objectif
+Je souhaite une **reprise complète et sécurisée** du projet dès le début.  
+👉 **Aucun compte démo ne doit être utilisé ni généré, que ce soit pour client ou admin.**  
+👉 **Uniquement des comptes réels avec authentification complète, exactement comme en production.**
+
+---
+
+## ✅ Ce que je demande
+
+### 🔐 **Accès & authentification**
+- Mettre en place un système de **connexion réelle pour les clients** : email + mot de passe réel (testé et fonctionnel)  
+- Mettre en place un système de **connexion réelle pour l’admin** : email + mot de passe réel (testé et fonctionnel)  
+- Fournir des accès réels validés :  
+  - Un compte admin actif (avec login/mot de passe)  
+  - Un ou plusieurs comptes client actifs (avec login/mot de passe)  
+
+---
+
+### 🌟 **Vérification complète du début à la fin**
+- Vérifier et corriger toutes les routes :  
+  - Les routes publiques  
+  - Les routes client protégées (accessibles uniquement après connexion réelle)  
+  - Les routes admin protégées (accessibles uniquement après connexion réelle)
+  
+- Vérifier et corriger tous les workflows :  
+  - Workflow client : connexion → choix numéros → achat ticket → visualisation ticket → historique → logout  
+  - Workflow admin : connexion → gestion clients → gestion tirages → gestion transactions → statistiques → logout  
+
+- Vérifier et corriger toutes les redirections :  
+  - Aucun accès admin possible sans login admin réel  
+  - Aucun accès client possible sans login client réel  
+  - Les boutons `Client Login`, `Start Playing Now`, etc. mènent tous au bon formulaire réel de connexion  
+  - Le **Logout** supprime bien la session et redirige vers la page publique
+
+---
+
+### 🎫 **Fonctionnalités client**
+- Grille de numéros (1-37) fonctionnelle pour choix des numéros  
+- Achat de ticket (avec prix correct : 10₪ par ticket standard, 100₪ si option VIP)  
+- Génération d’un ticket avec ID unique  
+- Visualisation des tickets actifs + historique  
+
+---
+
+### 🛠️ **Autres points**
+- S’assurer qu’aucune page, fonctionnalité ou route ne manque  
+- Créer les pages manquantes si nécessaire  
+- Harmoniser les designs des pages de connexion / espace client / espace admin  
+- Tester en conditions réelles tout le parcours client et admin  
+- Préparer pour redéploiement complet du système  
+
+---
+
+## 🌍 Langues
+Application : multilingue (Français / Anglais / Hébreu avec RTL)
+
+---
+
+## 💬 Langue Replit Agent
+Français  
+
+---
+
+## 📤 Résultat attendu
+✅ Code propre, sécurisé, sans compte démo  
+✅ Accès client et admin valides et testés  
+✅ Interface et workflows harmonisés et cohérents  
+✅ Application prête pour redéploiement réel en production  
+✅ Rapport des actions réalisées et des corrections apportées  
