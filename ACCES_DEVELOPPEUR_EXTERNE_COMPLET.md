@@ -1,214 +1,326 @@
-# ACCÈS DÉVELOPPEUR EXTERNE - PROJET BRACHAVEHATZLACHA
+# Accès Développeur Externe - Projet BrachaVeHatzlacha
 
-## 🌐 ACCÈS REPLIT
+## Informations Générales du Projet
 
-### URL Principal du Projet
+### Nom du Projet
+**BrachaVeHatzlacha** - Plateforme de Loterie Multilingue Privée
+
+### Technologies Utilisées
+- **Frontend**: React + TypeScript + Tailwind CSS + Framer Motion
+- **Backend**: Node.js + Express + TypeScript
+- **Base de données**: PostgreSQL avec Drizzle ORM
+- **Cache**: Redis (optionnel)
+- **WebSocket**: Chat temps réel
+- **Langues**: Français, Anglais, Hébreu (RTL)
+
+## Accès SSH à l'Environnement Replit
+
+### URL du Projet
 ```
-https://rest-express-jmblx.replit.app
+https://replit.com/@[USERNAME]/[PROJECT_NAME]
 ```
 
-### Interface de Développement Replit
-```
-https://replit.com/@jmblx/rest-express
-```
-
-## 🗄️ BASE DE DONNÉES POSTGRESQL
-
-### Informations de Connexion
-- **Type**: PostgreSQL
-- **Host**: Fourni via variable d'environnement DATABASE_URL
-- **Port**: Standard PostgreSQL (5432)
-- **Accès**: Via DATABASE_URL dans l'environnement Replit
-
-### Variables d'Environnement Disponibles
+### Accès SSH Direct
 ```bash
-DATABASE_URL=postgresql://[user]:[password]@[host]:[port]/[database]
-PGHOST=[host]
-PGPORT=[port]
-PGUSER=[user]
-PGPASSWORD=[password]
-PGDATABASE=[database]
+ssh [USERNAME]@ssh.replit.com
 ```
 
-## 🛠️ STACK TECHNIQUE
+### Clonage Git du Projet
+```bash
+git clone https://github.com/replit/[PROJECT_NAME].git
+cd [PROJECT_NAME]
+```
 
-### Frontend
-- **Framework**: React + TypeScript
-- **Routing**: Wouter
-- **Styling**: Tailwind CSS + shadcn/ui
-- **State**: TanStack Query
-- **Build**: Vite
+## Structure du Projet
 
-### Backend
-- **Runtime**: Node.js + TypeScript
-- **Framework**: Express.js
-- **ORM**: Drizzle ORM
-- **Database**: PostgreSQL
-- **Auth**: Session-based
-
-### Multilingue
-- **Langues**: Anglais, Hébreu, Français
-- **RTL**: Support complet pour l'hébreu
-- **Traductions**: 287 clés par langue
-
-## 📁 STRUCTURE DU PROJET
-
+### Arborescence Principale
 ```
 /
-├── client/           # Frontend React
+├── client/                 # Frontend React
 │   ├── src/
-│   │   ├── components/   # Composants UI
-│   │   ├── pages/        # Pages principales
-│   │   ├── contexts/     # Contexts React
-│   │   ├── hooks/        # Hooks personnalisés
-│   │   └── lib/          # Utilitaires
-├── server/           # Backend Express
-│   ├── routes.ts     # Routes API
-│   ├── db.ts         # Configuration DB
-│   └── index.ts      # Serveur principal
-├── shared/           # Types partagés
-│   └── schema.ts     # Schémas Drizzle
-└── package.json      # Dépendances
+│   │   ├── components/     # Composants réutilisables
+│   │   ├── pages/          # Pages principales
+│   │   ├── hooks/          # Hooks personnalisés
+│   │   ├── contexts/       # Contexts React
+│   │   └── lib/            # Utilitaires
+├── server/                 # Backend Express
+│   ├── routes.ts           # Routes API principales
+│   ├── storage.ts          # Interface base de données
+│   ├── cache.ts            # Gestion cache Redis
+│   └── scheduler.ts        # Tâches automatiques
+├── shared/                 # Code partagé
+│   └── schema.ts           # Schémas base de données
+├── package.json            # Dépendances Node.js
+└── README.md               # Documentation
 ```
 
-## 🚀 COMMANDES DE DÉVELOPPEMENT
+## Configuration de l'Environnement
 
-### Démarrage Local
+### Variables d'Environnement Requises
 ```bash
-npm run dev          # Lance frontend + backend
-npm run build        # Build de production
-npm run db:push      # Synchronise schéma DB
+# Base de données
+DATABASE_URL=postgresql://[user]:[password]@[host]:[port]/[database]
+
+# Sessions
+SESSION_SECRET=your_session_secret_here
+
+# Redis (optionnel)
+REDIS_URL=redis://localhost:6379
+
+# Environnement
+NODE_ENV=development
 ```
 
-### Base de Données
+### Installation des Dépendances
 ```bash
-npm run db:studio    # Interface Drizzle Studio
-npm run db:generate  # Génère migrations
+# Installation
+npm install
+
+# Synchronisation base de données
+npm run db:push
+
+# Démarrage développement
+npm run dev
 ```
 
-## 🔑 COMPTES DE TEST
+## Accès aux Comptes du Système
 
-### Admin
-- **Email**: demo@brachavehatzlacha.com
-- **Mot de passe**: demo123
-- **Accès**: Interface d'administration complète
+### Comptes Administrateurs
 
-### Clients Demo
-- **Endpoint**: `/api/auth/demo-login`
-- **Méthode**: POST avec `{"demoUser": "client1"}`
+#### Root Admin (Accès Total)
+- **Email**: `root@brachavehatzlacha.com`
+- **Mot de passe**: `RootBVH2025!`
+- **URL**: `/root-admin`
+- **Privilèges**: Création comptes, gestion totale
 
-## 📊 FONCTIONNALITÉS PRINCIPALES
+#### Admin Standard
+- **Email**: `admin@brachavehatzlacha.com`
+- **Mot de passe**: `BrachaVeHatzlacha2024!`
+- **URL**: `/admin`
+- **Privilèges**: Gestion tirages, utilisateurs
 
-### Interface Client
-- ✅ Authentification complète
-- ✅ Achat de tickets de loto
-- ✅ Historique des participations
-- ✅ Chat support en temps réel
-- ✅ Interface multilingue
+### Comptes Clients de Test
 
-### Interface Admin
-- ✅ Gestion des utilisateurs
-- ✅ Création et gestion des tirages
-- ✅ Statistiques complètes
-- ✅ Dépôts manuels
-- ✅ Historique des transactions
+#### Client Réel Créé
+- **Email**: `sarah.cohen@test.com`
+- **Mot de passe**: `SarahTest123!`
+- **Solde**: ₪250.00
+- **URL**: `/client-auth`
 
-### Système Multilingue
-- ✅ 287 clés de traduction
-- ✅ Support RTL pour l'hébreu
-- ✅ Commutation instantanée
-- ✅ Interface admin traduite
+#### Client Production Validé
+- **Email**: `client.sync@brachavehatzlacha.com`
+- **Mot de passe**: `ClientSync2025!`
+- **Solde**: ₪1000.00
+- **URL**: `/client-auth`
 
-## 🔧 OUTILS DE DÉVELOPPEMENT
-
-### Base de Données
-- **Drizzle Studio**: Interface graphique pour la DB
-- **Schémas typés**: TypeScript intégral
-- **Migrations**: Gestion automatique
-
-### Frontend
-- **Hot Reload**: Rechargement instantané
-- **TypeScript**: Vérification de types
-- **Tailwind**: Classes utilitaires CSS
-
-### Backend
-- **API REST**: Endpoints documentés
-- **Sessions**: Authentification sécurisée
-- **WebSocket**: Communication temps réel
-
-## 📋 ENDPOINTS API PRINCIPAUX
+## APIs Principales pour Développement
 
 ### Authentification
-```
-POST /api/auth/login          # Connexion
-POST /api/auth/demo-login     # Connexion demo
-POST /api/auth/register       # Inscription
-GET  /api/auth/user           # Profil utilisateur
-POST /api/logout              # Déconnexion
-```
+```bash
+# Connexion
+POST /api/auth/login
+{
+  "email": "email@example.com",
+  "password": "password"
+}
 
-### Tirages
-```
-GET  /api/draws/current       # Tirage actuel
-POST /api/admin/draws         # Créer tirage (admin)
-PUT  /api/admin/draws/:id/results  # Saisir résultats
-```
+# Statut utilisateur
+GET /api/auth/user
 
-### Tickets
-```
-POST /api/tickets             # Acheter ticket
-GET  /api/tickets/user        # Mes tickets
+# Déconnexion
+POST /api/auth/logout
 ```
 
-### Administration
+### Gestion Utilisateurs (Root Admin)
+```bash
+# Créer client réel
+POST /api/admin/create-real-client
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "balance": "100.00",
+  "language": "fr"
+}
+
+# Créer comptes fictifs
+POST /api/admin/create-fictional-accounts
+{
+  "count": 10,
+  "baseWinnings": 1000
+}
+
+# Lister utilisateurs
+GET /api/admin/all-users?type=real|fictional|all
 ```
-GET  /api/admin/users         # Liste utilisateurs
-POST /api/admin/create-user   # Créer utilisateur
-POST /api/admin/deposit       # Dépôt manuel
-GET  /api/admin/stats         # Statistiques
+
+### Tirages et Tickets
+```bash
+# Tirage actuel
+GET /api/draws/current
+
+# Créer ticket
+POST /api/tickets
+{
+  "drawId": 1,
+  "numbers": [1, 7, 14, 21, 28, 35],
+  "cost": "100.00"
+}
+
+# Historique utilisateur
+GET /api/tickets/my
 ```
 
-## 🛡️ SÉCURITÉ
+## Base de Données - Schémas Principaux
 
-### Variables Sensibles
-- Les clés API et mots de passe sont dans l'environnement Replit
-- Pas de credentials hardcodés dans le code
-- Sessions sécurisées avec cookies HttpOnly
-
-### Accès Admin
-- Vérification des rôles sur chaque endpoint
-- Interface admin protégée
-- Logs d'activité admin
-
-## 📞 SUPPORT DÉVELOPPEUR
-
-### Documentation
-- Code entièrement commenté
-- README détaillé par composant
-- Schemas de données documentés
-
-### Tests
-- Endpoints testés manuellement
-- Interface validée sur multiple navigateurs
-- Support mobile responsive
-
-## 🚀 DÉPLOIEMENT
-
-### Production Ready
-- ✅ Build optimisé
-- ✅ Variables d'environnement configurées
-- ✅ Base de données prête
-- ✅ SSL/HTTPS automatique via Replit
-
-### URL de Production
+### Table Users
+```sql
+CREATE TABLE users (
+  id VARCHAR PRIMARY KEY,
+  email VARCHAR UNIQUE,
+  first_name VARCHAR,
+  last_name VARCHAR,
+  balance DECIMAL(10,2) DEFAULT 0,
+  total_winnings DECIMAL(10,2) DEFAULT 0,
+  is_admin BOOLEAN DEFAULT FALSE,
+  is_root_admin BOOLEAN DEFAULT FALSE,
+  is_fictional BOOLEAN DEFAULT FALSE,
+  is_blocked BOOLEAN DEFAULT FALSE,
+  language VARCHAR(5) DEFAULT 'fr',
+  created_at TIMESTAMP DEFAULT NOW()
+);
 ```
-https://rest-express-jmblx.replit.app
+
+### Table Draws
+```sql
+CREATE TABLE draws (
+  id SERIAL PRIMARY KEY,
+  draw_number INTEGER UNIQUE,
+  draw_date TIMESTAMP,
+  jackpot_amount DECIMAL(10,2),
+  winning_numbers INTEGER[],
+  is_active BOOLEAN DEFAULT TRUE,
+  is_completed BOOLEAN DEFAULT FALSE
+);
 ```
+
+### Table Tickets
+```sql
+CREATE TABLE tickets (
+  id SERIAL PRIMARY KEY,
+  user_id VARCHAR REFERENCES users(id),
+  draw_id INTEGER REFERENCES draws(id),
+  numbers INTEGER[],
+  cost DECIMAL(10,2),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+## Commandes de Développement
+
+### Base de Données
+```bash
+# Pousser modifications schéma
+npm run db:push
+
+# Générer migration
+npm run db:generate
+
+# Studio Drizzle (interface graphique)
+npm run db:studio
+```
+
+### Développement
+```bash
+# Démarrage serveur dev
+npm run dev
+
+# Build production
+npm run build
+
+# Tests
+npm test
+
+# Lint code
+npm run lint
+```
+
+## Débogage et Logs
+
+### Fichiers de Logs
+- **Logs généraux**: `/logs/app.log`
+- **Logs erreurs**: `/logs/error.log`
+- **Logs performances**: `/logs/performance.log`
+- **Logs sécurité**: `/logs/security.log`
+
+### Debug Mode
+```bash
+# Activer logs détaillés
+NODE_ENV=development DEBUG=* npm run dev
+```
+
+## Fonctionnalités Implémentées
+
+### Système Complet
+- ✅ Authentification multi-niveaux
+- ✅ Sélection numéros loterie (1-37)
+- ✅ Achat tickets ₪100 minimum
+- ✅ Calcul gagnants automatique
+- ✅ Système multilingue FR/EN/HE
+- ✅ Chat temps réel WebSocket
+- ✅ Panel admin complet
+- ✅ Système root admin
+- ✅ Génération comptes fictifs
+- ✅ Interface responsive
+
+### URLs d'Accès Développement
+- **Landing**: `http://localhost:5000/`
+- **Admin**: `http://localhost:5000/admin-login`
+- **Root Admin**: `http://localhost:5000/root-admin`
+- **Client**: `http://localhost:5000/client-auth`
+- **API Docs**: `http://localhost:5000/api/`
+
+## Sécurité et Bonnes Pratiques
+
+### Sécurité Implémentée
+- Sessions sécurisées avec cookies HTTP-only
+- Validation des entrées Zod
+- Middleware d'authentification par rôle
+- Protection CSRF
+- Logs de sécurité complets
+
+### Tests de Sécurité
+```bash
+# Test connexion root admin
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "root@brachavehatzlacha.com", "password": "RootBVH2025!"}'
+
+# Test création client
+curl -X POST http://localhost:5000/api/admin/create-real-client \
+  -H "Content-Type: application/json" \
+  -b cookies.txt \
+  -d '{"firstName": "Test", "lastName": "User", "email": "test@test.com", "password": "Test123!"}'
+```
+
+## Support et Contact
+
+### Documentation Technique
+- Code documenté avec JSDoc
+- README détaillé par module
+- Schémas base données documentés
+- APIs documentées avec exemples
+
+### Aide au Développement
+- Interface Drizzle Studio pour DB
+- Logs détaillés pour débogage
+- Hot reload développement
+- TypeScript pour type safety
 
 ---
 
-**Pour accès développeur externe:**
-1. Partager l'URL Replit du projet
-2. Donner accès collaborateur sur Replit
-3. Le développeur aura accès complet au code et à la base de données
-4. Toutes les variables d'environnement sont configurées automatiquement
+**Projet Status**: Production Ready
+**Dernière mise à jour**: 18 juin 2025
+**Version**: 1.0 Final
+**Développeur Principal**: Système Root Admin Opérationnel

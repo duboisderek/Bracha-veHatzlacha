@@ -1,204 +1,284 @@
-# ACCÈS SSH SERVEUR - PROJET BRACHAVEHATZLACHA
+# Accès SSH Serveur Replit - BrachaVeHatzlacha
 
-## 🔐 INFORMATIONS DE CONNEXION SSH
+## Informations de Connexion SSH
 
-### Serveur Replit
+### Détails du Serveur
+- **Propriétaire**: duboisderek7
+- **Projet**: workspace (BrachaVeHatzlacha)
+- **Environnement**: Production Ready
+
+### Commande SSH Directe
 ```bash
-Host: rest-express-jmblx.replit.dev
-Port: 22
-User: runner
+ssh duboisderek7@ssh.replit.com
 ```
 
-### Commande de Connexion
-```bash
-ssh runner@rest-express-jmblx.replit.dev
+### URL du Projet Replit
+```
+https://replit.com/@duboisderek7/workspace
 ```
 
-## 🌐 ACCÈS ALTERNATIVE
-
-### Via Interface Replit
-1. Accédez à : https://replit.com/@jmblx/rest-express
-2. Ouvrez l'onglet "Shell" pour un terminal direct
-3. Accès immédiat sans configuration SSH
-
-### Connexion VS Code Remote
+### Accès par Clé SSH (Recommandé)
 ```bash
-# Configuration .ssh/config
-Host replit-brachavehatzlacha
-    HostName rest-express-jmblx.replit.dev
-    User runner
-    Port 22
+# Générer clé SSH (si nécessaire)
+ssh-keygen -t rsa -b 4096 -C "developpeur@brachavehatzlacha.com"
+
+# Ajouter la clé publique dans Replit Settings > SSH Keys
+cat ~/.ssh/id_rsa.pub
+
+# Connexion avec clé
+ssh -i ~/.ssh/id_rsa duboisderek7@ssh.replit.com
 ```
 
-## 🖥️ DÉTAILS SERVEUR
+## Commandes Post-Connexion
 
-### Système
-- **OS**: Ubuntu Linux (Replit container)
-- **Architecture**: x86_64
-- **Runtime**: Node.js 20.x
-- **Package Manager**: npm
-
-### Ports Actifs
-- **5000**: Application principale (Express + Vite)
-- **22**: SSH daemon
-- **5432**: PostgreSQL (via tunnel)
-
-### Répertoires Importants
+### Démarrage Rapide
 ```bash
-/home/runner/rest-express/     # Projet principal
-├── client/                    # Frontend React
-├── server/                    # Backend Express
-├── shared/                    # Types partagés
-└── node_modules/             # Dépendances
+# Navigation vers le projet
+cd ~/workspace
+
+# Installation dépendances (si nécessaire)
+npm install
+
+# Synchronisation base de données
+npm run db:push
+
+# Démarrage serveur développement
+npm run dev
 ```
 
-## 🔧 CONFIGURATION ENVIRONNEMENT
-
-### Variables Disponibles
+### Vérification Système
 ```bash
-DATABASE_URL=postgresql://...   # Connexion DB auto-configurée
-REPL_SLUG=rest-express         # Nom du projet
-REPL_OWNER=jmblx              # Propriétaire
-PORT=5000                     # Port application
-NODE_ENV=development          # Mode développement
-```
+# Statut de l'application
+curl http://localhost:5000/api/auth/user
 
-### Services Actifs
-```bash
-# Vérifier les processus
-ps aux | grep node
+# Vérification base données
+npm run db:studio
 
 # Logs en temps réel
 tail -f logs/app.log
-
-# Status base de données
-npm run db:studio
 ```
 
-## 🛠️ COMMANDES UTILES SSH
+## Accès aux Comptes du Système
 
-### Navigation Projet
+### Root Administrator (Accès Total)
+```
+Email: root@brachavehatzlacha.com
+Mot de passe: RootBVH2025!
+URL: http://localhost:5000/root-admin
+```
+
+### Admin Standard
+```
+Email: admin@brachavehatzlacha.com
+Mot de passe: BrachaVeHatzlacha2024!
+URL: http://localhost:5000/admin
+```
+
+### Clients de Test
+```
+# Client Réel Créé
+Email: sarah.cohen@test.com
+Mot de passe: SarahTest123!
+Solde: ₪250.00
+
+# Client Production
+Email: client.sync@brachavehatzlacha.com
+Mot de passe: ClientSync2025!
+Solde: ₪1000.00
+```
+
+## Variables d'Environnement
+
+### Configuration Actuelle
 ```bash
-cd /home/runner/rest-express   # Répertoire projet
-ls -la                        # Fichiers du projet
-cat package.json              # Configuration npm
+# Base de données PostgreSQL (automatique Replit)
+DATABASE_URL=(automatiquement configuré)
+
+# Port d'écoute
+PORT=5000
+
+# Environnement
+NODE_ENV=development
 ```
 
-### Gestion Application
-```bash
-npm run dev                   # Lancer serveur dev
-npm run build                 # Build production
-npm install                   # Installer dépendances
+## Structure du Projet
+
+### Dossiers Principaux
+```
+~/workspace/
+├── client/               # Frontend React + TypeScript
+├── server/               # Backend Express + TypeScript
+├── shared/               # Schémas partagés (Drizzle)
+├── logs/                 # Fichiers de logs
+├── package.json          # Dépendances npm
+└── README.md             # Documentation
 ```
 
-### Base de Données
-```bash
-npm run db:push              # Synchroniser schéma
-npm run db:studio            # Interface graphique
+### Fichiers Critiques pour Développement
+```
+server/routes.ts          # Toutes les APIs
+shared/schema.ts          # Schémas base de données
+client/src/App.tsx        # Routage frontend
+client/src/pages/         # Pages principales
 ```
 
-### Logs et Debug
-```bash
-tail -f ~/.pm2/logs/app-out.log  # Logs application
-tail -f ~/.pm2/logs/app-error.log # Logs erreurs
-pm2 status                       # Status processus
-```
-
-## 🔐 SÉCURITÉ SSH
+## APIs Disponibles
 
 ### Authentification
-- **Clé publique**: Configurée automatiquement par Replit
-- **Password**: Non requis (clé SSH)
-- **Session**: Persistante pendant la durée de connexion
-
-### Permissions
 ```bash
-# Utilisateur runner a accès complet au projet
-sudo -l                      # Vérifier permissions sudo
-whoami                       # Confirmer utilisateur actuel
+POST /api/auth/login      # Connexion
+GET /api/auth/user        # Utilisateur connecté
+POST /api/auth/logout     # Déconnexion
 ```
 
-## 📡 TUNNELING ET FORWARDING
-
-### Port Forwarding Local
+### Root Admin (Gestion Avancée)
 ```bash
-# Depuis votre machine locale
-ssh -L 8080:localhost:5000 runner@rest-express-jmblx.replit.dev
-
-# Accès local : http://localhost:8080
+POST /api/admin/create-real-client        # Créer client réel
+POST /api/admin/create-fictional-accounts # Créer comptes fictifs
+GET /api/admin/all-users                  # Lister utilisateurs
 ```
 
-### Tunnel Base de Données
+### Système Loterie
 ```bash
-# Forward PostgreSQL
-ssh -L 5433:localhost:5432 runner@rest-express-jmblx.replit.dev
-
-# Connexion locale : postgresql://localhost:5433/database
+GET /api/draws/current    # Tirage actuel
+POST /api/tickets         # Acheter ticket
+GET /api/tickets/my       # Mes tickets
 ```
 
-## 🚀 WORKFLOW DÉVELOPPEMENT
+## Tests de Validation
 
-### Connexion et Setup
+### Test Connexion Root Admin
 ```bash
-# 1. Connexion SSH
-ssh runner@rest-express-jmblx.replit.dev
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "root@brachavehatzlacha.com", "password": "RootBVH2025!"}' \
+  -c cookies.txt
 
-# 2. Navigation projet
-cd /home/runner/rest-express
-
-# 3. Vérification état
-npm run dev
-
-# 4. Ouverture dans éditeur
-code . # Si VS Code remote configuré
+# Réponse attendue: {"user": {..., "isRootAdmin": true}}
 ```
 
-### Synchronisation Code
+### Test Création Client
 ```bash
-# Pull dernières modifications
-git pull origin main
-
-# Installer nouvelles dépendances
-npm install
-
-# Redémarrer application
-npm run dev
+curl -X POST http://localhost:5000/api/admin/create-real-client \
+  -H "Content-Type: application/json" \
+  -b cookies.txt \
+  -d '{
+    "firstName": "Nouveau",
+    "lastName": "Client",
+    "email": "nouveau@test.com",
+    "password": "Test123!",
+    "balance": "200.00",
+    "language": "fr"
+  }'
 ```
 
-## 📋 TROUBLESHOOTING
-
-### Problèmes Connexion
+### Test Interface Web
 ```bash
-# Test connectivité
-ping rest-express-jmblx.replit.dev
+# Lancement navigateur (si environnement graphique)
+open http://localhost:5000
 
-# Vérifier clés SSH
-ssh-keygen -l -f ~/.ssh/id_rsa.pub
-
-# Debug connexion
-ssh -v runner@rest-express-jmblx.replit.dev
+# Ou via curl pour tester
+curl http://localhost:5000/
 ```
 
-### Problèmes Application
-```bash
-# Vérifier processus
-ps aux | grep node
+## Base de Données
 
-# Nettoyer et redémarrer
-npm run clean
-npm install
-npm run dev
+### Connexion Drizzle Studio
+```bash
+# Interface graphique base de données
+npm run db:studio
+
+# Accès: http://localhost:5001
 ```
 
-### Problèmes Base de Données
-```bash
-# Test connexion DB
-npm run db:push
+### Tables Actuelles
+- **users**: Utilisateurs (réels/fictifs/admins)
+- **draws**: Tirages de loterie
+- **tickets**: Tickets achetés
+- **transactions**: Historique financier
+- **chat_messages**: Messages support
+- **referrals**: Système parrainage
 
-# Logs PostgreSQL
-sudo tail -f /var/log/postgresql/postgresql.log
+### Données Pré-chargées
+- 1 Root Admin opérationnel
+- 1 Admin standard validé
+- 2 Clients réels testés
+- 15 Comptes fictifs générés
+- 1 Tirage actif (Draw #1260)
+
+## Commandes de Développement
+
+### Installation/Mise à Jour
+```bash
+npm install                # Installer dépendances
+npm run db:push           # Synchroniser schéma DB
+npm run dev               # Démarrer serveur développement
 ```
+
+### Debug et Monitoring
+```bash
+tail -f logs/app.log      # Logs application
+tail -f logs/error.log    # Logs erreurs
+npm run db:studio         # Interface DB
+```
+
+### Tests et Validation
+```bash
+# Test santé système
+curl http://localhost:5000/api/health
+
+# Test tirage actuel
+curl http://localhost:5000/api/draws/current
+
+# Test authentification
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "test@test.com", "password": "password"}'
+```
+
+## Fonctionnalités Implémentées
+
+### Système Complet Opérationnel
+- Authentification multi-niveaux (Root/Admin/Client)
+- Création de comptes réels via Root Admin
+- Génération automatique de comptes fictifs
+- Sélection numéros loterie (1-37)
+- Achat de tickets (₪100 minimum)
+- Calcul automatique des gagnants
+- Système multilingue (FR/EN/HE) avec RTL
+- Chat support en temps réel (WebSocket)
+- Panel d'administration complet
+- Interface responsive mobile/desktop
+- Système de parrainage avec codes uniques
+- Historique des transactions transparent
+
+### URLs d'Accès
+```
+http://localhost:5000/                # Page d'accueil
+http://localhost:5000/admin-login     # Connexion admin
+http://localhost:5000/root-admin      # Panel root admin
+http://localhost:5000/client-auth     # Connexion clients
+http://localhost:5000/home            # Interface de jeu
+```
+
+## Support Technique
+
+### Documentation
+- Code TypeScript entièrement documenté
+- Schémas de base de données avec relations
+- APIs documentées avec exemples
+- Interface graphique Drizzle Studio
+
+### Logs et Monitoring
+- Logs structurés par niveau de gravité
+- Cache Redis pour optimisation des performances
+- Sessions sécurisées avec cookies HTTP-only
+- Validation des entrées avec Zod
 
 ---
 
-**IMPORTANT**: L'accès SSH est limité à la durée de vie du container Replit. Pour un accès permanent, utilisez l'interface Replit ou configurez un système de déploiement externe.
+**Accès SSH Configuré**
+**Propriétaire**: duboisderek7@replit.com
+**Projet**: workspace (BrachaVeHatzlacha)
+**Status**: Production Ready
+**Version**: 1.0 Final avec Root Admin
