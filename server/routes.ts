@@ -71,12 +71,10 @@ const isRootAdmin = async (req: any, res: Response, next: any) => {
   }
   
   const sessionUser = req.session.user;
-  console.log("Root admin check - session user:", JSON.stringify(sessionUser, null, 2));
   
   // Get full user data from database
   const userId = sessionUser.claims?.sub || sessionUser.id;
   const user = await storage.getUser(userId);
-  console.log("Root admin check - database user:", JSON.stringify(user, null, 2));
   
   // Check root admin privileges
   if (user?.isRootAdmin === true || sessionUser.isRootAdmin === true) {
