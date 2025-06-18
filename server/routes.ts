@@ -55,13 +55,30 @@ const isAdmin = async (req: any, res: Response, next: any) => {
   
   const user = req.session.user;
   
-  // Check admin privileges
-  if (user.isAdmin === true || user.claims?.sub === 'admin_bracha_vehatzlacha') {
+  // Check admin privileges (including root admin)
+  if (user.isAdmin === true || user.isRootAdmin === true || user.claims?.sub === 'admin_bracha_vehatzlacha') {
     req.user = user;
     return next();
   }
   
   return res.status(403).json({ message: "Admin access required" });
+};
+
+// Root admin authorization middleware
+const isRootAdmin = async (req: any, res: Response, next: any) => {
+  if (!req.session?.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
+  const user = req.session.user;
+  
+  // Check root admin privileges
+  if (user.isRootAdmin === true) {
+    req.user = user;
+    return next();
+  }
+  
+  return res.status(403).json({ message: "Root admin access required" });
 };
 
 // VIP client middleware
@@ -137,6 +154,9 @@ const getPermissionsForRole = (role: UserRole): string[] => {
 
 // Global credentials store (in production, this would be in database)
 const globalCredentials: Record<string, { password: string; userId: string }> = {
+    // Root Admin
+    'root@brachavehatzlacha.com': { password: 'RootBVH2025!', userId: 'root_admin_bvh_2025' },
+    
     // Admin accounts
     'admin@brachavehatzlacha.com': { password: 'BrachaVeHatzlacha2024!', userId: 'admin_bracha_vehatzlacha' },
     'admin.he@brachavehatzlacha.com': { password: 'admin123', userId: 'admin_hebrew_test' },
@@ -1275,6 +1295,139 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating draw:", error);
       res.status(500).json({ message: "Failed to create draw" });
+    }
+  });
+
+  // Root Admin Endpoints - Create Real Client
+  app.post('/api/admin/create-real-client', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { firstName, lastName, email, password, balance, language } = req.body;
+      
+      if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({ message: "Tous les champs sont requis" });
+      }
+      
+      // Check if email already exists
+      const existingUsers = await storage.getAllUsers();
+      const emailExists = existingUsers.some(user => user.email === email);
+      
+      if (emailExists) {
+        return res.status(400).json({ message: "Un compte avec cet email existe déjà" });
+      }
+      
+      // Generate unique ID
+      const userId = `real_client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const referralCode = `${firstName.substring(0, 3).toUpperCase()}${lastName.substring(0, 3).toUpperCase()}${Math.floor(Math.random() * 1000)}`;
+      
+      // Add to credentials store for authentication
+      globalCredentials[email] = {
+        password: password,
+        userId: userId
+      };
+      
+      // Create real client user
+      const userData = {
+        id: userId,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        balance: balance || '100.00',
+        totalWinnings: '0.00',
+        referralCode: referralCode,
+        referralBonus: '0.00',
+        referralCount: 0,
+        isAdmin: false,
+        isRootAdmin: false,
+        isBlocked: false,
+        isFictional: false,
+        language: language || 'fr',
+        smsNotifications: true,
+      };
+      
+      const newUser = await storage.upsertUser(userData as any);
+      
+      res.json({ 
+        message: 'Client réel créé avec succès',
+        user: newUser,
+        credentials: { email, password }
+      });
+    } catch (error) {
+      console.error("Error creating real client:", error);
+      res.status(500).json({ message: "Erreur lors de la création du client réel" });
+    }
+  });
+
+  // Root Admin Endpoints - Create Fictional Accounts
+  app.post('/api/admin/create-fictional-accounts', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { count = 10, baseWinnings = 1000 } = req.body;
+      
+      if (count > 1000) {
+        return res.status(400).json({ message: "Maximum 1000 comptes fictifs autorisés" });
+      }
+      
+      const createdAccounts = [];
+      const firstNames = ['Ahmed', 'Sarah', 'Mohamed', 'Fatima', 'David', 'Rachel', 'Youssef', 'Leah', 'Omar', 'Miriam'];
+      const lastNames = ['Cohen', 'Levy', 'Ben-David', 'Azoulay', 'Benayoun', 'Ohayon', 'Amar', 'Sebag', 'Dahan', 'Toledano'];
+      
+      for (let i = 0; i < count; i++) {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        const randomWinnings = (Math.random() * baseWinnings).toFixed(2);
+        
+        const userId = `fictional_${Date.now()}_${i}_${Math.random().toString(36).substr(2, 6)}`;
+        const referralCode = `FIC${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+        
+        const userData = {
+          id: userId,
+          email: null, // No email for fictional accounts
+          firstName: firstName,
+          lastName: lastName,
+          balance: '0.00',
+          totalWinnings: randomWinnings,
+          referralCode: referralCode,
+          referralBonus: '0.00',
+          referralCount: 0,
+          isAdmin: false,
+          isRootAdmin: false,
+          isBlocked: false,
+          isFictional: true,
+          language: 'fr',
+          smsNotifications: false,
+        };
+        
+        const newUser = await storage.upsertUser(userData as any);
+        createdAccounts.push(newUser);
+      }
+      
+      res.json({ 
+        message: `${count} comptes fictifs créés avec succès`,
+        accounts: createdAccounts
+      });
+    } catch (error) {
+      console.error("Error creating fictional accounts:", error);
+      res.status(500).json({ message: "Erreur lors de la création des comptes fictifs" });
+    }
+  });
+
+  // Get all users with filtering
+  app.get('/api/admin/all-users', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { type } = req.query; // 'real', 'fictional', or 'all'
+      
+      const allUsers = await storage.getAllUsers();
+      
+      let filteredUsers = allUsers;
+      if (type === 'real') {
+        filteredUsers = allUsers.filter(user => !user.isFictional);
+      } else if (type === 'fictional') {
+        filteredUsers = allUsers.filter(user => user.isFictional);
+      }
+      
+      res.json(filteredUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
     }
   });
 

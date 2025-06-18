@@ -1,0 +1,59 @@
+# 🚀 DEMANDE : Refonte complète du système — root admin + client réel + gestion comptes fictifs + reprise totale
+
+## 🎯 Objectif
+Je demande une **refonte complète et propre du système**, avec :  
+
+✅ Reprise des bases :  
+- **Root admin** avec droits complets  
+- **Clients réels** : les clients créés par admin doivent être de vrais comptes valides (login + mot de passe réel, authentification complète)  
+- **Comptes fictifs** : l’admin doit pouvoir créer (par interface) des comptes fictifs (jusqu’à 1000) qui n'ont pas accès au système mais qui apparaissent comme participants aux jackpots pour rendre visible une activité (ex : dans le carrousel des gagnants)
+
+---
+
+## 🔍 Ce que je demande en détail
+
+### 🔐 **Rôles et accès**
+- Root admin : gestion complète (création clients réels + comptes fictifs + gestion tirages + gestion transactions + CRM + statistiques)  
+- Clients réels : comptes actifs, authentifiés, fonctionnels  
+- Comptes fictifs : créés et visibles dans l’interface client (par ex : dans les gagnants du jackpot), mais pas de login possible  
+
+---
+
+### 🌟 **Fonctionnalités**
+- Workflow client réel : 
+  - Connexion → choix des numéros → achat ticket → visualisation ticket → historique → logout  
+- Workflow admin : 
+  - Connexion → gestion clients (réels + fictifs) → gestion tirages → gestion transactions → statistiques → logout  
+- Génération de comptes fictifs via interface admin (avec options nombre, nom aléatoire, gains simulés)  
+- Pages manquantes : créer et implanter toutes les pages nécessaires (ex : formulaire création compte fictif, grille numéros si manquante, visualisation des gagnants)  
+- Routes protégées et sécurisées  
+- Multilingue (FR / EN / HE avec RTL) sur toutes les pages  
+
+---
+
+### 🛠️ **Ce qui doit être livré**
+- Code propre, synchronisé, sécurisé  
+- Accès root admin réel fonctionnel (login + mot de passe)  
+- Accès client réel fonctionnel (login + mot de passe)  
+- Projet complet, déployé, prêt pour production  
+- Fiche complète des accès (liens + logins + mots de passe testés)  
+- Rapport clair : ce qui a été fait, ce qui a été testé, ce qui a été corrigé  
+- Exemple d’au moins un client réel créé et visible  
+- Exemple d’au moins 10 comptes fictifs générés pour tester  
+
+---
+
+## ⚠️ Contraintes
+🚫 Aucun compte démo  
+🚫 Aucun accès communiqué sans test réel  
+🚫 Pas de redéploiement partiel : projet complet uniquement  
+
+---
+
+## 🌍 Langues
+Application : multilingue (Français / Anglais / Hébreu avec RTL)
+
+---
+
+## 💬 Langue Replit Agent
+Français  
