@@ -6,6 +6,7 @@ interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAuth?: boolean;
   requireAdmin?: boolean;
+  requireRootAdmin?: boolean;
   redirectTo?: string;
 }
 
@@ -13,6 +14,7 @@ export function ProtectedRoute({
   children, 
   requireAuth = true, 
   requireAdmin = false,
+  requireRootAdmin = false,
   redirectTo = "/login"
 }: ProtectedRouteProps) {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -26,11 +28,16 @@ export function ProtectedRoute({
       return;
     }
 
+    if (requireRootAdmin && (!isAuthenticated || !(user as any)?.isRootAdmin)) {
+      navigate("/admin-login");
+      return;
+    }
+
     if (requireAdmin && (!isAuthenticated || !(user as any)?.isAdmin)) {
       navigate("/admin-login");
       return;
     }
-  }, [isAuthenticated, isLoading, user, requireAuth, requireAdmin, redirectTo, navigate]);
+  }, [isAuthenticated, isLoading, user, requireAuth, requireAdmin, requireRootAdmin, redirectTo, navigate]);
 
   if (isLoading) {
     return (
@@ -44,6 +51,10 @@ export function ProtectedRoute({
   }
 
   if (requireAuth && !isAuthenticated) {
+    return null;
+  }
+
+  if (requireRootAdmin && (!isAuthenticated || !(user as any)?.isRootAdmin)) {
     return null;
   }
 

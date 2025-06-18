@@ -16,6 +16,7 @@ import Home from "@/pages/Home";
 import PersonalArea from "@/pages/PersonalArea";
 import ChatSupport from "@/pages/ChatSupport";
 import Admin from "@/pages/AdminCleanMultilingual";
+import RootAdminPanel from "@/pages/RootAdminPanel";
 import HebrewTestPage from "@/pages/HebrewTestPage";
 import { Header } from "@/components/layout/Header";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -74,6 +75,13 @@ function AppContent() {
         <Route path="/admin/*">
           <ProtectedRoute requireAdmin={true}>
             <Admin />
+          </ProtectedRoute>
+        </Route>
+        
+        {/* Root Admin Panel - requires root admin privileges */}
+        <Route path="/root-admin">
+          <ProtectedRoute requireRootAdmin={true}>
+            <RootAdminPanel />
           </ProtectedRoute>
         </Route>
         
