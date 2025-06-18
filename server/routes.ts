@@ -70,11 +70,17 @@ const isRootAdmin = async (req: any, res: Response, next: any) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
   
-  const user = req.session.user;
+  const sessionUser = req.session.user;
+  console.log("Root admin check - session user:", JSON.stringify(sessionUser, null, 2));
+  
+  // Get full user data from database
+  const userId = sessionUser.claims?.sub || sessionUser.id;
+  const user = await storage.getUser(userId);
+  console.log("Root admin check - database user:", JSON.stringify(user, null, 2));
   
   // Check root admin privileges
-  if (user.isRootAdmin === true) {
-    req.user = user;
+  if (user?.isRootAdmin === true || sessionUser.isRootAdmin === true) {
+    req.user = sessionUser;
     return next();
   }
   
@@ -478,13 +484,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         foundUser = await storage.upsertUser(userData as any);
       }
       
-      // Search in existing registered users
+      // Search in existing registered users (including admins and root admin)
       if (!foundUser) {
         foundUser = existingUsers.find(user => 
           user.email === email && 
-          (user as any).password === password &&
-          !user.isAdmin
+          (user as any).password === password
         );
+      }
+      
+      // Check global credentials (for admins)
+      if (!foundUser && globalCredentials[email] && globalCredentials[email].password === password) {
+        const userId = globalCredentials[email].userId;
+        foundUser = existingUsers.find(user => user.id === userId);
       }
       
       if (!foundUser) {
@@ -495,7 +506,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Compte bloqué" });
       }
       
-      // Create session
+      // Create session with proper admin/root admin flags
       (req.session as any).user = {
         claims: {
           sub: foundUser.id,
@@ -503,10 +514,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           first_name: foundUser.firstName,
           last_name: foundUser.lastName,
         },
-        isAdmin: false
+        isAdmin: foundUser.isAdmin || false,
+        isRootAdmin: foundUser.isRootAdmin || false
       };
       
-      res.json({ user: { ...foundUser, isAdmin: false } });
+      res.json({ user: foundUser });
     } catch (error) {
       console.error("Login error:", error);
       res.status(500).json({ message: "Erreur de connexion" });
