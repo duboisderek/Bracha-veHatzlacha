@@ -2205,6 +2205,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Chat send endpoint - returns JSON
+  app.post('/api/chat/send', isAuthenticated, async (req: any, res) => {
+    try {
+      const { message } = req.body;
+      const userId = req.user.claims.sub;
+      
+      if (!message || message.trim() === '') {
+        return res.status(400).json({ message: "Message cannot be empty" });
+      }
+      
+      const chatMessage = await storage.createChatMessage({
+        userId,
+        message: message.trim(),
+        isFromAdmin: req.user.claims.isAdmin || false
+      });
+      
+      res.json({ 
+        success: true,
+        message: "Message sent successfully",
+        data: chatMessage
+      });
+    } catch (error) {
+      console.error("Error sending chat message:", error);
+      res.status(500).json({ message: "Failed to send message" });
+    }
+  });
+
+
+
   // ============================================
   // NEW FEATURES API ROUTES
   // ============================================

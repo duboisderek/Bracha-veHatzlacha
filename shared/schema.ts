@@ -290,6 +290,7 @@ export const insertCryptoPaymentSchema = createInsertSchema(cryptoPayments).omit
 });
 
 export const insertSecurityEventSchema = createInsertSchema(securityEvents).omit({
+  id: true,
   timestamp: true,
 });
 

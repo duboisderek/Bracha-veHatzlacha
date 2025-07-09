@@ -1,35 +1,29 @@
-import { logger } from "./logger";
-import { storage } from "./storage";
+import nodemailer from 'nodemailer';
+import { logger } from './logger';
+import { storage } from './storage';
 
-export interface EmailConfig {
-  smtp: {
-    host: string;
-    port: number;
-    secure: boolean;
-    auth: {
-      user: string;
-      pass: string;
-    };
-  };
-  from: string;
-  enabled: boolean;
+export interface EmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
 }
 
 export interface EmailTemplate {
-  subject: string;
-  html: string;
-  text: string;
+  name: string;
+  subject: { [key: string]: string };
+  body: { [key: string]: string };
 }
 
 export class EmailService {
   private static instance: EmailService;
-  private config: EmailConfig | null = null;
+  private transporter: nodemailer.Transporter | null = null;
+  private configured: boolean = false;
   private templates: Map<string, EmailTemplate> = new Map();
 
   private constructor() {
-    // Load configuration from environment or system settings
-    this.loadConfiguration();
     this.initializeTemplates();
+    this.checkConfiguration();
   }
 
   static getInstance(): EmailService {
@@ -39,388 +33,429 @@ export class EmailService {
     return EmailService.instance;
   }
 
-  private async loadConfiguration(): Promise<void> {
+  private initializeTemplates() {
+    // Welcome email template
+    this.templates.set('welcome', {
+      name: 'welcome',
+      subject: {
+        he: 'ברוכים הבאים לברכה והצלחה!',
+        en: 'Welcome to BrachaVeHatzlacha!',
+        fr: 'Bienvenue à BrachaVeHatzlacha !'
+      },
+      body: {
+        he: `
+          <div style="direction: rtl; text-align: right; font-family: Arial, sans-serif;">
+            <h2>שלום {{firstName}} {{lastName}},</h2>
+            <p>ברוכים הבאים למערכת ההגרלות של ברכה והצלחה!</p>
+            <p>קיבלת בונוס רישום של ₪100 לחשבונך.</p>
+            <p>הפרטים שלך:</p>
+            <ul>
+              <li>דוא"ל: {{email}}</li>
+              <li>קוד הפניה: {{referralCode}}</li>
+            </ul>
+            <p>בהצלחה!</p>
+          </div>
+        `,
+        en: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Hello {{firstName}} {{lastName}},</h2>
+            <p>Welcome to BrachaVeHatzlacha lottery system!</p>
+            <p>You've received a registration bonus of ₪100 to your account.</p>
+            <p>Your details:</p>
+            <ul>
+              <li>Email: {{email}}</li>
+              <li>Referral code: {{referralCode}}</li>
+            </ul>
+            <p>Good luck!</p>
+          </div>
+        `,
+        fr: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Bonjour {{firstName}} {{lastName}},</h2>
+            <p>Bienvenue dans le système de loterie BrachaVeHatzlacha !</p>
+            <p>Vous avez reçu un bonus d'inscription de ₪100 sur votre compte.</p>
+            <p>Vos informations :</p>
+            <ul>
+              <li>Email : {{email}}</li>
+              <li>Code de parrainage : {{referralCode}}</li>
+            </ul>
+            <p>Bonne chance !</p>
+          </div>
+        `
+      }
+    });
+
+    // Ticket purchase template
+    this.templates.set('ticket_purchase', {
+      name: 'ticket_purchase',
+      subject: {
+        he: 'אישור רכישת כרטיס - הגרלה #{{drawNumber}}',
+        en: 'Ticket Purchase Confirmation - Draw #{{drawNumber}}',
+        fr: 'Confirmation d\'achat de billet - Tirage #{{drawNumber}}'
+      },
+      body: {
+        he: `
+          <div style="direction: rtl; text-align: right; font-family: Arial, sans-serif;">
+            <h2>אישור רכישת כרטיס</h2>
+            <p>שלום {{firstName}},</p>
+            <p>רכישת הכרטיס שלך אושרה בהצלחה!</p>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+              <p><strong>מספר הגרלה:</strong> {{drawNumber}}</p>
+              <p><strong>המספרים שלך:</strong> {{numbers}}</p>
+              <p><strong>עלות:</strong> ₪{{cost}}</p>
+              <p><strong>תאריך הגרלה:</strong> {{drawDate}}</p>
+            </div>
+            <p>בהצלחה!</p>
+          </div>
+        `,
+        en: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Ticket Purchase Confirmation</h2>
+            <p>Hello {{firstName}},</p>
+            <p>Your ticket purchase has been confirmed successfully!</p>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+              <p><strong>Draw number:</strong> {{drawNumber}}</p>
+              <p><strong>Your numbers:</strong> {{numbers}}</p>
+              <p><strong>Cost:</strong> ₪{{cost}}</p>
+              <p><strong>Draw date:</strong> {{drawDate}}</p>
+            </div>
+            <p>Good luck!</p>
+          </div>
+        `,
+        fr: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Confirmation d'achat de billet</h2>
+            <p>Bonjour {{firstName}},</p>
+            <p>Votre achat de billet a été confirmé avec succès !</p>
+            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+              <p><strong>Numéro du tirage :</strong> {{drawNumber}}</p>
+              <p><strong>Vos numéros :</strong> {{numbers}}</p>
+              <p><strong>Coût :</strong> ₪{{cost}}</p>
+              <p><strong>Date du tirage :</strong> {{drawDate}}</p>
+            </div>
+            <p>Bonne chance !</p>
+          </div>
+        `
+      }
+    });
+
+    // Winning notification template
+    this.templates.set('winning_notification', {
+      name: 'winning_notification',
+      subject: {
+        he: 'מזל טוב! זכית בהגרלה #{{drawNumber}}',
+        en: 'Congratulations! You won in draw #{{drawNumber}}',
+        fr: 'Félicitations ! Vous avez gagné au tirage #{{drawNumber}}'
+      },
+      body: {
+        he: `
+          <div style="direction: rtl; text-align: right; font-family: Arial, sans-serif;">
+            <h1 style="color: #d4a574;">🎉 מזל טוב! 🎉</h1>
+            <p>{{firstName}} היקר/ה,</p>
+            <p>אנו שמחים לבשר לך שזכית בהגרלה!</p>
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 5px; border: 2px solid #d4a574;">
+              <p><strong>מספר הגרלה:</strong> {{drawNumber}}</p>
+              <p><strong>מספרים זוכים:</strong> {{winningNumbers}}</p>
+              <p><strong>המספרים שלך:</strong> {{userNumbers}}</p>
+              <p><strong>מספר התאמות:</strong> {{matchCount}}</p>
+              <h3 style="color: #d4a574;">סכום הזכייה: ₪{{winAmount}}</h3>
+            </div>
+            <p>הסכום נוסף לחשבונך באופן אוטומטי.</p>
+            <p>ברכות חמות,<br/>צוות ברכה והצלחה</p>
+          </div>
+        `,
+        en: `
+          <div style="font-family: Arial, sans-serif;">
+            <h1 style="color: #d4a574;">🎉 Congratulations! 🎉</h1>
+            <p>Dear {{firstName}},</p>
+            <p>We are pleased to inform you that you have won in the lottery!</p>
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 5px; border: 2px solid #d4a574;">
+              <p><strong>Draw number:</strong> {{drawNumber}}</p>
+              <p><strong>Winning numbers:</strong> {{winningNumbers}}</p>
+              <p><strong>Your numbers:</strong> {{userNumbers}}</p>
+              <p><strong>Matches:</strong> {{matchCount}}</p>
+              <h3 style="color: #d4a574;">Winning amount: ₪{{winAmount}}</h3>
+            </div>
+            <p>The amount has been automatically added to your account.</p>
+            <p>Warm congratulations,<br/>BrachaVeHatzlacha Team</p>
+          </div>
+        `,
+        fr: `
+          <div style="font-family: Arial, sans-serif;">
+            <h1 style="color: #d4a574;">🎉 Félicitations ! 🎉</h1>
+            <p>Cher(e) {{firstName}},</p>
+            <p>Nous sommes heureux de vous informer que vous avez gagné à la loterie !</p>
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 5px; border: 2px solid #d4a574;">
+              <p><strong>Numéro du tirage :</strong> {{drawNumber}}</p>
+              <p><strong>Numéros gagnants :</strong> {{winningNumbers}}</p>
+              <p><strong>Vos numéros :</strong> {{userNumbers}}</p>
+              <p><strong>Correspondances :</strong> {{matchCount}}</p>
+              <h3 style="color: #d4a574;">Montant gagné : ₪{{winAmount}}</h3>
+            </div>
+            <p>Le montant a été automatiquement ajouté à votre compte.</p>
+            <p>Félicitations chaleureuses,<br/>L'équipe BrachaVeHatzlacha</p>
+          </div>
+        `
+      }
+    });
+
+    // Password reset template
+    this.templates.set('password_reset', {
+      name: 'password_reset',
+      subject: {
+        he: 'איפוס סיסמה - ברכה והצלחה',
+        en: 'Password Reset - BrachaVeHatzlacha',
+        fr: 'Réinitialisation du mot de passe - BrachaVeHatzlacha'
+      },
+      body: {
+        he: `
+          <div style="direction: rtl; text-align: right; font-family: Arial, sans-serif;">
+            <h2>איפוס סיסמה</h2>
+            <p>שלום {{firstName}},</p>
+            <p>קיבלנו בקשה לאיפוס הסיסמה שלך.</p>
+            <p>קוד האיפוס שלך הוא:</p>
+            <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 24px; font-weight: bold;">
+              {{resetCode}}
+            </div>
+            <p>הקוד תקף ל-15 דקות.</p>
+            <p>אם לא ביקשת איפוס סיסמה, אנא התעלם מהודעה זו.</p>
+          </div>
+        `,
+        en: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Password Reset</h2>
+            <p>Hello {{firstName}},</p>
+            <p>We received a request to reset your password.</p>
+            <p>Your reset code is:</p>
+            <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 24px; font-weight: bold;">
+              {{resetCode}}
+            </div>
+            <p>This code is valid for 15 minutes.</p>
+            <p>If you didn't request a password reset, please ignore this email.</p>
+          </div>
+        `,
+        fr: `
+          <div style="font-family: Arial, sans-serif;">
+            <h2>Réinitialisation du mot de passe</h2>
+            <p>Bonjour {{firstName}},</p>
+            <p>Nous avons reçu une demande de réinitialisation de votre mot de passe.</p>
+            <p>Votre code de réinitialisation est :</p>
+            <div style="background: #f5f5f5; padding: 20px; text-align: center; font-size: 24px; font-weight: bold;">
+              {{resetCode}}
+            </div>
+            <p>Ce code est valide pendant 15 minutes.</p>
+            <p>Si vous n'avez pas demandé de réinitialisation, veuillez ignorer cet email.</p>
+          </div>
+        `
+      }
+    });
+  }
+
+  private async checkConfiguration() {
     try {
-      // Try to load from system settings first
-      const smtpHostSetting = await storage.getSystemSetting('smtp_host');
-      const smtpUserSetting = await storage.getSystemSetting('smtp_user');
-      const smtpPassSetting = await storage.getSystemSetting('smtp_pass');
-      const emailFromSetting = await storage.getSystemSetting('email_from');
-
-      if (smtpHostSetting && smtpUserSetting && smtpPassSetting && emailFromSetting) {
-        this.config = {
-          smtp: {
-            host: smtpHostSetting.value,
-            port: 587,
-            secure: false,
-            auth: {
-              user: smtpUserSetting.value,
-              pass: smtpPassSetting.value,
-            },
-          },
-          from: emailFromSetting.value,
-          enabled: true,
-        };
-        logger.info('Email service configured from system settings', 'EMAIL_SERVICE');
+      const smtpConfig = await storage.getSystemSetting('smtp_config');
+      if (smtpConfig) {
+        const config = JSON.parse(smtpConfig.value);
+        await this.configure(config);
       } else {
-        // Fallback to environment variables
-        const smtpHost = process.env.SMTP_HOST;
-        const smtpUser = process.env.SMTP_USER;
-        const smtpPass = process.env.SMTP_PASS;
-        const emailFrom = process.env.EMAIL_FROM;
-
-        if (smtpHost && smtpUser && smtpPass && emailFrom) {
-          this.config = {
-            smtp: {
-              host: smtpHost,
-              port: parseInt(process.env.SMTP_PORT || '587'),
-              secure: process.env.SMTP_SECURE === 'true',
-              auth: {
-                user: smtpUser,
-                pass: smtpPass,
-              },
-            },
-            from: emailFrom,
-            enabled: true,
-          };
-          logger.info('Email service configured from environment variables', 'EMAIL_SERVICE');
-        } else {
-          logger.warn('Email service not configured - missing SMTP settings', 'EMAIL_SERVICE');
-        }
+        logger.warn('Email service not configured - missing SMTP settings', 'EMAIL_SERVICE');
       }
     } catch (error) {
       logger.error('Failed to load email configuration', error as Error, 'EMAIL_SERVICE');
     }
   }
 
-  private initializeTemplates(): void {
-    // Welcome email template
-    this.templates.set('welcome', {
-      subject: 'ברוכים הבאים ל-BrachaVeHatzlacha! 🎉',
-      html: `
-        <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center;">
-            <h1>ברוכים הבאים ל-BrachaVeHatzlacha!</h1>
-            <p>פלטפורמת הלוטו הפרטית שלכם</p>
-          </div>
-          <div style="padding: 20px; background-color: #f9f9f9;">
-            <h2>שלום {{firstName}}!</h2>
-            <p>אנחנו שמחים שהצטרפת אלינו. החשבון שלך מוכן ומחכה לך!</p>
-            <div style="background-color: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <h3>פרטי החשבון שלך:</h3>
-              <ul>
-                <li>יתרה נוכחית: ₪{{balance}}</li>
-                <li>קוד הפניה: {{referralCode}}</li>
-                <li>בונוס ברכה: ₪100</li>
-              </ul>
-            </div>
-            <p>כעת אתה יכול להתחיל לרכוש כרטיסים ולהשתתף בהגרלות!</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="{{platformUrl}}" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">התחל לשחק עכשיו</a>
-            </div>
-          </div>
-          <div style="text-align: center; padding: 20px; color: #666; font-size: 12px;">
-            <p>BrachaVeHatzlacha - בס״ד</p>
-          </div>
-        </div>
-      `,
-      text: 'ברוכים הבאים ל-BrachaVeHatzlacha! החשבון שלך מוכן. יתרה נוכחית: ₪{{balance}}, קוד הפניה: {{referralCode}}'
-    });
-
-    // Winner notification template
-    this.templates.set('winner', {
-      subject: '🎉 מזל טוב! זכית בהגרלה!',
-      html: `
-        <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; text-align: center;">
-            <h1>🎉 מזל טוב! 🎉</h1>
-            <p>זכית בהגרלה!</p>
-          </div>
-          <div style="padding: 20px; background-color: #f9f9f9;">
-            <h2>שלום {{firstName}}!</h2>
-            <p>יש לנו חדשות מדהימות בשבילך!</p>
-            <div style="background-color: #fff3cd; border: 2px solid #ffeaa7; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-              <h3 style="color: #856404;">זכית בסכום של:</h3>
-              <div style="font-size: 36px; font-weight: bold; color: #2d3436;">₪{{amount}}</div>
-              <p style="color: #856404;">בהגרלה מספר {{drawNumber}}</p>
-            </div>
-            <div style="background-color: white; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <h3>פרטי הזכייה:</h3>
-              <ul>
-                <li>מספר הגרלה: {{drawNumber}}</li>
-                <li>המספרים הזוכים: {{winningNumbers}}</li>
-                <li>המספרים שלך: {{yourNumbers}}</li>
-                <li>כמות התאמות: {{matches}}</li>
-                <li>סכום הזכייה: ₪{{amount}}</li>
-              </ul>
-            </div>
-            <p>הסכום כבר נוסף לחשבון שלך ואתה יכול להשתמש בו לרכישת כרטיסים נוספים!</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="{{platformUrl}}" style="background-color: #f5576c; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">צפה בחשבון שלך</a>
-            </div>
-          </div>
-        </div>
-      `,
-      text: 'מזל טוב! זכית ב-₪{{amount}} בהגרלה מספר {{drawNumber}}. הסכום נוסף לחשבון שלך.'
-    });
-
-    // Draw reminder template
-    this.templates.set('draw_reminder', {
-      subject: '⏰ הגרלה מתחילה בקרוב!',
-      html: `
-        <div style="direction: rtl; font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center;">
-            <h1>⏰ הגרלה מתחילה בקרוב!</h1>
-          </div>
-          <div style="padding: 20px; background-color: #f9f9f9;">
-            <h2>שלום {{firstName}}!</h2>
-            <p>הגרלה מספר {{drawNumber}} מתחילה בעוד כמה שעות!</p>
-            <div style="background-color: white; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
-              <h3>פרטי ההגרלה:</h3>
-              <ul style="text-align: right;">
-                <li>מספר הגרלה: {{drawNumber}}</li>
-                <li>תאריך ההגרלה: {{drawDate}}</li>
-                <li>גובה הג'קפוט: ₪{{jackpot}}</li>
-              </ul>
-            </div>
-            <p>עדיין יש לך זמן לרכוש כרטיסים ולהשתתף בהגרלה!</p>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="{{platformUrl}}" style="background-color: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">רכוש כרטיס עכשיו</a>
-            </div>
-          </div>
-        </div>
-      `,
-      text: 'הגרלה מספר {{drawNumber}} מתחילה בקרוב! ג\'קפוט: ₪{{jackpot}}. רכוש כרטיס עכשיו!'
-    });
-  }
-
-  isEnabled(): boolean {
-    return this.config?.enabled || false;
-  }
-
-  async sendEmail(to: string, subject: string, content: string, isHtml: boolean = false): Promise<boolean> {
+  async configure(config: {
+    host: string;
+    port: number;
+    secure: boolean;
+    auth: {
+      user: string;
+      pass: string;
+    };
+    from?: string;
+  }): Promise<void> {
     try {
-      if (!this.config?.enabled) {
-        logger.warn('Email service is not enabled', 'EMAIL_SERVICE');
-        return false;
-      }
-
-      // In a real implementation, you would use nodemailer or similar
-      // For now, we'll simulate sending
-      logger.info('Email sent successfully', 'EMAIL_SERVICE', {
-        to,
-        subject,
-        contentLength: content.length,
-        isHtml
+      this.transporter = nodemailer.createTransporter({
+        host: config.host,
+        port: config.port,
+        secure: config.secure,
+        auth: config.auth,
+        tls: {
+          rejectUnauthorized: false
+        }
       });
 
-      return true;
+      // Test connection
+      await this.transporter.verify();
+      this.configured = true;
+      
+      logger.info('Email service configured successfully', 'EMAIL_SERVICE');
+    } catch (error) {
+      logger.error('Failed to configure email service', error as Error, 'EMAIL_SERVICE');
+      this.configured = false;
+      throw error;
+    }
+  }
+
+  isConfigured(): boolean {
+    return this.configured;
+  }
+
+  private replaceTemplateVariables(template: string, variables: { [key: string]: any }): string {
+    let result = template;
+    Object.keys(variables).forEach(key => {
+      const regex = new RegExp(`{{${key}}}`, 'g');
+      result = result.replace(regex, variables[key]);
+    });
+    return result;
+  }
+
+  async sendEmail(options: EmailOptions): Promise<void> {
+    if (!this.configured || !this.transporter) {
+      logger.warn('Email service not configured', 'EMAIL_SERVICE');
+      return;
+    }
+
+    try {
+      await this.transporter.sendMail({
+        from: '"BrachaVeHatzlacha" <noreply@brachavehatzlacha.com>',
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+        text: options.text || options.html.replace(/<[^>]*>/g, '')
+      });
+
+      logger.info('Email sent successfully', 'EMAIL_SERVICE', {
+        to: options.to,
+        subject: options.subject
+      });
     } catch (error) {
       logger.error('Failed to send email', error as Error, 'EMAIL_SERVICE');
-      return false;
+      throw error;
     }
   }
 
-  async sendWelcomeEmail(user: any): Promise<boolean> {
-    try {
-      const template = this.templates.get('welcome');
-      if (!template) {
-        throw new Error('Welcome template not found');
-      }
-
-      const personalizedHtml = template.html
-        .replace(/{{firstName}}/g, user.firstName)
-        .replace(/{{balance}}/g, user.balance)
-        .replace(/{{referralCode}}/g, user.referralCode)
-        .replace(/{{platformUrl}}/g, process.env.PLATFORM_URL || 'https://brachavehatzlacha.replit.app');
-
-      const personalizedText = template.text
-        .replace(/{{firstName}}/g, user.firstName)
-        .replace(/{{balance}}/g, user.balance)
-        .replace(/{{referralCode}}/g, user.referralCode);
-
-      const success = await this.sendEmail(user.email, template.subject, personalizedHtml, true);
-      
-      if (success) {
-        logger.info('Welcome email sent', 'EMAIL_SERVICE', { userId: user.id, email: user.email });
-      }
-
-      return success;
-    } catch (error) {
-      logger.error('Failed to send welcome email', error as Error, 'EMAIL_SERVICE');
-      return false;
+  async sendTemplateEmail(
+    templateName: string,
+    to: string,
+    language: string,
+    variables: { [key: string]: any }
+  ): Promise<void> {
+    const template = this.templates.get(templateName);
+    if (!template) {
+      throw new Error(`Template ${templateName} not found`);
     }
+
+    const lang = language || 'en';
+    const subject = this.replaceTemplateVariables(template.subject[lang] || template.subject.en, variables);
+    const html = this.replaceTemplateVariables(template.body[lang] || template.body.en, variables);
+
+    await this.sendEmail({
+      to,
+      subject,
+      html
+    });
   }
 
-  async sendWinnerNotification(user: any, amount: string, drawNumber: number, winningNumbers: number[], userNumbers: number[], matches: number): Promise<boolean> {
-    try {
-      const template = this.templates.get('winner');
-      if (!template) {
-        throw new Error('Winner template not found');
-      }
-
-      const personalizedHtml = template.html
-        .replace(/{{firstName}}/g, user.firstName)
-        .replace(/{{amount}}/g, amount)
-        .replace(/{{drawNumber}}/g, drawNumber.toString())
-        .replace(/{{winningNumbers}}/g, winningNumbers.join(', '))
-        .replace(/{{yourNumbers}}/g, userNumbers.join(', '))
-        .replace(/{{matches}}/g, matches.toString())
-        .replace(/{{platformUrl}}/g, process.env.PLATFORM_URL || 'https://brachavehatzlacha.replit.app');
-
-      const personalizedText = template.text
-        .replace(/{{amount}}/g, amount)
-        .replace(/{{drawNumber}}/g, drawNumber.toString());
-
-      const success = await this.sendEmail(user.email, template.subject, personalizedHtml, true);
-      
-      if (success) {
-        logger.info('Winner notification email sent', 'EMAIL_SERVICE', { 
-          userId: user.id, 
-          email: user.email, 
-          amount, 
-          drawNumber 
-        });
-      }
-
-      return success;
-    } catch (error) {
-      logger.error('Failed to send winner notification email', error as Error, 'EMAIL_SERVICE');
-      return false;
-    }
+  async sendWelcomeEmail(user: any): Promise<void> {
+    await this.sendTemplateEmail('welcome', user.email, user.language || 'en', {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      referralCode: user.referralCode
+    });
   }
 
-  async sendDrawReminder(user: any, drawNumber: number, drawDate: Date, jackpot: string): Promise<boolean> {
-    try {
-      const template = this.templates.get('draw_reminder');
-      if (!template) {
-        throw new Error('Draw reminder template not found');
-      }
-
-      const personalizedHtml = template.html
-        .replace(/{{firstName}}/g, user.firstName)
-        .replace(/{{drawNumber}}/g, drawNumber.toString())
-        .replace(/{{drawDate}}/g, drawDate.toLocaleDateString('he-IL'))
-        .replace(/{{jackpot}}/g, jackpot)
-        .replace(/{{platformUrl}}/g, process.env.PLATFORM_URL || 'https://brachavehatzlacha.replit.app');
-
-      const personalizedText = template.text
-        .replace(/{{drawNumber}}/g, drawNumber.toString())
-        .replace(/{{jackpot}}/g, jackpot);
-
-      const success = await this.sendEmail(user.email, template.subject, personalizedHtml, true);
-      
-      if (success) {
-        logger.info('Draw reminder email sent', 'EMAIL_SERVICE', { 
-          userId: user.id, 
-          email: user.email, 
-          drawNumber 
-        });
-      }
-
-      return success;
-    } catch (error) {
-      logger.error('Failed to send draw reminder email', error as Error, 'EMAIL_SERVICE');
-      return false;
-    }
+  async sendTicketPurchaseEmail(user: any, ticket: any, draw: any): Promise<void> {
+    const numbers = (ticket.numbers as number[]).join(', ');
+    await this.sendTemplateEmail('ticket_purchase', user.email, user.language || 'en', {
+      firstName: user.firstName,
+      drawNumber: draw.drawNumber,
+      numbers,
+      cost: ticket.cost,
+      drawDate: new Date(draw.drawDate).toLocaleDateString()
+    });
   }
 
-  async sendBulkEmails(users: any[], templateName: string, customData: any = {}): Promise<{ sent: number; failed: number }> {
-    let sent = 0;
-    let failed = 0;
-
-    for (const user of users) {
-      try {
-        let success = false;
-
-        switch (templateName) {
-          case 'welcome':
-            success = await this.sendWelcomeEmail(user);
-            break;
-          case 'draw_reminder':
-            success = await this.sendDrawReminder(
-              user, 
-              customData.drawNumber, 
-              customData.drawDate, 
-              customData.jackpot
-            );
-            break;
-          default:
-            logger.warn('Unknown template name', 'EMAIL_SERVICE', { templateName });
-            failed++;
-            continue;
-        }
-
-        if (success) {
-          sent++;
-        } else {
-          failed++;
-        }
-
-        // Small delay to avoid overwhelming the email service
-        await new Promise(resolve => setTimeout(resolve, 100));
-      } catch (error) {
-        logger.error('Failed to send bulk email', error as Error, 'EMAIL_SERVICE');
-        failed++;
-      }
-    }
-
-    logger.info('Bulk email sending completed', 'EMAIL_SERVICE', { sent, failed, total: users.length });
-    return { sent, failed };
+  async sendWinningNotification(user: any, ticket: any, draw: any): Promise<void> {
+    const userNumbers = (ticket.numbers as number[]).join(', ');
+    const winningNumbers = (draw.winningNumbers as number[]).join(', ');
+    
+    await this.sendTemplateEmail('winning_notification', user.email, user.language || 'en', {
+      firstName: user.firstName,
+      drawNumber: draw.drawNumber,
+      winningNumbers,
+      userNumbers,
+      matchCount: ticket.matchCount,
+      winAmount: ticket.winningAmount
+    });
   }
 
-  async updateConfiguration(newConfig: Partial<EmailConfig>): Promise<boolean> {
-    try {
-      if (this.config) {
-        this.config = { ...this.config, ...newConfig };
-      } else {
-        this.config = {
-          smtp: {
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: { user: '', pass: '' }
-          },
-          from: 'noreply@brachavehatzlacha.com',
-          enabled: false,
-          ...newConfig
-        } as EmailConfig;
-      }
+  async sendPasswordResetEmail(user: any, resetCode: string): Promise<void> {
+    await this.sendTemplateEmail('password_reset', user.email, user.language || 'en', {
+      firstName: user.firstName,
+      resetCode
+    });
+  }
 
-      // Save to system settings
-      if (this.config.smtp.host) {
-        await storage.setSystemSetting({
-          key: 'smtp_host',
-          value: this.config.smtp.host,
-          description: 'SMTP server host',
-          updatedBy: 'system'
-        });
-      }
+  getTemplates(): EmailTemplate[] {
+    return Array.from(this.templates.values());
+  }
 
-      if (this.config.smtp.auth.user) {
-        await storage.setSystemSetting({
-          key: 'smtp_user',
-          value: this.config.smtp.auth.user,
-          description: 'SMTP username',
-          updatedBy: 'system'
-        });
-      }
-
-      if (this.config.from) {
-        await storage.setSystemSetting({
-          key: 'email_from',
-          value: this.config.from,
-          description: 'Email from address',
-          updatedBy: 'system'
-        });
-      }
-
-      logger.info('Email configuration updated', 'EMAIL_SERVICE');
-      return true;
-    } catch (error) {
-      logger.error('Failed to update email configuration', error as Error, 'EMAIL_SERVICE');
-      return false;
+  async updateTemplate(name: string, updates: Partial<EmailTemplate>): Promise<void> {
+    const template = this.templates.get(name);
+    if (!template) {
+      throw new Error(`Template ${name} not found`);
     }
+
+    if (updates.subject) {
+      Object.assign(template.subject, updates.subject);
+    }
+    if (updates.body) {
+      Object.assign(template.body, updates.body);
+    }
+
+    // Save to database
+    await storage.upsertSystemSetting({
+      key: `email_template_${name}`,
+      value: JSON.stringify(template),
+      description: `Email template: ${name}`
+    });
+  }
+
+  async testEmailConfiguration(testEmail: string): Promise<void> {
+    await this.sendEmail({
+      to: testEmail,
+      subject: 'Test Email - BrachaVeHatzlacha',
+      html: `
+        <div style="font-family: Arial, sans-serif;">
+          <h2>Test Email</h2>
+          <p>This is a test email from BrachaVeHatzlacha lottery system.</p>
+          <p>If you received this email, your email configuration is working correctly!</p>
+          <p>Timestamp: ${new Date().toISOString()}</p>
+        </div>
+      `
+    });
+  }
+
+  getConfiguration() {
+    return {
+      configured: this.configured,
+      host: this.transporter?.options?.host,
+      port: this.transporter?.options?.port,
+      secure: this.transporter?.options?.secure
+    };
+  }
+
+  async updateConfiguration(config: any) {
+    await this.configure(config);
+    // Save to database
+    await storage.upsertSystemSetting({
+      key: 'smtp_config',
+      value: JSON.stringify(config),
+      description: 'SMTP configuration for email service'
+    });
   }
 }
 

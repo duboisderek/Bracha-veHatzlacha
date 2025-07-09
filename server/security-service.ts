@@ -142,8 +142,7 @@ export class SecurityService {
         userAgent: eventData.userAgent,
         severity: eventData.severity,
         blocked: eventData.blocked,
-        metadata: eventData.metadata ? JSON.stringify(eventData.metadata) : null,
-        timestamp: new Date()
+        details: eventData.metadata || null
       });
     } catch (error) {
       logger.error('Failed to record security event', error as Error, 'SECURITY_SERVICE');
