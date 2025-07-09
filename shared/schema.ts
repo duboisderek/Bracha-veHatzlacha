@@ -109,6 +109,63 @@ export const referrals = pgTable("referrals", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Crypto payments table
+export const cryptoPayments = pgTable("crypto_payments", {
+  id: varchar("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  txHash: varchar("tx_hash").notNull(),
+  walletAddress: varchar("wallet_address").notNull(),
+  currency: varchar("currency").notNull(), // btc, eth, usdt, bnb
+  status: varchar("status").notNull(), // pending, approved, rejected
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  processedAt: timestamp("processed_at"),
+  processedBy: varchar("processed_by").references(() => users.id),
+  notes: text("notes"),
+});
+
+// Security events table
+export const securityEvents = pgTable("security_events", {
+  id: varchar("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id),
+  event: varchar("event").notNull(),
+  ip: varchar("ip").notNull(),
+  userAgent: text("user_agent").notNull(),
+  timestamp: timestamp("timestamp").defaultNow(),
+  severity: varchar("severity").notNull(), // low, medium, high, critical
+  blocked: boolean("blocked").default(false).notNull(),
+  details: jsonb("details"),
+});
+
+// Two factor auth table
+export const twoFactorAuth = pgTable("two_factor_auth", {
+  userId: varchar("user_id").primaryKey().references(() => users.id),
+  secret: varchar("secret").notNull(),
+  enabled: boolean("enabled").default(false).notNull(),
+  backupCodes: jsonb("backup_codes").notNull(), // array of backup codes
+  createdAt: timestamp("created_at").defaultNow(),
+  enabledAt: timestamp("enabled_at"),
+});
+
+// System settings table
+export const systemSettings = pgTable("system_settings", {
+  key: varchar("key").primaryKey(),
+  value: text("value").notNull(),
+  description: text("description"),
+  updatedBy: varchar("updated_by").references(() => users.id),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Admin wallet addresses table
+export const adminWallets = pgTable("admin_wallets", {
+  currency: varchar("currency").primaryKey(), // btc, eth, usdt, bnb
+  address: varchar("address").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdBy: varchar("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many, one }) => ({
   tickets: many(tickets),
@@ -169,6 +226,31 @@ export const referralsRelations = relations(referrals, ({ one }) => ({
   }),
 }));
 
+export const cryptoPaymentsRelations = relations(cryptoPayments, ({ one }) => ({
+  user: one(users, {
+    fields: [cryptoPayments.userId],
+    references: [users.id],
+  }),
+  processedByUser: one(users, {
+    fields: [cryptoPayments.processedBy],
+    references: [users.id],
+  }),
+}));
+
+export const securityEventsRelations = relations(securityEvents, ({ one }) => ({
+  user: one(users, {
+    fields: [securityEvents.userId],
+    references: [users.id],
+  }),
+}));
+
+export const twoFactorAuthRelations = relations(twoFactorAuth, ({ one }) => ({
+  user: one(users, {
+    fields: [twoFactorAuth.userId],
+    references: [users.id],
+  }),
+}));
+
 // Insert schemas - Corrected types
 export const insertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
@@ -202,6 +284,29 @@ export const insertReferralSchema = createInsertSchema(referrals).omit({
   createdAt: true,
 });
 
+export const insertCryptoPaymentSchema = createInsertSchema(cryptoPayments).omit({
+  submittedAt: true,
+  processedAt: true,
+});
+
+export const insertSecurityEventSchema = createInsertSchema(securityEvents).omit({
+  timestamp: true,
+});
+
+export const insertTwoFactorAuthSchema = createInsertSchema(twoFactorAuth).omit({
+  createdAt: true,
+  enabledAt: true,
+});
+
+export const insertSystemSettingSchema = createInsertSchema(systemSettings).omit({
+  updatedAt: true,
+});
+
+export const insertAdminWalletSchema = createInsertSchema(adminWallets).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -215,3 +320,13 @@ export type ChatMessage = typeof chatMessages.$inferSelect;
 export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
 export type Referral = typeof referrals.$inferSelect;
 export type InsertReferral = z.infer<typeof insertReferralSchema>;
+export type CryptoPayment = typeof cryptoPayments.$inferSelect;
+export type InsertCryptoPayment = z.infer<typeof insertCryptoPaymentSchema>;
+export type SecurityEvent = typeof securityEvents.$inferSelect;
+export type InsertSecurityEvent = z.infer<typeof insertSecurityEventSchema>;
+export type TwoFactorAuth = typeof twoFactorAuth.$inferSelect;
+export type InsertTwoFactorAuth = z.infer<typeof insertTwoFactorAuthSchema>;
+export type SystemSetting = typeof systemSettings.$inferSelect;
+export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
+export type AdminWallet = typeof adminWallets.$inferSelect;
+export type InsertAdminWallet = z.infer<typeof insertAdminWalletSchema>;

@@ -18,6 +18,9 @@ import ChatSupport from "@/pages/ChatSupport";
 import Admin from "@/pages/AdminCleanMultilingual";
 import RootAdminPanel from "@/pages/RootAdminPanel";
 import HebrewTestPage from "@/pages/HebrewTestPage";
+import AdvancedAnalytics from "@/pages/AdvancedAnalytics";
+import CryptoPayments from "@/pages/CryptoPayments";
+import Security from "@/pages/Security";
 import { Header } from "@/components/layout/Header";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 
@@ -64,11 +67,29 @@ function AppContent() {
             <ChatSupport />
           </ProtectedRoute>
         </Route>
+
+        <Route path="/crypto-payments">
+          <ProtectedRoute requireAuth={true}>
+            <CryptoPayments />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/security">
+          <ProtectedRoute requireAuth={true}>
+            <Security />
+          </ProtectedRoute>
+        </Route>
         
         {/* Protected admin routes - require admin authentication */}
         <Route path="/admin">
           <ProtectedRoute requireAdmin={true}>
             <Admin />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/advanced-analytics">
+          <ProtectedRoute requireAdmin={true}>
+            <AdvancedAnalytics />
           </ProtectedRoute>
         </Route>
         

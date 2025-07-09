@@ -5,6 +5,11 @@ import {
   transactions,
   chatMessages,
   referrals,
+  cryptoPayments,
+  securityEvents,
+  twoFactorAuth,
+  systemSettings,
+  adminWallets,
   type User,
   type UpsertUser,
   type Draw,
@@ -17,6 +22,16 @@ import {
   type InsertChatMessage,
   type Referral,
   type InsertReferral,
+  type CryptoPayment,
+  type InsertCryptoPayment,
+  type SecurityEvent,
+  type InsertSecurityEvent,
+  type TwoFactorAuth,
+  type InsertTwoFactorAuth,
+  type SystemSetting,
+  type InsertSystemSetting,
+  type AdminWallet,
+  type InsertAdminWallet,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, count } from "drizzle-orm";
@@ -73,6 +88,32 @@ export interface IStorage {
     winningAmount: string;
     numbers: number[];
   }[]>;
+
+  // Crypto payment operations
+  createCryptoPayment(payment: InsertCryptoPayment): Promise<CryptoPayment>;
+  getCryptoPayment(paymentId: string): Promise<CryptoPayment | undefined>;
+  updateCryptoPayment(paymentId: string, updates: Partial<CryptoPayment>): Promise<void>;
+  getPendingCryptoPayments(): Promise<CryptoPayment[]>;
+  getUserCryptoPayments(userId: string): Promise<CryptoPayment[]>;
+
+  // Security operations
+  createSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent>;
+  getSecurityEvents(limit?: number, severity?: string, userId?: string): Promise<SecurityEvent[]>;
+
+  // Two factor auth operations
+  createTwoFactorAuth(twoFA: InsertTwoFactorAuth): Promise<TwoFactorAuth>;
+  getTwoFactorAuth(userId: string): Promise<TwoFactorAuth | undefined>;
+  enableTwoFactorAuth(userId: string): Promise<void>;
+  removeBackupCode(userId: string, code: string): Promise<void>;
+
+  // System settings operations
+  getSystemSetting(key: string): Promise<SystemSetting | undefined>;
+  setSystemSetting(setting: InsertSystemSetting): Promise<SystemSetting>;
+  getAllSystemSettings(): Promise<SystemSetting[]>;
+
+  // Admin wallet operations
+  getAdminWallets(): Promise<AdminWallet[]>;
+  setAdminWallet(wallet: InsertAdminWallet): Promise<AdminWallet>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -483,6 +524,146 @@ export class DatabaseStorage implements IStorage {
       winningAmount: winner.winningAmount || "0",
       numbers: winner.numbers as number[] || [],
     }));
+  }
+
+  // Crypto payment operations
+  async createCryptoPayment(paymentData: InsertCryptoPayment): Promise<CryptoPayment> {
+    const [payment] = await db.insert(cryptoPayments).values(paymentData).returning();
+    return payment;
+  }
+
+  async getCryptoPayment(paymentId: string): Promise<CryptoPayment | undefined> {
+    const [payment] = await db.select().from(cryptoPayments).where(eq(cryptoPayments.id, paymentId));
+    return payment;
+  }
+
+  async updateCryptoPayment(paymentId: string, updates: Partial<CryptoPayment>): Promise<void> {
+    await db
+      .update(cryptoPayments)
+      .set(updates)
+      .where(eq(cryptoPayments.id, paymentId));
+  }
+
+  async getPendingCryptoPayments(): Promise<CryptoPayment[]> {
+    return db
+      .select()
+      .from(cryptoPayments)
+      .where(eq(cryptoPayments.status, 'pending'))
+      .orderBy(desc(cryptoPayments.submittedAt));
+  }
+
+  async getUserCryptoPayments(userId: string): Promise<CryptoPayment[]> {
+    return db
+      .select()
+      .from(cryptoPayments)
+      .where(eq(cryptoPayments.userId, userId))
+      .orderBy(desc(cryptoPayments.submittedAt));
+  }
+
+  // Security operations
+  async createSecurityEvent(eventData: InsertSecurityEvent): Promise<SecurityEvent> {
+    const [event] = await db.insert(securityEvents).values(eventData).returning();
+    return event;
+  }
+
+  async getSecurityEvents(limit = 100, severity?: string, userId?: string): Promise<SecurityEvent[]> {
+    let query = db.select().from(securityEvents);
+
+    if (severity) {
+      query = query.where(eq(securityEvents.severity, severity));
+    }
+    
+    if (userId) {
+      query = query.where(eq(securityEvents.userId, userId));
+    }
+
+    return query
+      .orderBy(desc(securityEvents.timestamp))
+      .limit(limit);
+  }
+
+  // Two factor auth operations
+  async createTwoFactorAuth(twoFAData: InsertTwoFactorAuth): Promise<TwoFactorAuth> {
+    const [twoFA] = await db.insert(twoFactorAuth).values(twoFAData).returning();
+    return twoFA;
+  }
+
+  async getTwoFactorAuth(userId: string): Promise<TwoFactorAuth | undefined> {
+    const [twoFA] = await db.select().from(twoFactorAuth).where(eq(twoFactorAuth.userId, userId));
+    return twoFA;
+  }
+
+  async enableTwoFactorAuth(userId: string): Promise<void> {
+    await db
+      .update(twoFactorAuth)
+      .set({ 
+        enabled: true,
+        enabledAt: new Date()
+      })
+      .where(eq(twoFactorAuth.userId, userId));
+  }
+
+  async removeBackupCode(userId: string, code: string): Promise<void> {
+    const twoFA = await this.getTwoFactorAuth(userId);
+    if (twoFA) {
+      const backupCodes = (twoFA.backupCodes as string[]).filter(c => c !== code);
+      await db
+        .update(twoFactorAuth)
+        .set({ backupCodes })
+        .where(eq(twoFactorAuth.userId, userId));
+    }
+  }
+
+  // System settings operations
+  async getSystemSetting(key: string): Promise<SystemSetting | undefined> {
+    const [setting] = await db.select().from(systemSettings).where(eq(systemSettings.key, key));
+    return setting;
+  }
+
+  async setSystemSetting(settingData: InsertSystemSetting): Promise<SystemSetting> {
+    const [setting] = await db
+      .insert(systemSettings)
+      .values(settingData)
+      .onConflictDoUpdate({
+        target: systemSettings.key,
+        set: {
+          value: settingData.value,
+          description: settingData.description,
+          updatedBy: settingData.updatedBy,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return setting;
+  }
+
+  async getAllSystemSettings(): Promise<SystemSetting[]> {
+    return db.select().from(systemSettings).orderBy(systemSettings.key);
+  }
+
+  // Admin wallet operations
+  async getAdminWallets(): Promise<AdminWallet[]> {
+    return db
+      .select()
+      .from(adminWallets)
+      .where(eq(adminWallets.isActive, true))
+      .orderBy(adminWallets.currency);
+  }
+
+  async setAdminWallet(walletData: InsertAdminWallet): Promise<AdminWallet> {
+    const [wallet] = await db
+      .insert(adminWallets)
+      .values(walletData)
+      .onConflictDoUpdate({
+        target: adminWallets.currency,
+        set: {
+          address: walletData.address,
+          isActive: walletData.isActive,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return wallet;
   }
 }
 

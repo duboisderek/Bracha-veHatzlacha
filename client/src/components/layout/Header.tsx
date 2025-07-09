@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LogOut, User, Globe, Home, UserCircle, MessageCircle, Settings, UserCheck } from "lucide-react";
+import { LogOut, User, Globe, Home, UserCircle, MessageCircle, Settings, UserCheck, Wallet, Shield, BarChart3 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -49,10 +49,13 @@ export function Header() {
       ...publicItems,
       { path: "/personal", label: t("dashboard"), icon: UserCircle },
       { path: "/chat", label: t("chat"), icon: MessageCircle },
+      { path: "/crypto-payments", label: "Crypto Payments", icon: Wallet },
+      { path: "/security", label: "Security", icon: Shield },
     ];
     
     if ((user as any)?.isAdmin) {
       authenticatedItems.push({ path: "/admin", label: t("admin"), icon: Settings });
+      authenticatedItems.push({ path: "/advanced-analytics", label: "Analytics", icon: BarChart3 });
     }
     
     return authenticatedItems;

@@ -4,6 +4,12 @@ import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { smsService } from "./sms-service";
 import { cache, cacheMiddleware } from "./cache";
+import { paymentService } from "./payment-service";
+import { emailService } from "./email-service";
+import { securityService } from "./security-service";
+import { analyticsService } from "./analytics-service";
+import { systemService } from "./system-service";
+import { logger } from "./logger";
 import { insertTicketSchema, insertTransactionSchema, insertChatMessageSchema, insertDrawSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -38,10 +44,24 @@ enum Permission {
   ADMIN = 'admin'
 }
 
-// Authentication middleware
-const isAuthenticated = (req: any, res: Response, next: any) => {
+// Authentication middleware with security monitoring
+const isAuthenticated = async (req: any, res: Response, next: any) => {
   if (req.session?.user) {
     req.user = req.session.user;
+    
+    // Record successful access for security monitoring
+    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+    const userAgent = req.get('User-Agent') || 'unknown';
+    
+    await securityService.recordSecurityEvent({
+      event: 'authenticated_access',
+      userId: req.user.claims?.sub,
+      ip: clientIP,
+      userAgent,
+      severity: 'low',
+      blocked: false
+    });
+    
     return next();
   }
   return res.status(401).json({ message: "Unauthorized" });
@@ -446,14 +466,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Real client authentication
+  // Real client authentication with security
   app.post('/api/auth/login', async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, twoFactorToken } = req.body;
+      const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+      const userAgent = req.get('User-Agent') || 'unknown';
       
       // Validate input
       if (!email || !password) {
         return res.status(400).json({ message: "Email et mot de passe requis" });
+      }
+
+      // Check if account is locked due to failed attempts
+      const canAttempt = await securityService.recordLoginAttempt(email, clientIP, userAgent, false);
+      if (!canAttempt) {
+        return res.status(429).json({ 
+          message: "Compte temporairement bloqué en raison de trop nombreuses tentatives. Réessayez dans 15 minutes." 
+        });
       }
       
       // Check existing users for real authentication
@@ -497,13 +527,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       if (!foundUser) {
+        await securityService.recordLoginAttempt(email, clientIP, userAgent, false);
         return res.status(401).json({ message: "Email ou mot de passe incorrect" });
       }
       
       if (foundUser.isBlocked) {
         return res.status(403).json({ message: "Compte bloqué" });
       }
+
+      // Check 2FA if enabled
+      const twoFAValid = await securityService.verifyTwoFactor(foundUser.id, twoFactorToken || '');
+      if (!twoFAValid && twoFactorToken !== undefined) {
+        await securityService.recordLoginAttempt(email, clientIP, userAgent, false);
+        return res.status(401).json({ message: "Code 2FA invalide" });
+      }
       
+      // Record successful login
+      await securityService.recordLoginAttempt(email, clientIP, userAgent, true);
+
       // Create session with proper admin/root admin flags
       (req.session as any).user = {
         claims: {
@@ -1147,6 +1188,414 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating phone number:", error);
       res.status(500).json({ message: "Failed to update phone number" });
+    }
+  });
+
+  // ================================
+  // NOUVEAUX ENDPOINTS - CRYPTO PAYMENTS
+  // ================================
+
+  // Get admin wallet addresses
+  app.get('/api/payments/wallets', async (req, res) => {
+    try {
+      const wallets = paymentService.getAdminWallets();
+      res.json(wallets);
+    } catch (error) {
+      console.error("Error fetching admin wallets:", error);
+      res.status(500).json({ message: "Failed to fetch wallet addresses" });
+    }
+  });
+
+  // Submit crypto payment
+  app.post('/api/payments/crypto', isAuthenticated, async (req: any, res) => {
+    try {
+      const { amount, txHash, currency } = req.body;
+      const userId = req.user.claims.sub;
+
+      if (!amount || !txHash || !currency) {
+        return res.status(400).json({ message: "Amount, transaction hash, and currency are required" });
+      }
+
+      if (parseFloat(amount) < 100) {
+        return res.status(400).json({ message: "Minimum deposit amount is ₪100" });
+      }
+
+      const payment = await paymentService.submitCryptoPayment(userId, amount, txHash, currency);
+      
+      res.json({
+        message: "Crypto payment submitted successfully. Awaiting admin approval.",
+        payment: {
+          id: payment.id,
+          amount: payment.amount,
+          status: payment.status,
+          submittedAt: payment.submittedAt
+        }
+      });
+    } catch (error) {
+      console.error("Error submitting crypto payment:", error);
+      res.status(500).json({ message: "Failed to submit crypto payment" });
+    }
+  });
+
+  // Get user's crypto payments
+  app.get('/api/payments/crypto/history', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const payments = await paymentService.getUserPayments(userId);
+      res.json(payments);
+    } catch (error) {
+      console.error("Error fetching payment history:", error);
+      res.status(500).json({ message: "Failed to fetch payment history" });
+    }
+  });
+
+  // Admin: Get pending crypto payments
+  app.get('/api/admin/payments/pending', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const pendingPayments = await paymentService.getPendingPayments();
+      res.json(pendingPayments);
+    } catch (error) {
+      console.error("Error fetching pending payments:", error);
+      res.status(500).json({ message: "Failed to fetch pending payments" });
+    }
+  });
+
+  // Admin: Approve crypto payment
+  app.post('/api/admin/payments/:paymentId/approve', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { paymentId } = req.params;
+      const { notes } = req.body;
+      const adminId = req.user.claims.sub;
+
+      await paymentService.approveCryptoPayment(paymentId, adminId, notes);
+      
+      res.json({ message: "Payment approved successfully" });
+    } catch (error) {
+      console.error("Error approving payment:", error);
+      res.status(500).json({ message: "Failed to approve payment" });
+    }
+  });
+
+  // Admin: Reject crypto payment
+  app.post('/api/admin/payments/:paymentId/reject', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { paymentId } = req.params;
+      const { notes } = req.body;
+      const adminId = req.user.claims.sub;
+
+      if (!notes) {
+        return res.status(400).json({ message: "Rejection reason is required" });
+      }
+
+      await paymentService.rejectCryptoPayment(paymentId, adminId, notes);
+      
+      res.json({ message: "Payment rejected successfully" });
+    } catch (error) {
+      console.error("Error rejecting payment:", error);
+      res.status(500).json({ message: "Failed to reject payment" });
+    }
+  });
+
+  // Admin: Manual deposit
+  app.post('/api/admin/payments/manual-deposit', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId, amount, description } = req.body;
+      const adminId = req.user.claims.sub;
+
+      if (!userId || !amount) {
+        return res.status(400).json({ message: "User ID and amount are required" });
+      }
+
+      if (parseFloat(amount) <= 0) {
+        return res.status(400).json({ message: "Amount must be positive" });
+      }
+
+      await paymentService.manualDeposit(userId, amount, adminId, description);
+      
+      res.json({ message: "Manual deposit processed successfully" });
+    } catch (error) {
+      console.error("Error processing manual deposit:", error);
+      res.status(500).json({ message: "Failed to process manual deposit" });
+    }
+  });
+
+  // Admin: Update wallet addresses
+  app.post('/api/admin/payments/wallets', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { wallets } = req.body;
+      
+      if (!wallets || typeof wallets !== 'object') {
+        return res.status(400).json({ message: "Valid wallet configuration required" });
+      }
+
+      paymentService.updateAdminWallets(wallets);
+      
+      res.json({ message: "Wallet addresses updated successfully" });
+    } catch (error) {
+      console.error("Error updating wallet addresses:", error);
+      res.status(500).json({ message: "Failed to update wallet addresses" });
+    }
+  });
+
+  // ================================
+  // NOUVEAUX ENDPOINTS - ANALYTICS
+  // ================================
+
+  // Get user behavior analytics
+  app.get('/api/analytics/user-behavior', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const analytics = await analyticsService.getUserBehaviorAnalytics();
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching user behavior analytics:", error);
+      res.status(500).json({ message: "Failed to fetch user behavior analytics" });
+    }
+  });
+
+  // Get revenue analytics
+  app.get('/api/analytics/revenue', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const analytics = await analyticsService.getRevenueAnalytics();
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching revenue analytics:", error);
+      res.status(500).json({ message: "Failed to fetch revenue analytics" });
+    }
+  });
+
+  // Get draw analytics
+  app.get('/api/analytics/draws', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const analytics = await analyticsService.getDrawAnalytics();
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching draw analytics:", error);
+      res.status(500).json({ message: "Failed to fetch draw analytics" });
+    }
+  });
+
+  // Get conversion analytics
+  app.get('/api/analytics/conversion-rates', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const analytics = await analyticsService.getConversionAnalytics();
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching conversion analytics:", error);
+      res.status(500).json({ message: "Failed to fetch conversion analytics" });
+    }
+  });
+
+  // Get detailed analytics report
+  app.get('/api/analytics/detailed-reports', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { dateFrom, dateTo } = req.query;
+      const from = dateFrom ? new Date(dateFrom as string) : undefined;
+      const to = dateTo ? new Date(dateTo as string) : undefined;
+      
+      const report = await analyticsService.generateDetailedReport(from, to);
+      res.json(report);
+    } catch (error) {
+      console.error("Error generating detailed report:", error);
+      res.status(500).json({ message: "Failed to generate detailed report" });
+    }
+  });
+
+  // ================================
+  // NOUVEAUX ENDPOINTS - SYSTEM
+  // ================================
+
+  // Get system health
+  app.get('/api/admin/system-health', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const health = await systemService.getSystemHealth();
+      res.json(health);
+    } catch (error) {
+      console.error("Error fetching system health:", error);
+      res.status(500).json({ message: "Failed to fetch system health" });
+    }
+  });
+
+  // Create system backup
+  app.post('/api/admin/backup-system', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { type } = req.body;
+      const createdBy = req.user.claims.sub;
+      
+      if (!['full', 'users', 'draws', 'transactions'].includes(type)) {
+        return res.status(400).json({ message: "Invalid backup type" });
+      }
+
+      const backup = await systemService.createBackup(type, createdBy);
+      res.json({
+        message: "Backup creation initiated",
+        backup: {
+          id: backup.id,
+          type: backup.type,
+          status: backup.status,
+          createdAt: backup.createdAt
+        }
+      });
+    } catch (error) {
+      console.error("Error creating backup:", error);
+      res.status(500).json({ message: "Failed to create backup" });
+    }
+  });
+
+  // Get system backups
+  app.get('/api/admin/backups', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const backups = await systemService.getBackups();
+      res.json(backups);
+    } catch (error) {
+      console.error("Error fetching backups:", error);
+      res.status(500).json({ message: "Failed to fetch backups" });
+    }
+  });
+
+  // Enable maintenance mode
+  app.post('/api/admin/maintenance-mode', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { enabled, message, scheduledStart, scheduledEnd } = req.body;
+      const performedBy = req.user.claims.sub;
+
+      if (enabled) {
+        await systemService.enableMaintenanceMode(
+          message || "System maintenance in progress",
+          performedBy,
+          scheduledStart ? new Date(scheduledStart) : undefined,
+          scheduledEnd ? new Date(scheduledEnd) : undefined
+        );
+      } else {
+        await systemService.disableMaintenanceMode(performedBy);
+      }
+
+      res.json({ message: `Maintenance mode ${enabled ? 'enabled' : 'disabled'} successfully` });
+    } catch (error) {
+      console.error("Error updating maintenance mode:", error);
+      res.status(500).json({ message: "Failed to update maintenance mode" });
+    }
+  });
+
+  // Get maintenance mode status
+  app.get('/api/maintenance-mode', async (req, res) => {
+    try {
+      const maintenanceMode = systemService.getMaintenanceMode();
+      res.json(maintenanceMode);
+    } catch (error) {
+      console.error("Error fetching maintenance mode:", error);
+      res.status(500).json({ message: "Failed to fetch maintenance mode status" });
+    }
+  });
+
+  // ================================
+  // NOUVEAUX ENDPOINTS - SECURITY
+  // ================================
+
+  // Generate 2FA secret
+  app.post('/api/security/2fa/generate', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { secret, qrCode } = await securityService.generateTwoFactorSecret(userId);
+      
+      res.json({
+        secret,
+        qrCode,
+        message: "2FA secret generated. Scan QR code with authenticator app."
+      });
+    } catch (error) {
+      console.error("Error generating 2FA secret:", error);
+      res.status(500).json({ message: "Failed to generate 2FA secret" });
+    }
+  });
+
+  // Enable 2FA
+  app.post('/api/security/2fa/enable', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { token } = req.body;
+
+      if (!token) {
+        return res.status(400).json({ message: "2FA token is required" });
+      }
+
+      const success = await securityService.enableTwoFactor(userId, token);
+      
+      if (success) {
+        res.json({ message: "2FA enabled successfully" });
+      } else {
+        res.status(400).json({ message: "Invalid 2FA token" });
+      }
+    } catch (error) {
+      console.error("Error enabling 2FA:", error);
+      res.status(500).json({ message: "Failed to enable 2FA" });
+    }
+  });
+
+  // Get security events
+  app.get('/api/admin/security/events', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { limit, severity, userId } = req.query;
+      const events = await securityService.getSecurityEvents(
+        limit ? parseInt(limit as string) : 100,
+        severity as string,
+        userId as string
+      );
+      res.json(events);
+    } catch (error) {
+      console.error("Error fetching security events:", error);
+      res.status(500).json({ message: "Failed to fetch security events" });
+    }
+  });
+
+  // Get user security summary
+  app.get('/api/security/summary', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const summary = await securityService.getUserSecuritySummary(userId);
+      res.json(summary);
+    } catch (error) {
+      console.error("Error fetching security summary:", error);
+      res.status(500).json({ message: "Failed to fetch security summary" });
+    }
+  });
+
+  // ================================
+  // NOUVEAUX ENDPOINTS - EMAIL
+  // ================================
+
+  // Send test email
+  app.post('/api/admin/email/test', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { to, subject, message } = req.body;
+
+      if (!to || !subject || !message) {
+        return res.status(400).json({ message: "To, subject, and message are required" });
+      }
+
+      const success = await emailService.sendEmail(to, subject, message);
+      
+      if (success) {
+        res.json({ message: "Test email sent successfully" });
+      } else {
+        res.status(500).json({ message: "Failed to send test email" });
+      }
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      res.status(500).json({ message: "Failed to send test email" });
+    }
+  });
+
+  // Get email service status
+  app.get('/api/admin/email/status', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const isEnabled = emailService.isEnabled();
+      res.json({ 
+        enabled: isEnabled,
+        message: isEnabled ? "Email service is configured and ready" : "Email service not configured"
+      });
+    } catch (error) {
+      console.error("Error fetching email status:", error);
+      res.status(500).json({ message: "Failed to fetch email status" });
     }
   });
 
