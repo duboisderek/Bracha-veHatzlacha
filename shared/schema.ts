@@ -126,7 +126,7 @@ export const cryptoPayments = pgTable("crypto_payments", {
 
 // Security events table
 export const securityEvents = pgTable("security_events", {
-  id: varchar("id").primaryKey(),
+  id: uuid("id").primaryKey().defaultRandom(),
   userId: varchar("user_id").references(() => users.id),
   event: varchar("event").notNull(),
   ip: varchar("ip").notNull(),

@@ -1172,6 +1172,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User stats endpoint - FIXED
+  app.get('/api/user/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const tickets = await storage.getUserTickets(userId);
+      const referrals = await storage.getUserReferrals(userId);
+      
+      res.json({
+        balance: user.balance,
+        totalWinnings: user.totalWinnings,
+        totalTickets: tickets.length,
+        activeTickets: tickets.filter((t: any) => !t.isWinner).length,
+        referralCount: user.referralCount,
+        referralBonus: user.referralBonus,
+      });
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+      res.status(500).json({ message: "Failed to fetch user stats" });
+    }
+  });
+
+  // User transactions endpoint - FIXED
+  app.get('/api/user/transactions', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const transactions = await storage.getUserTransactions(userId);
+      res.json(transactions);
+    } catch (error) {
+      console.error("Error fetching user transactions:", error);
+      res.status(500).json({ message: "Failed to fetch transactions" });
+    }
+  });
+
+  // User tickets endpoint - FIXED
+  app.get('/api/user/tickets', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const tickets = await storage.getUserTickets(userId);
+      res.json(tickets);
+    } catch (error) {
+      console.error("Error fetching user tickets:", error);
+      res.status(500).json({ message: "Failed to fetch tickets" });
+    }
+  });
+
   // Phone number update endpoint
   app.put('/api/users/:userId/phone', isAuthenticated, async (req: any, res) => {
     try {
@@ -1188,6 +1239,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating phone number:", error);
       res.status(500).json({ message: "Failed to update phone number" });
+    }
+  });
+
+  // Ticket purchase endpoint - FIXED
+  app.post('/api/tickets/purchase', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { drawId, numbers } = req.body;
+      
+      if (!drawId || !numbers || !Array.isArray(numbers) || numbers.length !== 6) {
+        return res.status(400).json({ message: "Draw ID and 6 numbers are required" });
+      }
+      
+      // Validate numbers are between 1-37
+      const validNumbers = numbers.every((num: number) => 
+        Number.isInteger(num) && num >= 1 && num <= 37
+      );
+      
+      if (!validNumbers) {
+        return res.status(400).json({ message: "Numbers must be between 1 and 37" });
+      }
+      
+      // Check if draw exists and is active
+      const draw = await storage.getDraw(drawId);
+      if (!draw || !draw.isActive || draw.isCompleted) {
+        return res.status(400).json({ message: "Draw is not available for ticket purchase" });
+      }
+      
+      // Check user balance (ticket cost is 20₪)
+      const ticketCost = "20.00";
+      const user = await storage.getUser(userId);
+      if (!user || parseFloat(user.balance) < parseFloat(ticketCost)) {
+        return res.status(400).json({ message: "Insufficient balance" });
+      }
+      
+      // Check if user already has a ticket for this draw
+      const hasTicket = await storage.getUserHasTicketForDraw(userId, drawId);
+      if (hasTicket) {
+        return res.status(400).json({ message: "You already have a ticket for this draw" });
+      }
+      
+      // Create ticket
+      const ticket = await storage.createTicket({
+        userId,
+        drawId,
+        numbers,
+        cost: ticketCost
+      });
+      
+      // Deduct cost from balance
+      await storage.updateUserBalance(userId, `-${ticketCost}`);
+      
+      // Create transaction
+      await storage.createTransaction({
+        userId,
+        type: "ticket_purchase",
+        amount: `-${ticketCost}`,
+        description: `Ticket purchase for draw #${drawId}`,
+        ticketId: ticket.id,
+      });
+      
+      // Update draw jackpot (50% of ticket cost goes to jackpot)
+      await storage.updateDrawJackpot(drawId, parseFloat(ticketCost) * 0.5);
+      
+      res.json({
+        message: "Ticket purchased successfully",
+        ticket,
+        newBalance: (parseFloat(user.balance) - parseFloat(ticketCost)).toFixed(2)
+      });
+    } catch (error) {
+      console.error("Error purchasing ticket:", error);
+      res.status(500).json({ message: "Failed to purchase ticket" });
+    }
+  });
+
+  // User profile update endpoint - FIXED  
+  app.put('/api/user/profile', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { phoneNumber, language } = req.body;
+      
+      const updates: any = {};
+      if (phoneNumber !== undefined) updates.phoneNumber = phoneNumber;
+      if (language !== undefined) updates.language = language;
+      
+      await storage.updateUser(userId, updates);
+      
+      const updatedUser = await storage.getUser(userId);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // User referral link endpoint - FIXED
+  app.get('/api/user/referral-link', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const referralLink = `${req.protocol}://${req.get('host')}/register?ref=${user.referralCode}`;
+      
+      res.json({
+        referralCode: user.referralCode,
+        referralLink: referralLink
+      });
+    } catch (error) {
+      console.error("Error fetching referral link:", error);
+      res.status(500).json({ message: "Failed to fetch referral link" });
     }
   });
 
