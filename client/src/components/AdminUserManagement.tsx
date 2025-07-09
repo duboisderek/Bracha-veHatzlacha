@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { UserDetailDialog } from "@/components/UserDetailDialog";
 import { 
   Users, 
   Search, 
@@ -98,7 +99,6 @@ export default function AdminUserManagement() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [activeTab, setActiveTab] = useState("users");
   
@@ -800,7 +800,140 @@ export default function AdminUserManagement() {
         </TabsContent>
       </Tabs>
 
-      {/* User Detail Dialog would go here - very large, continuing in next component */}
+      {/* User Detail Dialog */}
+      <UserDetailDialog
+        user={selectedUser}
+        isOpen={showDetailDialog}
+        onClose={() => {
+          setShowDetailDialog(false);
+          setSelectedUser(null);
+        }}
+        onUpdate={loadUsers}
+        isProcessing={isProcessing}
+      />
+
+      {/* Create User Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5" />
+              Créer un Nouvel Utilisateur
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="firstName">Prénom *</Label>
+                <Input
+                  id="firstName"
+                  value={createForm.firstName}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, firstName: e.target.value }))}
+                  placeholder="Jean"
+                />
+              </div>
+              <div>
+                <Label htmlFor="lastName">Nom *</Label>
+                <Input
+                  id="lastName"
+                  value={createForm.lastName}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, lastName: e.target.value }))}
+                  placeholder="Dupont"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="email">Email *</Label>
+              <Input
+                id="email"
+                type="email"
+                value={createForm.email}
+                onChange={(e) => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
+                placeholder="jean.dupont@example.com"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="phone">Téléphone</Label>
+                <Input
+                  id="phone"
+                  value={createForm.phone}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, phone: e.target.value }))}
+                  placeholder="+33612345678"
+                />
+              </div>
+              <div>
+                <Label htmlFor="balance">Solde initial (₪)</Label>
+                <Input
+                  id="balance"
+                  type="number"
+                  value={createForm.balance}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, balance: e.target.value }))}
+                  placeholder="100"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="role">Rôle</Label>
+                <Select value={createForm.role} onValueChange={(value) => setCreateForm(prev => ({ ...prev, role: value as User['role'] }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">Utilisateur</SelectItem>
+                    <SelectItem value="vip">VIP</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="status">Statut</Label>
+                <Select value={createForm.status} onValueChange={(value) => setCreateForm(prev => ({ ...prev, status: value as User['status'] }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Actif</SelectItem>
+                    <SelectItem value="pending">En attente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Alert>
+              <Users className="h-4 w-4" />
+              <AlertDescription>
+                L'utilisateur recevra un email avec ses identifiants de connexion.
+              </AlertDescription>
+            </Alert>
+
+            <div className="flex gap-3 pt-4">
+              <Button 
+                onClick={handleCreateUser}
+                disabled={isProcessing || !createForm.email || !createForm.firstName || !createForm.lastName}
+                className="flex-1"
+              >
+                {isProcessing ? "Création..." : "Créer l'utilisateur"}
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowCreateDialog(false);
+                  resetCreateForm();
+                }}
+                variant="outline"
+                disabled={isProcessing}
+              >
+                Annuler
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

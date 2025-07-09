@@ -25,7 +25,9 @@ import Chat from "@/pages/Chat";
 import AdminCryptoPayments from "@/pages/AdminCryptoPayments";
 import AdminDrawManagement from "@/pages/AdminDrawManagement";
 import AdminUserManagement from "@/pages/AdminUserManagement";
+import AdminSystemHealth from "@/pages/AdminSystemHealth";
 import AdminEmailConfig from "@/pages/AdminEmailConfig";
+import AdminSMSConfig from "@/pages/AdminSMSConfig";
 import AdminSystemLogs from "@/pages/AdminSystemLogs";
 import RootAdminWallets from "@/pages/RootAdminWallets";
 import SystemBackupRestore from "@/pages/SystemBackupRestore";
@@ -119,9 +121,21 @@ function AppContent() {
           </ProtectedRoute>
         </Route>
 
-        <Route path="/admin-email-config">
+        <Route path="/admin-system-health">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminSystemHealth />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-email">
           <ProtectedRoute requireAdmin={true}>
             <AdminEmailConfig />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-sms">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminSMSConfig />
           </ProtectedRoute>
         </Route>
 
