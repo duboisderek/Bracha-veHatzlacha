@@ -136,6 +136,7 @@ export class SecurityService {
   }): Promise<void> {
     try {
       await storage.createSecurityEvent({
+        id: crypto.randomUUID(),
         event: eventData.event,
         userId: eventData.userId || null,
         ip: eventData.ip,

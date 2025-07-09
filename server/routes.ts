@@ -223,48 +223,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // Universal login endpoint for all user types
-  app.post('/api/auth/login', async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      
-      if (globalCredentials[email] && globalCredentials[email].password === password) {
-        const user = await storage.getUser(globalCredentials[email].userId);
-        
-        if (!user) {
-          return res.status(401).json({ message: "Utilisateur non trouvé" });
-        }
-        
-        if (user.isBlocked) {
-          return res.status(403).json({ message: "Compte bloqué" });
-        }
-        
-        (req.session as any).user = {
-          claims: {
-            sub: user.id,
-            email: user.email,
-            first_name: user.firstName,
-            last_name: user.lastName,
-          },
-          isAdmin: user.isAdmin,
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          balance: user.balance,
-          language: user.language
-        };
-        
-        res.json({ user });
-      } else {
-        res.status(401).json({ message: "Email ou mot de passe incorrect" });
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      res.status(500).json({ message: "Erreur de connexion" });
-    }
-  });
-
   // Real admin authentication
   app.post('/api/auth/admin-login', async (req, res) => {
     try {
@@ -395,78 +353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Real client registration endpoint
-  app.post('/api/auth/register', async (req, res) => {
-    try {
-      const { email, password, firstName, lastName, phoneNumber, language } = req.body;
-      
-      // Validate input
-      if (!email || !password || !firstName) {
-        return res.status(400).json({ message: "Email, mot de passe et prénom requis" });
-      }
-      
-      if (password.length < 6) {
-        return res.status(400).json({ message: "Le mot de passe doit contenir au moins 6 caractères" });
-      }
-      
-      // Check if user already exists
-      const existingUsers = await storage.getAllUsers();
-      const userExists = existingUsers.some(user => user.email === email);
-      
-      if (userExists) {
-        return res.status(400).json({ message: "Un compte avec cet email existe déjà" });
-      }
-      
-      // Generate unique ID and referral code
-      const timestamp = Date.now();
-      const randomId = Math.random().toString(36).substr(2, 9);
-      const userId = `user_${timestamp}_${randomId}`;
-      const referralCode = (firstName.substring(0, 3) + lastName.substring(0, 3) + Math.floor(Math.random() * 1000)).toUpperCase();
-      
-      // Store credentials for authentication
-      globalCredentials[email] = {
-        password: password,
-        userId: userId
-      };
-
-      const userData = {
-        id: userId,
-        email: email,
-        firstName: firstName,
-        lastName: lastName || '',
-        profileImageUrl: null,
-        phoneNumber: phoneNumber || null,
-        balance: '100.00',
-        totalWinnings: '0.00',
-        referralCode: referralCode,
-        referredBy: null,
-        referralBonus: '0.00',
-        referralCount: 0,
-        isAdmin: false,
-        isBlocked: false,
-        language: language || 'fr',
-        smsNotifications: true,
-        password: password // Note: In production, this should be hashed
-      };
-      
-      const newUser = await storage.upsertUser(userData as any);
-      
-      res.status(201).json({ 
-        message: 'Compte créé avec succès',
-        user: {
-          id: newUser.id,
-          email: newUser.email,
-          firstName: newUser.firstName,
-          lastName: newUser.lastName
-        }
-      });
-    } catch (error) {
-      console.error('Registration error:', error);
-      res.status(500).json({ message: 'Erreur lors de la création du compte' });
-    }
-  });
-
-  // Real client authentication with security
+  // Real client authentication with security (single login endpoint)
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { email, password, twoFactorToken } = req.body;
@@ -524,6 +411,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!foundUser && globalCredentials[email] && globalCredentials[email].password === password) {
         const userId = globalCredentials[email].userId;
         foundUser = existingUsers.find(user => user.id === userId);
+        
+        if (!foundUser) {
+          // Create user if not exists in database
+          const user = await storage.getUser(userId);
+          if (user) {
+            foundUser = user;
+          }
+        }
       }
       
       if (!foundUser) {
@@ -545,7 +440,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Record successful login
       await securityService.recordLoginAttempt(email, clientIP, userAgent, true);
 
-      // Create session with proper admin/root admin flags
+      // Create session with proper admin/root admin flags AND complete user data
       (req.session as any).user = {
         claims: {
           sub: foundUser.id,
@@ -553,6 +448,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           first_name: foundUser.firstName,
           last_name: foundUser.lastName,
         },
+        id: foundUser.id,
+        email: foundUser.email,
+        firstName: foundUser.firstName,
+        lastName: foundUser.lastName,
+        balance: foundUser.balance,
+        language: foundUser.language,
         isAdmin: foundUser.isAdmin || false,
         isRootAdmin: foundUser.isRootAdmin || false
       };
