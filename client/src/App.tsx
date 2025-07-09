@@ -21,6 +21,12 @@ import HebrewTestPage from "@/pages/HebrewTestPage";
 import AdvancedAnalytics from "@/pages/AdvancedAnalytics";
 import CryptoPayments from "@/pages/CryptoPayments";
 import Security from "@/pages/Security";
+import Chat from "@/pages/Chat";
+import AdminCryptoPayments from "@/pages/AdminCryptoPayments";
+import AdminEmailConfig from "@/pages/AdminEmailConfig";
+import AdminSystemLogs from "@/pages/AdminSystemLogs";
+import RootAdminWallets from "@/pages/RootAdminWallets";
+import SystemBackupRestore from "@/pages/SystemBackupRestore";
 import { Header } from "@/components/layout/Header";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 
@@ -64,7 +70,7 @@ function AppContent() {
         
         <Route path="/chat">
           <ProtectedRoute requireAuth={true}>
-            <ChatSupport />
+            <Chat />
           </ProtectedRoute>
         </Route>
 
@@ -90,6 +96,36 @@ function AppContent() {
         <Route path="/advanced-analytics">
           <ProtectedRoute requireAdmin={true}>
             <AdvancedAnalytics />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-crypto-payments">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminCryptoPayments />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-email-config">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminEmailConfig />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-system-logs">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminSystemLogs />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/root-admin-wallets">
+          <ProtectedRoute requireRootAdmin={true}>
+            <RootAdminWallets />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/system-backup-restore">
+          <ProtectedRoute requireRootAdmin={true}>
+            <SystemBackupRestore />
           </ProtectedRoute>
         </Route>
         

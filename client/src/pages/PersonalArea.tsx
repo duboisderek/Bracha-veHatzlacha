@@ -15,11 +15,14 @@ import {
   CreditCard,
   Calendar,
   Trophy,
-  Users
+  Users,
+  Phone,
+  Settings
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
+import { PhoneNumberEdit } from "@/components/PhoneNumberEdit";
 
 // User Status Badge Component
 function UserStatusBadge({ status, participationCount }: { status: string, participationCount: number }) {
@@ -370,6 +373,13 @@ export default function PersonalArea() {
 
           {/* Right Columns */}
           <div className="lg:col-span-2 space-y-6">
+            <PhoneNumberEdit 
+              currentPhone={(user as any)?.phoneNumber || ""} 
+              onUpdate={(newPhone) => {
+                // Update user phone in context or refetch user data
+                console.log("Phone updated:", newPhone);
+              }} 
+            />
             <div className="grid md:grid-cols-2 gap-6">
               <TopupHistory />
               <ParticipationHistory />

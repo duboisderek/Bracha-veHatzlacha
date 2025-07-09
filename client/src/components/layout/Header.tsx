@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LogOut, User, Globe, Home, UserCircle, MessageCircle, Settings, UserCheck, Wallet, Shield, BarChart3 } from "lucide-react";
+import { LogOut, User, Globe, Home, UserCircle, MessageCircle, Settings, UserCheck, Wallet, Shield, BarChart3, Mail, Database, CreditCard } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -56,6 +56,14 @@ export function Header() {
     if ((user as any)?.isAdmin) {
       authenticatedItems.push({ path: "/admin", label: t("admin"), icon: Settings });
       authenticatedItems.push({ path: "/advanced-analytics", label: "Analytics", icon: BarChart3 });
+      authenticatedItems.push({ path: "/admin-crypto-payments", label: "Crypto Admin", icon: CreditCard });
+      authenticatedItems.push({ path: "/admin-email-config", label: "Email Config", icon: Mail });
+      authenticatedItems.push({ path: "/admin-system-logs", label: "System Logs", icon: Database });
+    }
+    
+    if ((user as any)?.isRootAdmin) {
+      authenticatedItems.push({ path: "/root-admin-wallets", label: "Root Wallets", icon: Wallet });
+      authenticatedItems.push({ path: "/system-backup-restore", label: "Backup/Restore", icon: Database });
     }
     
     return authenticatedItems;
