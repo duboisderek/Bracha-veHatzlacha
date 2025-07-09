@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Phone, Check, X, AlertCircle } from "lucide-react";
+import { Phone, Edit, X, AlertCircle, CheckCircle } from "lucide-react";
 
 interface PhoneNumberEditProps {
   currentPhone?: string;
@@ -14,13 +13,12 @@ interface PhoneNumberEditProps {
 }
 
 export function PhoneNumberEdit({ currentPhone = "", onUpdate }: PhoneNumberEditProps) {
-  const { t } = useLanguage();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [newPhone, setNewPhone] = useState(currentPhone);
-  const [isLoading, setIsLoading] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [newPhone, setNewPhone] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
 
   const handleStartEdit = () => {
     setIsEditing(true);
@@ -29,31 +27,16 @@ export function PhoneNumberEdit({ currentPhone = "", onUpdate }: PhoneNumberEdit
 
   const handleCancel = () => {
     setIsEditing(false);
-    setNewPhone(currentPhone);
     setIsVerifying(false);
+    setNewPhone("");
     setVerificationCode("");
-  };
-
-  const validatePhoneNumber = (phone: string): boolean => {
-    // Support for international phone numbers
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
   };
 
   const handleSendVerification = async () => {
     if (!newPhone.trim()) {
       toast({
         title: "Erreur",
-        description: "Veuillez entrer un numéro de téléphone",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!validatePhoneNumber(newPhone)) {
-      toast({
-        title: "Erreur",
-        description: "Format de numéro de téléphone invalide",
+        description: "Veuillez saisir un numéro de téléphone",
         variant: "destructive"
       });
       return;
@@ -94,10 +77,10 @@ export function PhoneNumberEdit({ currentPhone = "", onUpdate }: PhoneNumberEdit
   };
 
   const handleVerifyAndUpdate = async () => {
-    if (!verificationCode.trim()) {
+    if (verificationCode.length !== 6) {
       toast({
         title: "Erreur",
-        description: "Veuillez entrer le code de vérification",
+        description: "Le code de vérification doit contenir 6 chiffres",
         variant: "destructive"
       });
       return;
@@ -165,6 +148,7 @@ export function PhoneNumberEdit({ currentPhone = "", onUpdate }: PhoneNumberEdit
               size="sm"
               onClick={handleStartEdit}
             >
+              <Edit className="w-4 h-4 mr-1" />
               {currentPhone ? "Modifier" : "Ajouter"}
             </Button>
           </div>
@@ -195,7 +179,7 @@ export function PhoneNumberEdit({ currentPhone = "", onUpdate }: PhoneNumberEdit
                 <div className="flex gap-2">
                   <Button 
                     onClick={handleSendVerification}
-                    disabled={isLoading}
+                    disabled={isLoading || !newPhone.trim()}
                     className="flex-1"
                   >
                     {isLoading ? "Envoi..." : "Envoyer code de vérification"}
@@ -224,7 +208,7 @@ export function PhoneNumberEdit({ currentPhone = "", onUpdate }: PhoneNumberEdit
                     id="verificationCode"
                     type="text"
                     value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
+                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     placeholder="123456"
                     maxLength={6}
                     className="mt-1 text-center text-lg font-mono"
@@ -234,30 +218,24 @@ export function PhoneNumberEdit({ currentPhone = "", onUpdate }: PhoneNumberEdit
                 <div className="flex gap-2">
                   <Button 
                     onClick={handleVerifyAndUpdate}
-                    disabled={isLoading}
+                    disabled={isLoading || verificationCode.length !== 6}
                     className="flex-1"
                   >
-                    <Check className="w-4 h-4 mr-2" />
                     {isLoading ? "Vérification..." : "Vérifier et sauvegarder"}
                   </Button>
                   <Button 
-                    variant="outline" 
-                    onClick={handleCancel}
+                    onClick={handleSendVerification}
+                    variant="outline"
+                    disabled={isLoading}
+                  >
+                    Renvoyer
+                  </Button>
+                  <Button 
+                    onClick={handleCancel} 
+                    variant="ghost"
                     disabled={isLoading}
                   >
                     <X className="w-4 h-4" />
-                  </Button>
-                </div>
-                
-                <div className="text-center">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={handleSendVerification}
-                    disabled={isLoading}
-                    className="text-blue-600"
-                  >
-                    Renvoyer le code
                   </Button>
                 </div>
               </>

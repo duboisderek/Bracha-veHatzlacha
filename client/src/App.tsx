@@ -23,6 +23,8 @@ import CryptoPayments from "@/pages/CryptoPayments";
 import Security from "@/pages/Security";
 import Chat from "@/pages/Chat";
 import AdminCryptoPayments from "@/pages/AdminCryptoPayments";
+import AdminDrawManagement from "@/pages/AdminDrawManagement";
+import AdminUserManagement from "@/pages/AdminUserManagement";
 import AdminEmailConfig from "@/pages/AdminEmailConfig";
 import AdminSystemLogs from "@/pages/AdminSystemLogs";
 import RootAdminWallets from "@/pages/RootAdminWallets";
@@ -102,6 +104,18 @@ function AppContent() {
         <Route path="/admin-crypto-payments">
           <ProtectedRoute requireAdmin={true}>
             <AdminCryptoPayments />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-draw-management">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminDrawManagement />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-user-management">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminUserManagement />
           </ProtectedRoute>
         </Route>
 

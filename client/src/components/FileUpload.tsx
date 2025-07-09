@@ -1,66 +1,57 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, File, X, Image, FileText, Paperclip } from "lucide-react";
+import { Upload, File, Image, FileText, X, Check, AlertCircle } from "lucide-react";
 
 interface FileUploadProps {
-  onFileSelect: (file: File, url: string) => void;
+  onFileUpload?: (fileUrl: string, fileName: string) => void;
   acceptedTypes?: string[];
-  maxSize?: number; // in MB
+  maxFileSize?: number; // en MB
   multiple?: boolean;
+  className?: string;
+}
+
+interface FilePreviewProps {
+  file: File;
+  url?: string;
+  onRemove: () => void;
 }
 
 export function FileUpload({ 
-  onFileSelect, 
-  acceptedTypes = ['image/*', '.pdf', '.txt', '.doc', '.docx'],
-  maxSize = 5,
-  multiple = false
+  onFileUpload, 
+  acceptedTypes = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.doc', '.docx', '.txt'],
+  maxFileSize = 10,
+  multiple = false,
+  className = ""
 }: FileUploadProps) {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{file: File, url?: string, uploading: boolean, progress: number}>>([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  const validateFile = (file: File): boolean => {
+  const validateFile = (file: File): string | null => {
     // Check file size
-    if (file.size > maxSize * 1024 * 1024) {
-      toast({
-        title: "Fichier trop volumineux",
-        description: `La taille maximale autorisée est ${maxSize}MB`,
-        variant: "destructive"
-      });
-      return false;
+    if (file.size > maxFileSize * 1024 * 1024) {
+      return `Le fichier ${file.name} dépasse la taille maximale de ${maxFileSize}MB`;
     }
 
     // Check file type
-    const isValidType = acceptedTypes.some(type => {
-      if (type.includes('*')) {
-        return file.type.startsWith(type.replace('*', ''));
-      }
-      return file.name.toLowerCase().endsWith(type.toLowerCase());
-    });
-
-    if (!isValidType) {
-      toast({
-        title: "Type de fichier non supporté",
-        description: `Types acceptés: ${acceptedTypes.join(', ')}`,
-        variant: "destructive"
-      });
-      return false;
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    if (!acceptedTypes.some(type => type.toLowerCase() === fileExtension)) {
+      return `Type de fichier non supporté: ${fileExtension}`;
     }
 
-    return true;
+    return null;
   };
 
-  const uploadFile = async (file: File) => {
-    if (!validateFile(file)) return;
+  const uploadFile = async (file: File, index: number) => {
+    const formData = new FormData();
+    formData.append('file', file);
 
-    setIsUploading(true);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
       const response = await fetch('/api/upload', {
         method: 'POST',
         credentials: 'include',
@@ -68,40 +59,80 @@ export function FileUpload({
       });
 
       if (response.ok) {
-        const result = await response.json();
-        onFileSelect(file, result.url);
+        const data = await response.json();
+        
+        setUploadedFiles(prev => prev.map((item, i) => 
+          i === index 
+            ? { ...item, url: data.url, uploading: false, progress: 100 }
+            : item
+        ));
+
+        if (onFileUpload) {
+          onFileUpload(data.url, file.name);
+        }
+
         toast({
-          title: "Fichier téléchargé",
-          description: `${file.name} a été téléchargé avec succès`,
+          title: "Succès",
+          description: `${file.name} téléchargé avec succès`,
         });
       } else {
-        throw new Error('Erreur lors du téléchargement');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erreur lors du téléchargement');
       }
     } catch (error) {
+      setUploadedFiles(prev => prev.filter((_, i) => i !== index));
       toast({
-        title: "Erreur de téléchargement",
-        description: "Impossible de télécharger le fichier",
+        title: "Erreur",
+        description: `Impossible de télécharger ${file.name}: ${(error as Error).message}`,
         variant: "destructive"
       });
-    } finally {
-      setIsUploading(false);
     }
   };
 
-  const handleFileSelect = (files: FileList | null) => {
-    if (!files) return;
+  const handleFileSelect = (fileList: FileList | null) => {
+    if (!fileList) return;
 
-    const filesArray = Array.from(files);
+    const filesArray = Array.from(fileList);
+    
     if (!multiple && filesArray.length > 1) {
       toast({
-        title: "Sélection multiple non autorisée",
-        description: "Veuillez sélectionner un seul fichier",
+        title: "Erreur",
+        description: "Un seul fichier autorisé",
         variant: "destructive"
       });
       return;
     }
 
-    filesArray.forEach(uploadFile);
+    // Validate all files first
+    for (const file of filesArray) {
+      const error = validateFile(file);
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: error,
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
+    // Add files to state
+    const newFiles = filesArray.map(file => ({
+      file,
+      uploading: true,
+      progress: 0
+    }));
+
+    setUploadedFiles(prev => multiple ? [...prev, ...newFiles] : newFiles);
+    setIsUploading(true);
+
+    // Upload each file
+    newFiles.forEach((fileObj, index) => {
+      const actualIndex = multiple ? uploadedFiles.length + index : index;
+      uploadFile(fileObj.file, actualIndex);
+    });
+
+    setIsUploading(false);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -121,20 +152,12 @@ export function FileUpload({
     handleFileSelect(files);
   };
 
-  const getFileIcon = (fileName: string) => {
-    const extension = fileName.toLowerCase().split('.').pop();
-    
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
-      return Image;
-    } else if (['pdf', 'doc', 'docx', 'txt'].includes(extension || '')) {
-      return FileText;
-    } else {
-      return File;
-    }
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${className}`}>
       <input
         ref={fileInputRef}
         type="file"
@@ -157,91 +180,104 @@ export function FileUpload({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
-        {isUploading ? (
-          <div className="flex flex-col items-center space-y-2">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <p className="text-sm text-gray-500">Téléchargement en cours...</p>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center space-y-3">
-            <div className="p-3 bg-gray-100 rounded-full">
-              <Upload className="w-6 h-6 text-gray-600" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-700">
-                Glissez-déposez vos fichiers ici
-              </p>
-              <p className="text-xs text-gray-500">
-                ou cliquez pour sélectionner
-              </p>
-            </div>
-            <div className="text-xs text-gray-400">
-              <p>Types acceptés: {acceptedTypes.join(', ')}</p>
-              <p>Taille max: {maxSize}MB</p>
-            </div>
-          </div>
-        )}
+        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <p className="text-lg font-medium text-gray-900 mb-2">
+          Glissez et déposez vos fichiers ici
+        </p>
+        <p className="text-sm text-gray-500 mb-4">
+          ou cliquez pour sélectionner
+        </p>
+        <p className="text-xs text-gray-400">
+          Types acceptés: {acceptedTypes.join(', ')} | Taille max: {maxFileSize}MB
+        </p>
       </motion.div>
+
+      {/* File List */}
+      {uploadedFiles.length > 0 && (
+        <div className="mt-4 space-y-3">
+          {uploadedFiles.map((fileObj, index) => (
+            <FilePreview
+              key={`${fileObj.file.name}-${index}`}
+              file={fileObj.file}
+              url={fileObj.url}
+              uploading={fileObj.uploading}
+              progress={fileObj.progress}
+              onRemove={() => removeFile(index)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-interface FilePreviewProps {
-  file: File;
-  url: string;
-  onRemove: () => void;
-}
-
-export function FilePreview({ file, url, onRemove }: FilePreviewProps) {
-  const FileIcon = (() => {
-    const extension = file.name.toLowerCase().split('.').pop();
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
-      return Image;
-    } else if (['pdf', 'doc', 'docx', 'txt'].includes(extension || '')) {
-      return FileText;
-    } else {
-      return File;
+export function FilePreview({ 
+  file, 
+  url, 
+  uploading = false, 
+  progress = 0, 
+  onRemove 
+}: FilePreviewProps & { uploading?: boolean; progress?: number }) {
+  const getFileIcon = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    switch (extension) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'webp':
+        return <Image className="w-5 h-5" />;
+      case 'pdf':
+        return <FileText className="w-5 h-5 text-red-500" />;
+      case 'doc':
+      case 'docx':
+        return <FileText className="w-5 h-5 text-blue-500" />;
+      case 'txt':
+        return <FileText className="w-5 h-5 text-gray-500" />;
+      default:
+        return <File className="w-5 h-5" />;
     }
-  })();
+  };
 
-  const isImage = file.type.startsWith('image/');
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      className="relative group"
+      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border"
     >
-      <div className="flex items-center p-3 bg-gray-50 rounded-lg border">
-        <div className="flex-shrink-0 mr-3">
-          {isImage ? (
-            <img
-              src={url}
-              alt={file.name}
-              className="w-10 h-10 object-cover rounded"
-            />
-          ) : (
-            <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center">
-              <FileIcon className="w-5 h-5 text-gray-600" />
-            </div>
-          )}
-        </div>
+      {getFileIcon(file.name)}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium truncate">{file.name}</p>
+        <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
         
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-700 truncate">
-            {file.name}
-          </p>
-          <p className="text-xs text-gray-500">
-            {(file.size / 1024 / 1024).toFixed(2)} MB
-          </p>
-        </div>
-        
+        {uploading && (
+          <div className="mt-2">
+            <Progress value={progress} className="h-1" />
+            <p className="text-xs text-gray-500 mt-1">Téléchargement... {progress}%</p>
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center gap-2">
+        {url && !uploading && (
+          <Check className="w-4 h-4 text-green-500" />
+        )}
+        {uploading && (
+          <AlertCircle className="w-4 h-4 text-orange-500 animate-pulse" />
+        )}
         <Button
           variant="ghost"
           size="sm"
           onClick={onRemove}
-          className="ml-2 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="p-1 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
         >
           <X className="w-4 h-4" />
         </Button>
