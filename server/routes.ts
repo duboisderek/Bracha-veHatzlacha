@@ -2521,6 +2521,196 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========= NOUVELLES ROUTES CRITIQUES MANQUANTES =========
+
+  // 1. RESET PASSWORD UTILISATEUR (CRITIQUE)
+  app.post('/api/admin/reset-user-password', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId, newPassword } = req.body;
+      
+      if (!userId || !newPassword) {
+        return res.status(400).json({ message: "User ID and new password are required" });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+
+      // Hash new password
+      const bcrypt = require('bcrypt');
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      
+      // Update user password
+      await storage.updateUserPassword(userId, hashedPassword);
+      
+      // Log security event
+      await securityService.logEvent(req.session?.passport?.user, 'password_reset', 'info', 
+        `Admin reset password for user ${userId}`, req.ip);
+      
+      res.json({ 
+        message: "Password reset successfully",
+        userId,
+        newPassword // Pour l'admin seulement
+      });
+    } catch (error) {
+      console.error("Error resetting user password:", error);
+      res.status(500).json({ message: "Failed to reset user password" });
+    }
+  });
+
+  // 2. PROGRAMMATION TIRAGES AUTOMATIQUES (CRITIQUE)
+  app.post('/api/admin/schedule-draws', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { frequency, time, startDate, jackpotAmount } = req.body;
+      
+      if (!frequency || !time) {
+        return res.status(400).json({ message: "Frequency and time are required" });
+      }
+
+      // Store scheduling configuration
+      await storage.setSystemSetting({
+        key: 'auto_draw_schedule',
+        value: JSON.stringify({ frequency, time, startDate, jackpotAmount, enabled: true }),
+        description: 'Automatic draw scheduling configuration',
+        updatedBy: req.session?.passport?.user
+      });
+      
+      res.json({ 
+        message: "Automatic draw scheduling configured successfully",
+        config: { frequency, time, startDate, jackpotAmount, enabled: true }
+      });
+    } catch (error) {
+      console.error("Error scheduling draws:", error);
+      res.status(500).json({ message: "Failed to schedule automatic draws" });
+    }
+  });
+
+  // 3. EXPORT PDF ANALYTICS (CRITIQUE)
+  app.get('/api/admin/analytics/export-pdf', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      
+      // Get analytics data for PDF
+      const analytics = await analyticsService.getCompleteReport(startDate as string, endDate as string);
+      
+      // Simulate PDF generation (implement with PDFKit or similar)
+      const pdfData = {
+        title: "BrachaVeHatzlacha Analytics Report",
+        generatedAt: new Date().toISOString(),
+        period: { startDate, endDate },
+        summary: analytics.summary,
+        userStats: analytics.userStats,
+        drawStats: analytics.drawStats,
+        revenueStats: analytics.revenueStats
+      };
+      
+      res.json({ 
+        message: "PDF export ready",
+        downloadUrl: "/api/admin/analytics/download-pdf",
+        data: pdfData
+      });
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      res.status(500).json({ message: "Failed to export PDF analytics" });
+    }
+  });
+
+  // 4. TEST ENVOI EMAIL (CRITIQUE)
+  app.post('/api/admin/test-email', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { template, recipient, language = 'en' } = req.body;
+      
+      if (!template || !recipient) {
+        return res.status(400).json({ message: "Template and recipient are required" });
+      }
+
+      // Send test email
+      const result = await emailService.sendTestEmail(template, recipient, language);
+      
+      res.json({ 
+        message: "Test email sent successfully",
+        template,
+        recipient,
+        language,
+        sentAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error sending test email:", error);
+      res.status(500).json({ message: "Failed to send test email" });
+    }
+  });
+
+  // 5. BACKUP CONFIGURATION (CRITIQUE)
+  app.post('/api/admin/backup-config', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      // Get all system settings
+      const settings = await storage.getAllSystemSettings();
+      const draws = await storage.getAllDraws();
+      const users = await storage.getAllUsers();
+      
+      const backup = {
+        timestamp: new Date().toISOString(),
+        version: "1.0",
+        systemSettings: settings,
+        drawsConfig: draws.slice(0, 5), // Last 5 draws config only
+        usersCount: users.length,
+        backupType: "configuration"
+      };
+      
+      // Store backup
+      await storage.setSystemSetting({
+        key: `backup_${Date.now()}`,
+        value: JSON.stringify(backup),
+        description: 'System configuration backup',
+        updatedBy: req.session?.passport?.user
+      });
+      
+      res.json({ 
+        message: "Configuration backup created successfully",
+        backup: {
+          timestamp: backup.timestamp,
+          itemsCount: settings.length,
+          backupId: `backup_${Date.now()}`
+        }
+      });
+    } catch (error) {
+      console.error("Error creating backup:", error);
+      res.status(500).json({ message: "Failed to create configuration backup" });
+    }
+  });
+
+  // 6. GESTION RÔLES UTILISATEUR (PROMOTION VIP)
+  app.post('/api/admin/promote-user', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId, newRole } = req.body;
+      
+      if (!userId || !newRole) {
+        return res.status(400).json({ message: "User ID and new role are required" });
+      }
+
+      const validRoles = ['new', 'standard', 'vip'];
+      if (!validRoles.includes(newRole)) {
+        return res.status(400).json({ message: "Invalid role. Must be: new, standard, or vip" });
+      }
+
+      // Update user role
+      await storage.updateUser(userId, { status: newRole });
+      
+      // Log security event
+      await securityService.logEvent(req.session?.passport?.user, 'user_promotion', 'info', 
+        `Admin promoted user ${userId} to ${newRole}`, req.ip);
+      
+      res.json({ 
+        message: `User promoted to ${newRole} successfully`,
+        userId,
+        newRole
+      });
+    } catch (error) {
+      console.error("Error promoting user:", error);
+      res.status(500).json({ message: "Failed to promote user" });
+    }
+  });
+
   // SMS Notification Routes
   app.post('/api/admin/sms/test', isAuthenticated, isAdmin, async (req: any, res) => {
     try {

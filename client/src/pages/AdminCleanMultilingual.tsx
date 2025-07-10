@@ -138,6 +138,48 @@ export default function AdminCleanMultilingual() {
     }
   };
 
+  const resetUserPassword = async (userId: string) => {
+    const newPassword = `temp${Math.random().toString(36).slice(2)}`;
+    try {
+      const res = await fetch("/api/admin/reset-user-password", {
+        method: "POST", 
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ userId, newPassword }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        showMessage(`${t("passwordReset")} - New password: ${data.newPassword}`);
+        return data.newPassword;
+      } else {
+        showMessage(t("errorResettingPassword"));
+      }
+    } catch (error) {
+      showMessage(t("connectionError"));
+    }
+  };
+
+  const promoteUser = async (userId: string, newRole: string) => {
+    try {
+      const res = await fetch("/api/admin/promote-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", 
+        body: JSON.stringify({ userId, newRole }),
+      });
+
+      if (res.ok) {
+        showMessage(`${t("userPromoted")} to ${newRole}`);
+        loadData();
+      } else {
+        showMessage(t("errorPromoting"));
+      }
+    } catch (error) {
+      showMessage(t("connectionError"));
+    }
+  };
+
   const toggleUserBlock = async (userId: string, shouldBlock: boolean) => {
     try {
       const res = await fetch("/api/admin/block-user", {
@@ -491,13 +533,34 @@ export default function AdminCleanMultilingual() {
                       </Badge>
                     </td>
                     <td className="py-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => toggleUserBlock(user.id, !user.isBlocked)}
-                      >
-                        {user.isBlocked ? t("unblock") : t("block")}
-                      </Button>
+                      <div className="flex gap-2 flex-wrap">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleUserBlock(user.id, !user.isBlocked)}
+                        >
+                          {user.isBlocked ? t("unblock") : t("block")}
+                        </Button>
+                        
+                        <Button
+                          onClick={() => resetUserPassword(user.id)}
+                          variant="outline"
+                          size="sm"
+                          className="bg-yellow-50 hover:bg-yellow-100 border-yellow-300 text-xs"
+                        >
+                          🔑 Reset
+                        </Button>
+                        
+                        <select 
+                          onChange={(e) => e.target.value && promoteUser(user.id, e.target.value)}
+                          className="px-2 py-1 text-xs border rounded"
+                          defaultValue=""
+                        >
+                          <option value="">Promote...</option>
+                          <option value="standard">Standard</option>
+                          <option value="vip">VIP</option>
+                        </select>
+                      </div>
                     </td>
                   </tr>
                 ))}
