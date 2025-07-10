@@ -10,6 +10,7 @@ import { securityService } from "./security-service";
 import { analyticsService } from "./analytics-service";
 import { systemService } from "./system-service";
 import { logger } from "./logger";
+import { sslHealthCheck } from "./ssl-config";
 import { insertTicketSchema, insertTransactionSchema, insertChatMessageSchema, insertDrawSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -1478,6 +1479,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching system health:", error);
       res.status(500).json({ message: "Failed to fetch system health" });
+    }
+  });
+
+  // Public SSL/Security health check endpoint
+  app.get('/api/system/health', async (req: any, res) => {
+    try {
+      sslHealthCheck(req, res);
+    } catch (error) {
+      console.error("Error in SSL health check:", error);
+      res.status(500).json({ message: "SSL health check failed" });
     }
   });
 

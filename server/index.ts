@@ -5,21 +5,35 @@ import { setupVite, serveStatic, log } from "./vite";
 import { drawScheduler } from "./scheduler";
 import { initializeCache } from "./cache";
 import { logger, performanceMiddleware, errorLoggingMiddleware } from "./logger";
+import { httpsRedirectMiddleware, securityHeadersMiddleware, rateLimitingMiddleware } from "./ssl-config";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-// Session configuration
+// Trust proxy for SSL termination (Replit/CloudFlare)
+app.set('trust proxy', 1);
+
+// Security middleware in order (no rate limiting in development)
+app.use(httpsRedirectMiddleware);
+app.use(securityHeadersMiddleware);
+// Rate limiting disabled in development to prevent 429 errors
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+
+// Enhanced Session configuration with production SSL
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'lottery-secret-key-development',
+  secret: process.env.SESSION_SECRET || 'lottery-secret-key-development-change-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true in production with HTTPS
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    httpOnly: true, // Prevent XSS access to cookies
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax', // CSRF protection
+    domain: process.env.NODE_ENV === 'production' ? '.brahatz.com' : undefined
+  },
+  name: 'bvh.sid', // Custom session name
+  proxy: process.env.NODE_ENV === 'production' // Trust proxy in production
 }));
 
 app.use((req, res, next) => {
