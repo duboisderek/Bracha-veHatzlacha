@@ -331,10 +331,10 @@ const Landing = memo(() => {
                   
                   <div className="text-center space-y-3">
                     <Badge className="bg-gradient-to-r from-green-400 to-blue-400 text-white px-6 py-3 text-lg font-bold">
-                      Ticket Cost: ₪100
+                      {t("costPerTicket")}: ₪20
                     </Badge>
                     <p className="text-white text-sm opacity-80">
-                      Choose 6 numbers from 1-37
+                      {t("chooseNumbers")}
                     </p>
                   </div>
                 </CardContent>
@@ -363,26 +363,26 @@ const Landing = memo(() => {
         >
           <Card className="text-center p-8 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-xl hover:shadow-2xl transition-all hover:scale-105">
             <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-6 animate-pulse" />
-            <h3 className="text-xl font-bold text-white mb-3">Massive Jackpots</h3>
-            <p className="text-blue-200 text-sm">Life-changing prizes every draw</p>
+            <h3 className="text-xl font-bold text-white mb-3">{t("massiveJackpots")}</h3>
+            <p className="text-blue-200 text-sm">{t("lifeChangingPrizes")}</p>
           </Card>
 
           <Card className="text-center p-8 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-xl hover:shadow-2xl transition-all hover:scale-105">
             <Shield className="w-16 h-16 text-green-400 mx-auto mb-6 animate-pulse" />
-            <h3 className="text-xl font-bold text-white mb-3">100% Secure</h3>
-            <p className="text-blue-200 text-sm">Advanced security & instant payouts</p>
+            <h3 className="text-xl font-bold text-white mb-3">{t("secureAndTrusted")}</h3>
+            <p className="text-blue-200 text-sm">{t("advancedSecurityPayouts")}</p>
           </Card>
 
           <Card className="text-center p-8 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-xl hover:shadow-2xl transition-all hover:scale-105">
             <Users className="w-16 h-16 text-purple-400 mx-auto mb-6 animate-pulse" />
-            <h3 className="text-xl font-bold text-white mb-3">Referral Rewards</h3>
-            <p className="text-blue-200 text-sm">Earn ₪100 for each friend you refer</p>
+            <h3 className="text-xl font-bold text-white mb-3">{t("referralRewards")}</h3>
+            <p className="text-blue-200 text-sm">{t("earnForReferrals")}</p>
           </Card>
 
           <Card className="text-center p-8 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 shadow-xl hover:shadow-2xl transition-all hover:scale-105">
             <Clock className="w-16 h-16 text-blue-400 mx-auto mb-6 animate-pulse" />
-            <h3 className="text-xl font-bold text-white mb-3">Regular Draws</h3>
-            <p className="text-blue-200 text-sm">Multiple chances to win every week</p>
+            <h3 className="text-xl font-bold text-white mb-3">{t("weeklyDraws")}</h3>
+            <p className="text-blue-200 text-sm">{t("multipleChancesToWin")}</p>
           </Card>
         </motion.div>
 
@@ -395,10 +395,10 @@ const Landing = memo(() => {
         >
           <Card className="bg-gradient-to-r from-purple-600 to-blue-600 border-0 shadow-2xl p-12">
             <h2 className="text-4xl font-bold text-white mb-6">
-              Ready to Change Your Life?
+              {t("readyToChangeLife")}
             </h2>
             <p className="text-xl text-blue-200 mb-8">
-              Join {t("appName")} today and start your journey to fortune
+              {t("joinTodayAndStart")}
             </p>
             <div className="flex justify-center space-x-6">
               <motion.div
@@ -412,7 +412,7 @@ const Landing = memo(() => {
                   className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-bold py-6 px-16 rounded-full shadow-2xl text-xl"
                 >
                   <Star className="w-6 h-6 mr-2" />
-                  Start Playing Now
+                  {t("startPlayingNow")}
                 </Button>
               </motion.div>
             </div>

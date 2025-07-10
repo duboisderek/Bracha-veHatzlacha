@@ -382,7 +382,20 @@ export const translations = {
     enterComment: "Enter comment (optional)",
     depositing: "Depositing",
     yourWinningNumbers: "Your Winning Numbers",
-    noCompletedDraws: "No completed draws found"
+    noCompletedDraws: "No completed draws found",
+    
+    // LANDING PAGE MISSING TRANSLATIONS - ENGLISH
+    massiveJackpots: "Massive Jackpots",
+    lifeChangingPrizes: "Life-changing prizes every draw",
+    advancedSecurityPayouts: "Advanced security & instant payouts",
+    referralRewards: "Referral Rewards",
+    earnForReferrals: "Earn ₪100 for each friend you refer",
+    multipleChancesToWin: "Multiple chances to win every week",
+    readyToChangeLife: "Ready to Change Your Life?",
+    joinTodayAndStart: "Join Bracha veHatzlacha today and start your journey to fortune",
+    startPlayingNow: "Start Playing Now",
+    weeklyDraws: "Weekly Draws",
+    secureAndTrusted: "100% Secure"
   },
   
   he: {
@@ -1189,7 +1202,17 @@ export const translations = {
     suggestionBox: "תיבת הצעות",
     feedbackForm: "טופס משוב",
     
-    // CLEANED DUPLICATES - HEBREW PERFECTION ACHIEVED
+    // LANDING PAGE MISSING TRANSLATIONS - HEBREW
+    massiveJackpots: "ג'קפוטים ענקיים",
+    lifeChangingPrizes: "פרסים שמשנים חיים בכל הגרלה",
+    advancedSecurityPayouts: "אבטחה מתקדמת ותשלומים מיידיים",
+    referralRewards: "פרסי הפניות",
+    earnForReferrals: "הרוויח ₪100 עבור כל חבר שאתה מפנה",
+    multipleChancesToWin: "מספר הזדמנויות לזכות כל שבוע",
+    readyToChangeLife: "מוכן לשנות את החיים שלך?",
+    joinTodayAndStart: "הצטרף היום והתחל את המסע שלך לעושר",
+    startPlayingNow: "התחל לשחק עכשיו",
+    
     // FINAL CLEAN TRANSLATIONS - NO DUPLICATES
     finalHebrew: "עברית מושלמת"
   },
@@ -1560,7 +1583,20 @@ export const translations = {
     enterComment: "Entrer commentaire (optionnel)",
     depositing: "Dépôt en cours",
     yourWinningNumbers: "Vos Numéros Gagnants",
-    noCompletedDraws: "Aucun tirage terminé trouvé"
+    noCompletedDraws: "Aucun tirage terminé trouvé",
+    
+    // LANDING PAGE MISSING TRANSLATIONS - FRENCH
+    massiveJackpots: "Jackpots Massifs",
+    lifeChangingPrizes: "Prix qui changent la vie à chaque tirage",
+    advancedSecurityPayouts: "Sécurité avancée et paiements instantanés",
+    referralRewards: "Récompenses de Parrainage",
+    earnForReferrals: "Gagnez ₪100 pour chaque ami que vous parrainez",
+    multipleChancesToWin: "Plusieurs chances de gagner chaque semaine",
+    readyToChangeLife: "Prêt à Changer Votre Vie ?",
+    joinTodayAndStart: "Rejoignez Bracha veHatzlacha aujourd'hui et commencez votre voyage vers la fortune",
+    startPlayingNow: "Commencer à Jouer Maintenant",
+    weeklyDraws: "Tirages Hebdomadaires",
+    secureAndTrusted: "100% Sécurisé"
   }
 };
 
