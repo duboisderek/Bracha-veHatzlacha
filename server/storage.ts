@@ -45,11 +45,13 @@ export interface IStorage {
   getUserByReferralCode(referralCode: string): Promise<User | undefined>;
   updateUserBalance(userId: string, amount: string): Promise<void>;
   updateUserPhone(userId: string, phoneNumber: string): Promise<void>;
+  updateUser(userId: string, updates: Partial<User>): Promise<void>;
   
   // Draw operations
   getCurrentDraw(): Promise<Draw | undefined>;
   getCompletedDraws(): Promise<Draw[]>;
   getAllDraws(): Promise<Draw[]>;
+  getDraw(drawId: number): Promise<Draw | undefined>;
   createDraw(draw: InsertDraw): Promise<Draw>;
   updateDrawWinningNumbers(drawId: number, winningNumbers: number[]): Promise<void>;
   updateDrawJackpot(drawId: number, additionalAmount: number): Promise<void>;
@@ -167,6 +169,16 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId));
   }
 
+  async updateUser(userId: string, updates: Partial<User>): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        ...updates,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
   // Draw operations
   async getCurrentDraw(): Promise<Draw | undefined> {
     const [draw] = await db
@@ -192,6 +204,15 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(draws)
       .orderBy(desc(draws.drawNumber));
+  }
+
+  async getDraw(drawId: number): Promise<Draw | undefined> {
+    const [draw] = await db
+      .select()
+      .from(draws)
+      .where(eq(draws.id, drawId))
+      .limit(1);
+    return draw;
   }
 
   async createDraw(drawData: InsertDraw): Promise<Draw> {
