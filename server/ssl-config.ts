@@ -90,42 +90,60 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
 
 export function rateLimitingMiddleware() {
   const attempts = new Map<string, { count: number; resetTime: number }>();
+  const loginAttempts = new Map<string, { count: number; resetTime: number }>();
   
   return (req: Request, res: Response, next: NextFunction) => {
-    // Skip rate limiting in development for static assets and API
-    if (process.env.NODE_ENV === 'development') {
-      return next();
-    }
-    
     const ip = req.ip || req.connection.remoteAddress || 'unknown';
     const now = Date.now();
     const windowMs = 15 * 60 * 1000; // 15 minutes
-    const maxAttempts = 1000; // Increased for development, 100 for production
+    
+    // Different limits for different endpoints
+    let maxAttempts: number;
+    let currentMap: Map<string, { count: number; resetTime: number }>;
+    
+    if (req.path === '/api/auth/login') {
+      // Stricter limits for login attempts
+      maxAttempts = process.env.NODE_ENV === 'production' ? 10 : 100;
+      currentMap = loginAttempts;
+    } else if (req.path.startsWith('/api/admin/')) {
+      // Medium limits for admin endpoints
+      maxAttempts = process.env.NODE_ENV === 'production' ? 50 : 500;
+      currentMap = attempts;
+    } else {
+      // Standard limits for general API
+      maxAttempts = process.env.NODE_ENV === 'production' ? 100 : 1000;
+      currentMap = attempts;
+    }
     
     // Clean expired entries
-    for (const [key, value] of attempts.entries()) {
+    for (const [key, value] of currentMap.entries()) {
       if (now > value.resetTime) {
-        attempts.delete(key);
+        currentMap.delete(key);
       }
     }
     
-    const current = attempts.get(ip);
+    const current = currentMap.get(ip);
     if (!current) {
-      attempts.set(ip, { count: 1, resetTime: now + windowMs });
+      currentMap.set(ip, { count: 1, resetTime: now + windowMs });
       return next();
     }
     
     if (now > current.resetTime) {
-      attempts.set(ip, { count: 1, resetTime: now + windowMs });
+      currentMap.set(ip, { count: 1, resetTime: now + windowMs });
       return next();
     }
     
     current.count++;
     
     if (current.count > maxAttempts) {
+      const message = req.path === '/api/auth/login' 
+        ? 'Too many login attempts. Please try again later.'
+        : 'Too many requests, please try again later';
+        
       return res.status(429).json({
-        message: 'Too many requests, please try again later',
-        retryAfter: Math.ceil((current.resetTime - now) / 1000)
+        message,
+        retryAfter: Math.ceil((current.resetTime - now) / 1000),
+        endpoint: req.path
       });
     }
     
@@ -133,6 +151,7 @@ export function rateLimitingMiddleware() {
     res.setHeader('X-RateLimit-Limit', maxAttempts);
     res.setHeader('X-RateLimit-Remaining', Math.max(0, maxAttempts - current.count));
     res.setHeader('X-RateLimit-Reset', Math.ceil(current.resetTime / 1000));
+    res.setHeader('X-RateLimit-Policy', `${maxAttempts} per ${windowMs / 60000} minutes`);
     
     next();
   };

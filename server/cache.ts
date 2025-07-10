@@ -20,7 +20,7 @@ export class CacheManager {
 
   constructor(config?: Partial<CacheConfig>) {
     this.config = {
-      url: process.env.REDIS_URL || 'redis://localhost:6379',
+      url: process.env.REDIS_URL || process.env.UPSTASH_REDIS_REST_URL || 'redis://localhost:6379',
       ttl: {
         short: 300,    // 5 minutes
         medium: 1800,  // 30 minutes
@@ -48,9 +48,7 @@ export class CacheManager {
       });
 
       this.client.on('error', (err) => {
-        if (process.env.NODE_ENV !== 'development') {
-          console.warn('[CACHE] Redis unavailable, using fallback mode');
-        }
+        console.warn('[CACHE] Redis error, using fallback mode:', err.message);
         this.connected = false;
       });
 
@@ -66,20 +64,16 @@ export class CacheManager {
 
       // Set connection timeout
       const timeout = setTimeout(() => {
-        if (process.env.NODE_ENV !== 'development') {
         console.warn('[CACHE] Redis connection timeout, using fallback mode');
-      }
         this.connected = false;
-      }, 2000);
+      }, 5000); // Increased timeout for production Redis services
 
       await this.client.connect();
       clearTimeout(timeout);
       this.connected = true;
       console.log('[CACHE] Redis cache initialized successfully');
     } catch (error) {
-      if (process.env.NODE_ENV !== 'development') {
-        console.warn('[CACHE] Redis unavailable, operating without cache:', error.message);
-      }
+      console.warn('[CACHE] Redis connection failed, operating in fallback mode:', error.message);
       this.connected = false;
     }
   }

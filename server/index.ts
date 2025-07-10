@@ -13,10 +13,17 @@ const app = express();
 // Trust proxy for SSL termination (Replit/CloudFlare)
 app.set('trust proxy', 1);
 
-// Security middleware in order (no rate limiting in development)
+// Security middleware in order
 app.use(httpsRedirectMiddleware);
 app.use(securityHeadersMiddleware);
-// Rate limiting disabled in development to prevent 429 errors
+
+// Enhanced Rate Limiting - Production Ready
+if (process.env.NODE_ENV === 'production') {
+  app.use(rateLimitingMiddleware);
+} else {
+  // Development mode: lighter rate limiting to prevent abuse but allow testing
+  app.use('/api', rateLimitingMiddleware);
+}
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
