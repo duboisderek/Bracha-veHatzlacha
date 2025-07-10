@@ -1,0 +1,73 @@
+Prompt Complet à destination de Replit Agent – Finalisation & Perfection du Système
+Merci d’exécuter les actions suivantes afin de finaliser la plateforme BrachaVeHatzlacha en corrigeant toutes les fonctionnalités incomplètes ou en attente, comme relevé dans le rapport du 10 juillet 2025. L’objectif est d’atteindre un niveau de stabilité, de propreté de code, et de cohérence parfait, prêt pour un lancement en production sans comportement inattendu ni dépendance inactive.
+🔧 1. Redis (production) – Configuration réelle
+Problème actuel : Le système utilise un fallback local car aucune instance Redis réelle n’est connectée.
+Action demandée :
+Connecter une instance Redis réelle (exemple : Upstash, Redis Cloud, ou Redis via Railway).
+Ajouter la variable d’environnement REDIS_URL dans le .env ou la configuration Replit.
+Modifier le backend pour s'assurer que :
+Les sessions utilisateurs sont bien stockées en Redis.
+Toutes les fonctionnalités utilisant un cache (auth, API throttling, tokens, notifications...) l’utilisent via Redis.
+But final : Améliorer les performances du backend et éviter la surcharge inutile de la base de données PostgreSQL.
+🔧 2. Paiements Crypto – Automatisation ou gestion sécurisée
+Problème actuel : Les paiements en crypto nécessitent une validation manuelle via l’admin. Ce n’est pas optimal ni automatisé.
+Action demandée :
+Implémenter un système de validation automatisée des paiements crypto :
+Soit en interfaçant directement l’API d’un wallet (Metamask, Coinbase, Binance, etc.).
+Soit via l’écoute de webhooks de transactions (par exemple via un service tiers comme Blockonomics, NOWPayments, etc.).
+Si l’automatisation n’est pas envisageable immédiatement, alors :
+Créer un système de logs détaillés des paiements en attente.
+Afficher un statut transaction (en attente, confirmé, refusé) dans l’interface admin.
+Envoyer une notification à l’admin à chaque nouveau paiement crypto à valider.
+But final : Rendre le système de paiement crypto fluide, traçable et soit automatique, soit maîtrisé avec rigueur.
+🔧 3. Backups – Connexion réelle à un service de stockage distant
+Problème actuel : Une API de backup est codée, mais non connectée à un espace de stockage réel.
+Action demandée :
+Connecter l’API de sauvegarde automatique à un service compatible avec Replit :
+Par exemple : Replit Storage API, Firebase Storage, AWS S3, Cloudflare R2, etc.
+Automatiser les sauvegardes de la base de données (PostgreSQL) avec une fréquence hebdomadaire ou quotidienne via CRON.
+Sauvegarder :
+Les tables critiques (users, transactions, tickets, draws, etc.)
+Les fichiers éventuels (upload ou images)
+Logs système si disponibles
+Générer une alerte ou log après chaque backup réussi.
+But final : Garantir la sécurité des données avec des sauvegardes accessibles, récurrentes et fiables.
+🔧 4. i18n – Suppression des clés en double
+Problème actuel : Le fichier i18n_final.ts contient des doublons de clés, provoquant des avertissements au build.
+Action demandée :
+Scanner le fichier i18n_final.ts et toutes ses variantes (FR, EN, HE).
+Supprimer toutes les clés identiques définies plusieurs fois (en conservant la plus récente si doute).
+Facultatif mais recommandé : Ajouter un script (npm run lint:i18n) ou un check dans CI/CD pour éviter les doublons à l’avenir.
+But final : Avoir une structure i18n propre, sans conflits ni ambigüités à l'affichage.
+🔧 5. Redis (local dev) – Fallback pour les développeurs
+Problème actuel : Redis n’est pas utilisable localement, ce qui gêne les développeurs en local.
+Action demandée :
+Modifier le code pour détecter automatiquement l’environnement local (par ex. via process.env.NODE_ENV === 'development').
+Si Redis n’est pas disponible, utiliser un fallback clair (en mémoire, ou un cache JS).
+Documenter cette configuration dans le fichier README.md avec instructions pour les développeurs :
+Comment installer Redis localement (optionnel)
+Comment utiliser le fallback
+Quelle limitation cela implique en mode local
+But final : Assurer une expérience de développement fluide sans casser les fonctionnalités dépendant de Redis.
+🔧 6. Service Worker – Activation en build production
+Problème actuel : Le Service Worker est présent mais désactivé en développement, empêchant les tests de comportement offline.
+Action demandée :
+Activer le Service Worker dans les builds de production :
+Par exemple : vite.config.ts doit appeler register() uniquement si import.meta.env.MODE === 'production'.
+Permettre aux développeurs de tester en local en lançant un build de prod (npm run build && npm run preview).
+Tester et valider :
+Mise en cache des assets
+Disponibilité offline de la page d’accueil et de l’espace client
+Notification éventuelle en cas de nouvelle version
+But final : Assurer que la plateforme fonctionne de manière fluide en PWA, même sans connexion.
+🔧 7. Suppression du cadeau de bienvenue automatique (bonus 100₪)
+Problème actuel : À chaque création de compte, un crédit automatique de 100₪ est accordé — cette logique doit être retirée.
+Action demandée :
+Supprimer entièrement la logique qui ajoute un bonus de bienvenue à tout nouvel utilisateur :
+Code backend (dans le contrôleur de création ou middleware utilisateur)
+Code frontend (s’il y a une mention visuelle du cadeau)
+S’assurer que tout nouvel utilisateur a un solde initial de 0₪ sans bonus.
+Supprimer tout test, toute notification, et toute traduction associée à ce bonus.
+But final : Revenir à un modèle standard où l’utilisateur démarre sans avantage par défaut.
+🎯 Objectif global
+Corriger ces 7 points techniques pour que la plateforme soit parfaitement propre, sans dépendances inactives, sans comportement temporaire, et entièrement sous contrôle technique, prête à être auditée, testée et utilisée sans surprise.

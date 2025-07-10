@@ -48,7 +48,9 @@ export class CacheManager {
       });
 
       this.client.on('error', (err) => {
-        console.warn('[CACHE] Redis unavailable, using fallback mode');
+        if (process.env.NODE_ENV !== 'development') {
+          console.warn('[CACHE] Redis unavailable, using fallback mode');
+        }
         this.connected = false;
       });
 
@@ -64,7 +66,9 @@ export class CacheManager {
 
       // Set connection timeout
       const timeout = setTimeout(() => {
+        if (process.env.NODE_ENV !== 'development') {
         console.warn('[CACHE] Redis connection timeout, using fallback mode');
+      }
         this.connected = false;
       }, 2000);
 
@@ -73,7 +77,9 @@ export class CacheManager {
       this.connected = true;
       console.log('[CACHE] Redis cache initialized successfully');
     } catch (error) {
-      console.warn('[CACHE] Redis unavailable, operating without cache:', error.message);
+      if (process.env.NODE_ENV !== 'development') {
+        console.warn('[CACHE] Redis unavailable, operating without cache:', error.message);
+      }
       this.connected = false;
     }
   }
@@ -92,7 +98,9 @@ export class CacheManager {
 
   async get<T>(key: string): Promise<T | null> {
     if (!this.connected || !this.client) {
-      console.warn('[CACHE] Redis not connected, skipping cache get');
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('[CACHE] Redis not connected, skipping cache get');
+      }
       return null;
     }
 
@@ -113,7 +121,9 @@ export class CacheManager {
 
   async set<T>(key: string, value: T, ttlType: 'short' | 'medium' | 'long' = 'medium'): Promise<void> {
     if (!this.connected || !this.client) {
-      console.warn('[CACHE] Redis not connected, skipping cache set');
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('[CACHE] Redis not connected, skipping cache set');
+      }
       return;
     }
 

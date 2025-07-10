@@ -6,6 +6,7 @@ import { drawScheduler } from "./scheduler";
 import { initializeCache } from "./cache";
 import { logger, performanceMiddleware, errorLoggingMiddleware } from "./logger";
 import { httpsRedirectMiddleware, securityHeadersMiddleware, rateLimitingMiddleware } from "./ssl-config";
+import { backupService } from "./backup-service";
 
 const app = express();
 
@@ -69,6 +70,11 @@ app.use((req, res, next) => {
 (async () => {
   console.log("Initializing Redis cache...");
   await initializeCache();
+  
+  // Schedule automatic backups
+  if (process.env.NODE_ENV === 'production') {
+    await backupService.scheduleBackups();
+  }
   
   const server = await registerRoutes(app);
 

@@ -10,6 +10,7 @@ import { securityService } from "./security-service";
 import { analyticsService } from "./analytics-service";
 import { systemService } from "./system-service";
 import { logger } from "./logger";
+import { backupService } from "./backup-service";
 import { sslHealthCheck } from "./ssl-config";
 import { insertTicketSchema, insertTransactionSchema, insertChatMessageSchema, insertDrawSchema } from "@shared/schema";
 import { z } from "zod";
@@ -319,7 +320,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastName: lastName,
         profileImageUrl: null,
         phoneNumber: phoneNumber || null,
-        balance: '100.00',
+        balance: '0.00',
         totalWinnings: '0.00',
         referralCode: referralCode,
         referredBy: null,
@@ -2240,6 +2241,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       logger.error('Error fetching crypto payments', error as Error, 'API');
       res.status(500).json({ message: "Erreur serveur" });
+    }
+  });
+
+  // ================================
+  // BACKUP API ENDPOINTS
+  // ================================
+
+  // Get backup configuration
+  app.get('/api/admin/backup/config', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const config = backupService.getConfiguration();
+      res.json(config);
+    } catch (error) {
+      console.error("Error fetching backup config:", error);
+      res.status(500).json({ message: "Failed to fetch backup configuration" });
+    }
+  });
+
+  // Update backup configuration
+  app.post('/api/admin/backup/config', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { provider, schedule, retention, credentials } = req.body;
+      
+      backupService.updateConfiguration({
+        provider,
+        schedule,
+        retention,
+        credentials
+      });
+      
+      res.json({ message: "Backup configuration updated successfully" });
+    } catch (error) {
+      console.error("Error updating backup config:", error);
+      res.status(500).json({ message: "Failed to update backup configuration" });
+    }
+  });
+
+  // Trigger manual backup
+  app.post('/api/admin/backup/trigger', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const result = await backupService.performBackup();
+      
+      if (result.success) {
+        res.json({ 
+          message: "Backup completed successfully",
+          path: result.path 
+        });
+      } else {
+        res.status(500).json({ 
+          message: "Backup failed",
+          error: result.error 
+        });
+      }
+    } catch (error) {
+      console.error("Error performing backup:", error);
+      res.status(500).json({ message: "Failed to perform backup" });
+    }
+  });
+
+  // Restore from backup
+  app.post('/api/admin/backup/restore', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { backupPath } = req.body;
+      
+      if (!backupPath) {
+        return res.status(400).json({ message: "Backup path is required" });
+      }
+      
+      const result = await backupService.restoreBackup(backupPath);
+      
+      if (result.success) {
+        res.json({ message: "Restore completed successfully" });
+      } else {
+        res.status(500).json({ 
+          message: "Restore failed",
+          error: result.error 
+        });
+      }
+    } catch (error) {
+      console.error("Error restoring backup:", error);
+      res.status(500).json({ message: "Failed to restore backup" });
     }
   });
 
