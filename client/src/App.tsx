@@ -31,6 +31,10 @@ import AdminSMSConfig from "@/pages/AdminSMSConfig";
 import AdminSystemLogs from "@/pages/AdminSystemLogs";
 import RootAdminWallets from "@/pages/RootAdminWallets";
 import SystemBackupRestore from "@/pages/SystemBackupRestore";
+import UserProfile from "@/pages/UserProfile";
+import AdminSystemSettings from "@/pages/AdminSystemSettings";
+import AdminEmailTemplates from "@/pages/AdminEmailTemplates";
+import AdminDrawStatistics from "@/pages/AdminDrawStatistics";
 import { Header } from "@/components/layout/Header";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { WhatsAppSupport } from "@/components/ui/whatsapp-support";
@@ -89,6 +93,12 @@ function AppContent() {
         <Route path="/security">
           <ProtectedRoute requireAuth={true}>
             <Security />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/profile">
+          <ProtectedRoute requireAuth={true}>
+            <UserProfile />
           </ProtectedRoute>
         </Route>
         
@@ -156,6 +166,24 @@ function AppContent() {
         <Route path="/system-backup-restore">
           <ProtectedRoute requireRootAdmin={true}>
             <SystemBackupRestore />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-system-settings">
+          <ProtectedRoute requireRootAdmin={true}>
+            <AdminSystemSettings />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-email-templates">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminEmailTemplates />
+          </ProtectedRoute>
+        </Route>
+
+        <Route path="/admin-draw-statistics">
+          <ProtectedRoute requireAdmin={true}>
+            <AdminDrawStatistics />
           </ProtectedRoute>
         </Route>
         

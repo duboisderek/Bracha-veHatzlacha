@@ -697,6 +697,113 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return wallet;
   }
+
+  // NOUVELLES MÉTHODES POUR LES STATISTIQUES DE TIRAGES
+  async getDrawStats(drawId: number): Promise<{
+    totalTickets: number;
+    totalJackpot: string;
+    winners: { matchCount: number; count: number; totalWinnings: string }[];
+  }> {
+    try {
+      const draw = await this.getDraw(drawId);
+      if (!draw) {
+        return { totalTickets: 0, totalJackpot: "0.00", winners: [] };
+      }
+
+      const ticketStats = await db.select({ count: count() })
+        .from(tickets)
+        .where(eq(tickets.drawId, drawId));
+
+      const totalTickets = ticketStats[0]?.count || 0;
+
+      const winnersQuery = await db.select({
+        matchCount: tickets.matchCount,
+        count: count(),
+        totalWinnings: sql<string>`COALESCE(SUM(${tickets.winningAmount}), '0.00')`.as('totalWinnings')
+      })
+      .from(tickets)
+      .where(and(eq(tickets.drawId, drawId), sql`${tickets.matchCount} > 0`))
+      .groupBy(tickets.matchCount);
+
+      const winners = winnersQuery.map(w => ({
+        matchCount: w.matchCount || 0,
+        count: w.count,
+        totalWinnings: w.totalWinnings || "0.00"
+      }));
+
+      return { totalTickets, totalJackpot: draw.jackpot || "0.00", winners };
+    } catch (error) {
+      console.error("Error getting draw stats:", error);
+      return { totalTickets: 0, totalJackpot: "0.00", winners: [] };
+    }
+  }
+
+  async getDrawWinners(drawId: number): Promise<{
+    matchCount: number;
+    user: { id: string; firstName: string; lastName: string; email: string };
+    winningAmount: string;
+    numbers: number[];
+  }[]> {
+    try {
+      const winnersQuery = await db.select({
+        matchCount: tickets.matchCount,
+        winningAmount: tickets.winningAmount,
+        numbers: tickets.numbers,
+        userId: tickets.userId,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        email: users.email
+      })
+      .from(tickets)
+      .leftJoin(users, eq(tickets.userId, users.id))
+      .where(and(eq(tickets.drawId, drawId), sql`${tickets.matchCount} > 0`))
+      .orderBy(desc(tickets.matchCount));
+
+      return winnersQuery.map(w => ({
+        matchCount: w.matchCount || 0,
+        user: {
+          id: w.userId,
+          firstName: w.firstName || '',
+          lastName: w.lastName || '',
+          email: w.email || ''
+        },
+        winningAmount: w.winningAmount || "0.00",
+        numbers: w.numbers || []
+      }));
+    } catch (error) {
+      console.error("Error getting draw winners:", error);
+      return [];
+    }
+  }
+
+  async updateDrawWinningNumbers(drawId: number, winningNumbers: number[]): Promise<void> {
+    try {
+      await db.update(draws)
+        .set({ 
+          winningNumbers,
+          updatedAt: new Date()
+        })
+        .where(eq(draws.id, drawId));
+    } catch (error) {
+      console.error("Error updating draw winning numbers:", error);
+      throw error;
+    }
+  }
+
+  async completeDraw(drawId: number): Promise<void> {
+    try {
+      await db.update(draws)
+        .set({ 
+          isCompleted: true,
+          isActive: false,
+          updatedAt: new Date()
+        })
+        .where(eq(draws.id, drawId));
+    } catch (error) {
+      console.error("Error completing draw:", error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();

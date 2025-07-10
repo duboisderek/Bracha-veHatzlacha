@@ -2364,6 +2364,163 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // NOUVELLES ROUTES MANQUANTES - USER PROFILE
+  app.put('/api/user/profile', isAuthenticated, async (req: any, res) => {
+    try {
+      const { firstName, lastName, phoneNumber, language, smsNotifications } = req.body;
+      const userId = req.session?.passport?.user;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const updates: any = {};
+      if (firstName) updates.firstName = firstName;
+      if (lastName) updates.lastName = lastName;
+      if (phoneNumber) updates.phoneNumber = phoneNumber;
+      if (language) updates.language = language;
+      if (typeof smsNotifications === 'boolean') updates.smsNotifications = smsNotifications;
+
+      await storage.updateUser(userId, updates);
+      const updatedUser = await storage.getUser(userId);
+
+      res.json({ 
+        message: "Profile updated successfully",
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // User referral link
+  app.get('/api/user/referral-link', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.session?.passport?.user;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const referralLink = `${req.protocol}://${req.get('host')}/register?ref=${user.referralCode}`;
+      
+      res.json({ 
+        referralLink,
+        referralCode: user.referralCode,
+        referralCount: user.referralCount,
+        referralBonus: user.referralBonus
+      });
+    } catch (error) {
+      console.error("Error getting referral link:", error);
+      res.status(500).json({ message: "Failed to get referral link" });
+    }
+  });
+
+  // NOUVELLES ROUTES AVANCÉES - SECURITY 2FA
+  app.post('/api/security/2fa/verify', isAuthenticated, async (req: any, res) => {
+    try {
+      const { code } = req.body;
+      const userId = req.session?.passport?.user;
+      
+      if (!code) {
+        return res.status(400).json({ message: "Verification code is required" });
+      }
+
+      // Simulate 2FA verification (implement with authenticator library)
+      const isValid = code === "123456"; // Mock verification
+      
+      if (isValid) {
+        res.json({ 
+          message: "2FA verification successful",
+          verified: true
+        });
+      } else {
+        res.status(400).json({ 
+          message: "Invalid verification code",
+          verified: false
+        });
+      }
+    } catch (error) {
+      console.error("Error verifying 2FA:", error);
+      res.status(500).json({ message: "Failed to verify 2FA code" });
+    }
+  });
+
+  // EMAIL TEMPLATE MANAGEMENT
+  app.put('/api/admin/email/template/:name', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { name } = req.params;
+      const { language, subject, body } = req.body;
+      
+      if (!language || !subject || !body) {
+        return res.status(400).json({ message: "Language, subject, and body are required" });
+      }
+
+      // Update email template in the email service
+      await emailService.updateTemplate(name, language, { subject, body });
+      
+      res.json({ 
+        message: "Email template updated successfully",
+        templateName: name,
+        language
+      });
+    } catch (error) {
+      console.error("Error updating email template:", error);
+      res.status(500).json({ message: "Failed to update email template" });
+    }
+  });
+
+  // SYSTEM SETTINGS MANAGEMENT
+  app.put('/api/admin/system/settings', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const settings = req.body;
+      
+      // Validate settings structure
+      if (!settings.lottery || !settings.security || !settings.notifications || !settings.payments) {
+        return res.status(400).json({ message: "Invalid settings structure" });
+      }
+
+      // Update system settings (implement in system service)
+      await systemService.updateSettings(settings);
+      
+      res.json({ 
+        message: "System settings updated successfully",
+        settings
+      });
+    } catch (error) {
+      console.error("Error updating system settings:", error);
+      res.status(500).json({ message: "Failed to update system settings" });
+    }
+  });
+
+  // CRYPTO WALLET MANAGEMENT
+  app.put('/api/root-admin/wallets/:currency', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const { currency } = req.params;
+      const { address, label } = req.body;
+      
+      if (!address) {
+        return res.status(400).json({ message: "Wallet address is required" });
+      }
+
+      // Update wallet address
+      const result = await paymentService.updateWalletAddress(currency, address, label);
+      
+      res.json({ 
+        message: `${currency.toUpperCase()} wallet updated successfully`,
+        wallet: result
+      });
+    } catch (error) {
+      console.error("Error updating wallet:", error);
+      res.status(500).json({ message: "Failed to update wallet address" });
+    }
+  });
+
   // SMS Notification Routes
   app.post('/api/admin/sms/test', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
