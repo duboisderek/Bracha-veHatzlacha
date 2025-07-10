@@ -56,12 +56,17 @@ export class PaymentService {
 
   async submitCryptoPayment(userId: string, amount: string, txHash: string, currency: string): Promise<any> {
     try {
+      // Get admin wallet address for the currency
+      const adminWallet = this.adminWallets.get(currency.toLowerCase());
+      const walletAddress = adminWallet ? adminWallet.address : 'pending_verification';
+      
       const payment = await storage.createCryptoPayment({
         id: `payment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId,
         amount,
         currency: currency.toLowerCase(),
         txHash,
+        walletAddress,
         status: 'pending',
         submittedAt: new Date()
       });
@@ -71,7 +76,8 @@ export class PaymentService {
         userId,
         amount,
         currency,
-        txHash
+        txHash,
+        walletAddress
       });
 
       return payment;
