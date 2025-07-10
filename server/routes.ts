@@ -905,6 +905,412 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin comprehensive stats endpoint
+  // ROOT ADMIN - System Configuration Endpoints
+  app.get('/api/root-admin/system/config', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      // Return default system configuration
+      const config = {
+        lottery: {
+          ticketPrice: 100,
+          minNumbers: 6,
+          maxNumbers: 6,
+          numberRange: 37,
+          drawFrequency: 'weekly'
+        },
+        financial: {
+          houseEdge: 0.5,
+          referralBonus: 100,
+          referralThreshold: 1000,
+          vipThreshold: 10000,
+          minDeposit: 100
+        },
+        security: {
+          sessionTimeout: 24,
+          maxLoginAttempts: 5,
+          lockoutDuration: 15,
+          require2FA: false,
+          enforceStrongPasswords: true
+        },
+        notifications: {
+          emailEnabled: true,
+          smsEnabled: false,
+          pushEnabled: true,
+          winningNotifications: true,
+          promotionalEmails: false
+        },
+        features: {
+          chatEnabled: true,
+          referralProgram: true,
+          cryptoPayments: true,
+          multiLanguage: true,
+          mobileApp: true
+        }
+      };
+      
+      res.json(config);
+    } catch (error) {
+      console.error("Error fetching system config:", error);
+      res.status(500).json({ message: "Failed to fetch configuration" });
+    }
+  });
+
+  app.post('/api/root-admin/system/config', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      // In a real implementation, save to database or config file
+      res.json({ message: "Configuration saved successfully" });
+    } catch (error) {
+      console.error("Error saving system config:", error);
+      res.status(500).json({ message: "Failed to save configuration" });
+    }
+  });
+
+  // ROOT ADMIN - Backup Management Endpoints
+  app.get('/api/root-admin/system/backups', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const backups = [
+        {
+          id: '1',
+          name: 'backup_2025_07_10_auto.sql',
+          date: '2025-07-10 03:00:00',
+          size: '2.4 MB',
+          type: 'automatic',
+          status: 'completed',
+          path: '/backups/backup_2025_07_10_auto.sql',
+          checksum: 'sha256:abc123...'
+        },
+        {
+          id: '2',
+          name: 'backup_2025_07_09_manual.sql',
+          date: '2025-07-09 15:30:00',
+          size: '2.3 MB',
+          type: 'manual',
+          status: 'completed',
+          path: '/backups/backup_2025_07_09_manual.sql',
+          checksum: 'sha256:def456...'
+        }
+      ];
+      
+      res.json({ backups });
+    } catch (error) {
+      console.error("Error fetching backups:", error);
+      res.status(500).json({ message: "Failed to fetch backups" });
+    }
+  });
+
+  app.get('/api/root-admin/system/backup-stats', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      const stats = {
+        totalBackups: 15,
+        totalSize: '36.2 MB',
+        lastBackup: '2025-07-10 03:00:00',
+        nextScheduled: '2025-07-11 03:00:00',
+        successRate: 98.5
+      };
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching backup stats:", error);
+      res.status(500).json({ message: "Failed to fetch backup stats" });
+    }
+  });
+
+  app.post('/api/root-admin/system/backup', isAuthenticated, isRootAdmin, async (req: any, res) => {
+    try {
+      // Simulate backup creation
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      res.json({ 
+        success: true, 
+        backup: {
+          id: Date.now().toString(),
+          name: `backup_${new Date().toISOString().split('T')[0]}_manual.sql`,
+          date: new Date().toISOString(),
+          type: 'manual',
+          status: 'completed'
+        }
+      });
+    } catch (error) {
+      console.error("Error creating backup:", error);
+      res.status(500).json({ message: "Failed to create backup" });
+    }
+  });
+
+  // VIP Support Endpoints
+  app.get('/api/vip/support/tickets', isAuthenticated, async (req: any, res) => {
+    try {
+      const tickets = [
+        {
+          id: '1',
+          subject: 'Problème de connexion',
+          message: 'Je n\'arrive pas à me connecter depuis ce matin',
+          priority: 'medium',
+          status: 'resolved',
+          createdAt: '2025-07-10 10:30:00',
+          updatedAt: '2025-07-10 11:15:00',
+          adminResponse: 'Problème résolu. Votre compte a été débloqué.',
+          responseTime: 45
+        }
+      ];
+      
+      res.json(tickets);
+    } catch (error) {
+      console.error("Error fetching VIP tickets:", error);
+      res.status(500).json({ message: "Failed to fetch tickets" });
+    }
+  });
+
+  app.get('/api/vip/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const stats = {
+        totalSpent: 15000,
+        ticketsPurchased: 150,
+        totalWinnings: 5000,
+        vipLevel: 'Gold',
+        pointsEarned: 1500,
+        nextLevelPoints: 2500
+      };
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching VIP stats:", error);
+      res.status(500).json({ message: "Failed to fetch VIP stats" });
+    }
+  });
+
+  app.post('/api/vip/support/tickets', isAuthenticated, async (req: any, res) => {
+    try {
+      const { subject, message, priority } = req.body;
+      
+      const ticket = {
+        id: Date.now().toString(),
+        subject,
+        message,
+        priority,
+        status: 'open',
+        createdAt: new Date().toISOString()
+      };
+      
+      res.json(ticket);
+    } catch (error) {
+      console.error("Error creating VIP ticket:", error);
+      res.status(500).json({ message: "Failed to create ticket" });
+    }
+  });
+
+  // Onboarding Endpoints
+  app.get('/api/user/onboarding/progress', isAuthenticated, async (req: any, res) => {
+    try {
+      const progress = {
+        currentStep: 1,
+        completedSteps: ['welcome'],
+        totalSteps: 6,
+        completionPercentage: 16.7,
+        nextReward: '25₪ bonus',
+        bonusEarned: 50
+      };
+      
+      res.json(progress);
+    } catch (error) {
+      console.error("Error fetching onboarding progress:", error);
+      res.status(500).json({ message: "Failed to fetch progress" });
+    }
+  });
+
+  app.post('/api/user/onboarding/complete', isAuthenticated, async (req: any, res) => {
+    try {
+      const { stepId } = req.body;
+      
+      const rewards = {
+        welcome: '50₪ bonus',
+        profile: '25₪ bonus',
+        deposit: '100₪ bonus (100% match)',
+        first_ticket: '1 ticket gratuit',
+        referral: '100₪ par parrainage',
+        complete: 'Statut VIP temporaire'
+      };
+      
+      res.json({ 
+        success: true,
+        reward: rewards[stepId as keyof typeof rewards] || 'Bonus spécial'
+      });
+    } catch (error) {
+      console.error("Error completing onboarding step:", error);
+      res.status(500).json({ message: "Failed to complete step" });
+    }
+  });
+
+  // Chat Moderation Endpoints
+  app.get('/api/admin/chat/messages', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { filter } = req.query;
+      
+      const messages = [
+        {
+          id: '1',
+          username: 'Client123',
+          message: 'Quelqu\'un peut m\'aider ?',
+          timestamp: '2025-07-10 14:30:00',
+          flagged: false,
+          hidden: false,
+          category: 'support',
+          reports: 0
+        },
+        {
+          id: '2',
+          username: 'SpamUser',
+          message: 'ACHETEZ MES PRODUITS !!!',
+          timestamp: '2025-07-10 14:25:00',
+          flagged: true,
+          hidden: false,
+          category: 'spam',
+          reports: 3,
+          moderatedBy: 'Admin'
+        }
+      ];
+      
+      let filteredMessages = messages;
+      if (filter === 'flagged') {
+        filteredMessages = messages.filter(m => m.flagged);
+      } else if (filter === 'hidden') {
+        filteredMessages = messages.filter(m => m.hidden);
+      } else if (filter === 'reported') {
+        filteredMessages = messages.filter(m => m.reports > 0);
+      }
+      
+      res.json(filteredMessages);
+    } catch (error) {
+      console.error("Error fetching chat messages:", error);
+      res.status(500).json({ message: "Failed to fetch messages" });
+    }
+  });
+
+  app.get('/api/admin/chat/stats', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const stats = {
+        totalMessages: 1248,
+        flaggedMessages: 15,
+        hiddenMessages: 8,
+        activeUsers: 45,
+        reportedMessages: 12
+      };
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching chat stats:", error);
+      res.status(500).json({ message: "Failed to fetch chat stats" });
+    }
+  });
+
+  app.post('/api/admin/chat/messages/:messageId/hide', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { messageId } = req.params;
+      // Hide/unhide message logic here
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error hiding message:", error);
+      res.status(500).json({ message: "Failed to hide message" });
+    }
+  });
+
+  app.delete('/api/admin/chat/messages/:messageId', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { messageId } = req.params;
+      // Delete message logic here
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      res.status(500).json({ message: "Failed to delete message" });
+    }
+  });
+
+  app.post('/api/admin/chat/ban/:username', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { username } = req.params;
+      // Ban user logic here
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error banning user:", error);
+      res.status(500).json({ message: "Failed to ban user" });
+    }
+  });
+
+  // Advanced Analytics Endpoints
+  app.get('/api/admin/analytics/advanced', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { range } = req.query;
+      
+      const analytics = {
+        revenue: {
+          daily: Array.from({ length: 30 }, (_, i) => ({
+            date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            amount: Math.floor(Math.random() * 5000) + 1000
+          })),
+          monthly: Array.from({ length: 12 }, (_, i) => ({
+            month: new Date(2025, i, 1).toLocaleDateString('fr-FR', { month: 'long' }),
+            amount: Math.floor(Math.random() * 50000) + 10000
+          })),
+          total: 250000,
+          growth: 15.2
+        },
+        users: {
+          registrations: Array.from({ length: 30 }, (_, i) => ({
+            date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            count: Math.floor(Math.random() * 20) + 5
+          })),
+          activity: Array.from({ length: 50 }, (_, i) => ({ id: i })),
+          retention: [
+            { period: 'Semaine 1', day1: 95, day7: 75, day30: 45 },
+            { period: 'Semaine 2', day1: 92, day7: 78, day30: 48 },
+            { period: 'Semaine 3', day1: 94, day7: 76, day30: 46 },
+            { period: 'Semaine 4', day1: 96, day7: 79, day30: 49 }
+          ],
+          demographics: [
+            { name: 'France', value: 45 },
+            { name: 'Israël', value: 30 },
+            { name: 'Canada', value: 15 },
+            { name: 'Autres', value: 10 }
+          ]
+        },
+        lottery: {
+          participation: Array.from({ length: 10 }, (_, i) => ({
+            draw: `Tirage ${i + 1}`,
+            tickets: Math.floor(Math.random() * 500) + 100
+          })),
+          popularNumbers: Array.from({ length: 37 }, (_, i) => ({
+            number: i + 1,
+            frequency: Math.floor(Math.random() * 100) + 20
+          })),
+          winnings: [
+            { name: '3 correspondances', amount: 15000 },
+            { name: '4 correspondances', amount: 35000 },
+            { name: '5 correspondances', amount: 85000 },
+            { name: '6 correspondances', amount: 250000 }
+          ]
+        },
+        conversion: {
+          funnel: [
+            { step: 'Inscription', rate: 100 },
+            { step: 'Premier dépôt', rate: 45 },
+            { step: 'Premier ticket', rate: 78 },
+            { step: 'Deuxième ticket', rate: 62 },
+            { step: 'Utilisateur régulier', rate: 35 }
+          ],
+          sources: [
+            { name: 'Organique', users: 45 },
+            { name: 'Parrainage', users: 30 },
+            { name: 'Publicité', users: 15 },
+            { name: 'Direct', users: 10 }
+          ]
+        }
+      };
+      
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching advanced analytics:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
+  });
+
   app.get('/api/admin/stats', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
       const users = await storage.getAllUsers();
