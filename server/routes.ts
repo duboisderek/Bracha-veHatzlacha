@@ -2333,6 +2333,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reset password endpoint (AJOUTÉ)
+  app.post('/api/admin/reset-password', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId, newPassword } = req.body;
+      
+      if (!userId || !newPassword) {
+        return res.status(400).json({ message: "User ID and new password are required" });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Hash the new password
+      const bcrypt = require('bcrypt');
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      
+      // Update user with new password
+      await storage.updateUserPassword(userId, hashedPassword);
+      
+      res.json({ 
+        message: `Password reset successfully for ${user.firstName} ${user.lastName}`,
+        userId: userId
+      });
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ message: "Failed to reset password" });
+    }
+  });
+
   // SMS Notification Routes
   app.post('/api/admin/sms/test', isAuthenticated, isAdmin, async (req: any, res) => {
     try {

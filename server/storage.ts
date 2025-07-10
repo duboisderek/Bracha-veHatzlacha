@@ -46,6 +46,7 @@ export interface IStorage {
   updateUserBalance(userId: string, amount: string): Promise<void>;
   updateUserPhone(userId: string, phoneNumber: string): Promise<void>;
   updateUser(userId: string, updates: Partial<User>): Promise<void>;
+  updateUserPassword(userId: string, hashedPassword: string): Promise<void>;
   
   // Draw operations
   getCurrentDraw(): Promise<Draw | undefined>;
@@ -174,6 +175,16 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ 
         ...updates,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async updateUserPassword(userId: string, hashedPassword: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        passwordHash: hashedPassword,
         updatedAt: new Date()
       })
       .where(eq(users.id, userId));

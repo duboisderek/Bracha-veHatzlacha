@@ -328,7 +328,7 @@ export class EmailService {
         to: options.to,
         subject: options.subject,
         html: options.html,
-        text: options.text || options.html.replace(/<[^>]*>/g, '')
+        text: options.text || (options.html ? options.html.replace(/<[^>]*>/g, '') : '')
       });
 
       logger.info('Email sent successfully', 'EMAIL_SERVICE', {
