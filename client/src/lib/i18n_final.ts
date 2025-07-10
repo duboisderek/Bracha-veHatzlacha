@@ -1187,7 +1187,126 @@ export const translations = {
     generalInquiry: "פנייה כללית",
     complaintSubmission: "הגשת תלונה",
     suggestionBox: "תיבת הצעות",
-    feedbackForm: "טופס משוב"
+    feedbackForm: "טופס משוב",
+    
+    // MISSING LANDING PAGE TRANSLATIONS HEBREW
+    landingWelcome: "ברוכים הבאים לחוויית הלוטו האולטימטיבית",
+    landingSubtitle: "הצטרפו לאלפי שחקנים ברחבי העולם",
+    currentJackpotLabel: "הג'קפוט הנוכחי",
+    nextDrawLabel: "ההגרלה הבאה",
+    drawsEveryWeek: "הגרלות מדי שבוע",
+    fridayAt8PM: "יום שישי בשעה 20:00",
+    joinNow: "הצטרף עכשיו",
+    loginAsAdmin: "גישת מנהל",
+    demoAccess: "גישת הדגמה",
+    chooseYourRole: "בחר את הגישה שלך",
+    
+    // FEATURES HEBREW
+    secureAndTrusted: "מאובטח ואמין",
+    weeklyDraws: "הגרלות שבועיות",
+    instantPayouts: "תשלומים מיידיים",
+    multiLanguage: "רב-לשוני",
+    
+    // STATS HEBREW
+    totalPlayers: "סה״כ שחקנים",
+    weeklyJackpot: "ג'קפוט שבועי",
+    winnersToDate: "זוכים עד היום",
+    
+    // AUTH FORMS HEBREW
+    enterCredentials: "הזינו את פרטי הכניסה שלכם",
+    emailAddress: "כתובת אימייל",
+    passwordField: "סיסמה",
+    loginButton: "כניסה",
+    registerButton: "הרשמה",
+    alreadyHaveAccount: "יש לכם כבר חשבון?",
+    dontHaveAccount: "אין לכם חשבון?",
+    
+    // ADMIN INTERFACE HEBREW
+    adminDashboard: "לוח בקרה מנהל",
+    managePlatform: "נהל את פעילות הפלטפורמה",
+    totalTickets: "סה״כ כרטיסים",
+    totalRevenue: "סה״כ הכנסות",
+    activeUsers: "משתמשים פעילים",
+    completedDraws: "הגרלות שהושלמו",
+    
+    // DEMO MESSAGES HEBREW
+    demoMode: "מצב הדגמה",
+    demoModeDescription: "זוהי הדגמה עם נתונים לדוגמה",
+    
+    // ERROR MESSAGES HEBREW
+    loginFailed: "הכניסה נכשלה. אנא נסו שוב.",
+    networkError: "שגיאת רשת. אנא בדקו את החיבור שלכם.",
+    unexpectedError: "אירעה שגיאה בלתי צפויה.",
+    
+    // SUCCESS MESSAGES HEBREW
+    loginSuccess: "הכניסה הצליחה",
+    accountCreated: "החשבון נוצר בהצלחה",
+    passwordChanged: "הסיסמה שונתה בהצלחה",
+    
+    // NAVIGATION HEBREW
+    backToLogin: "חזרה לכניסה",
+    goToHome: "עבור לבית",
+    viewProfile: "צפה בפרופיל",
+    accountSettings: "הגדרות חשבון",
+    
+    // ADMIN DASHBOARD MISSING KEYS HEBREW
+    jackpot: "ג'קפוט",
+    prizePool: "קופת פרסים",
+    revenue: "הכנסות",
+    ticketSales: "מכירות כרטיסים",
+    totalWinners: "סה״כ זוכים",
+    submitDrawResults: "הגש תוצאות הגרלה",
+    date: "תאריך",
+    selectWinningNumbers: "בחר מספרים זוכים",
+    winningNumbers: "מספרים זוכים",
+    processing: "מעבד",
+    submitResults: "הגש תוצאות",
+    drawStatistics: "סטטיסטיקות הגרלה",
+    ticketsText: "כרטיסים",
+    prizeDistribution: "חלוקת פרסים",
+    platformRetention: "שימור פלטפורמה",
+    user: "משתמש",
+    drawCreatedSuccessfully: "ההגרלה נוצרה בהצלחה",
+    selectDrawDate: "בחר תאריך הגרלה",
+    createNewDraw: "צור הגרלה חדשה",
+    creating: "יוצר",
+    createDraw: "צור הגרלה",
+    platformRevenue: "הכנסות פלטפורמה",
+    retentionFromDraw: "שימור מההגרלה",
+    depositSuccessful: "ההפקדה הצליחה",
+    invalidAmount: "סכום לא תקין",
+    searchUserByEmail: "חפש משתמש לפי אימייל",
+    userNotFound: "משתמש לא נמצא",
+    depositAmount: "סכום הפקדה",
+    enterAmount: "הזן סכום",
+    enterComment: "הזן הערה (אופציונלי)",
+    depositing: "מפקיד",
+    yourWinningNumbers: "המספרים הזוכים שלך",
+    noCompletedDraws: "לא נמצאו הגרלות שהושלמו",
+    
+    // MVP FEATURES HEBREW - COMPLETE
+    chatSupport: "תמיכת צ'אט",
+    referFriends: "הפנה חברים",
+    referralDescription: "הזמינו חברים וקבלו 100₪ כאשר הם מבצעים הפקדה ראשונה של 1000₪+",
+    progressToBonus: "התקדמות לבונוס",
+    referralsCount: "מספר הפניות",
+    won: "זכה",
+    correct_numbers: "מספרים נכונים",
+    scan_qr_referral: "סרקו QR כדי להצטרף עם קישור ההפניה שלכם",
+    draw_locked: "הגרלה נעולה",
+    participation_locked: "השתתפות חדשה נעולה 60 שניות לפני ההגרלה",
+    standard_lottery: "לוטו רגיל",
+    join_standard_lottery: "הצטרפו ללוטו רגיל",
+    jackpot_updated: "ג'קפוט עודכן",
+    last_update: "עדכון אחרון",
+    auto_update_in: "עדכון אוטומטי בעוד",
+    
+    // FINAL MISSING TRANSLATIONS HEBREW
+    mustSelect6Numbers: "יש לבחור 6 מספרים",
+    drawCreated: "ההגרלה נוצרה בהצלחה",
+    resultsSubmitted: "התוצאות הוגשו בהצלחה",
+    createUserButton: "צור משתמש",
+    drawDate: "תאריך הגרלה"
   },
   
   fr: {
