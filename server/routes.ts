@@ -2537,15 +2537,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Hash new password
-      const bcrypt = require('bcrypt');
+      const bcrypt = await import('bcrypt');
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       
       // Update user password
       await storage.updateUserPassword(userId, hashedPassword);
       
-      // Log security event
-      await securityService.logEvent(req.session?.passport?.user, 'password_reset', 'info', 
-        `Admin reset password for user ${userId}`, req.ip);
+      // Log security event (if service available)
+      try {
+        await securityService.logEvent(req.session?.passport?.user, 'password_reset', 'info', 
+          `Admin reset password for user ${userId}`, req.ip);
+      } catch (error) {
+        console.log('Security logging not available:', error.message);
+      }
       
       res.json({ 
         message: "Password reset successfully",
@@ -2591,7 +2595,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { startDate, endDate } = req.query;
       
       // Get analytics data for PDF
-      const analytics = await analyticsService.getCompleteReport(startDate as string, endDate as string);
+      const analytics = await analyticsService.generateDetailedReport(
+        startDate ? new Date(startDate as string) : undefined,
+        endDate ? new Date(endDate as string) : undefined
+      );
       
       // Simulate PDF generation (implement with PDFKit or similar)
       const pdfData = {
@@ -2696,9 +2703,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update user role
       await storage.updateUser(userId, { status: newRole });
       
-      // Log security event
-      await securityService.logEvent(req.session?.passport?.user, 'user_promotion', 'info', 
-        `Admin promoted user ${userId} to ${newRole}`, req.ip);
+      // Log security event (if service available)
+      try {
+        await securityService.logEvent(req.session?.passport?.user, 'user_promotion', 'info', 
+          `Admin promoted user ${userId} to ${newRole}`, req.ip);
+      } catch (error) {
+        console.log('Security logging not available:', error.message);
+      }
       
       res.json({ 
         message: `User promoted to ${newRole} successfully`,

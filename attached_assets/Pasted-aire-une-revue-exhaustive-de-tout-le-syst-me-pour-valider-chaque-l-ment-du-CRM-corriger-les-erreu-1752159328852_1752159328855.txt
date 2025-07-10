@@ -1,0 +1,75 @@
+aire une revue exhaustive de tout le système, pour valider chaque élément du CRM, corriger les erreurs restantes, compléter les actions incomplètes et garantir un fonctionnement parfait avant le déploiement final.
+
+🔁 Étapes demandées à Replit Agent :
+✅ Étape 1 : Test de TOUTES les fonctionnalités
+Effectuer une vérification approfondie de toutes les actions possibles pour chaque rôle :
+
+Authentification
+
+Navigation par rôle
+
+Accès aux boutons / menus
+
+Réponses des API pour chaque action
+
+Vérification des synchronisations entre admin, client, et autres rôles
+
+Tests de création, suppression, et modification d’objets dans la base
+
+Tests de la base de données (PostgreSQL) : intégrité, cohérence, transactions
+
+Vérification de la sécurité : routes protégées, validation des données, gestion de session
+
+Tests de l’interface sur les 3 langues
+
+Vérification du comportement de l’interface sur les différentes pages (/, /client-auth, /home, etc.)
+
+♻️ Étape 2 : Réinitialisation de la base de données
+Supprimer tous les utilisateurs existants
+
+Vider toutes les données dépendantes si nécessaire (tickets, sessions, etc.)
+
+👤 Étape 3 : Recréation de 1 utilisateur par rôle
+Créer manuellement un utilisateur par rôle : client, admin, etc.
+
+Affecter à chaque utilisateur les droits et menus correspondants
+
+Conserver ces identifiants pour documentation
+
+🔁 Étape 4 : Retester les nouveaux accès
+Connexion avec chaque rôle
+
+Vérification que les permissions sont correctes
+
+Test complet des workflows propres à chaque rôle
+
+📄 Étape 5 : Générer une documentation complète
+Créer un document structuré avec les éléments suivants :
+
+Liste des nouveaux accès (login/mot de passe) pour chaque rôle
+
+Workflow complet par rôle (actions possibles, enchaînement logique)
+
+Description de chaque menu, fonctionnalité, et bouton pour chaque rôle
+
+Que fait chaque menu ?
+
+À quoi sert chaque bouton ?
+
+Quelles sont les règles métier associées à chaque action ?
+
+📤 Sorties attendues :
+Fichier texte ou markdown (report.md) contenant toute la documentation demandée
+
+Captures si possible (facultatif)
+
+Code ou configuration corrigé si des erreurs sont détectées
+
+Confirmation finale que le système est 100 % fonctionnel et prêt pour production
+
+🆘 Aide attendue de Replit Agent :
+Corriger ou signaler toute erreur persistante
+
+Exécuter des tests automatisés ou semi-automatisés
+
+S’assurer que chaque fonctionnalité est complète, cohérente et sans bug
