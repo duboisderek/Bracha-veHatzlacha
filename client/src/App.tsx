@@ -33,6 +33,7 @@ import RootAdminWallets from "@/pages/RootAdminWallets";
 import SystemBackupRestore from "@/pages/SystemBackupRestore";
 import { Header } from "@/components/layout/Header";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { WhatsAppSupport } from "@/components/ui/whatsapp-support";
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -176,6 +177,9 @@ function AppContent() {
         {/* Fallback route */}
         <Route component={NotFound} />
       </Switch>
+      
+      {/* WhatsApp Support sur toutes les pages */}
+      <WhatsAppSupport phoneNumber="+972509948023" />
     </div>
   );
 }

@@ -253,15 +253,20 @@ export class EmailService {
 
   private async checkConfiguration() {
     try {
-      const smtpConfig = await storage.getSystemSetting('smtp_config');
-      if (smtpConfig) {
-        const config = JSON.parse(smtpConfig.value);
-        await this.configure(config);
-      } else {
-        logger.warn('Email service not configured - missing SMTP settings', 'EMAIL_SERVICE');
-      }
+      // Configuration SMTP Hostinger directe
+      await this.configure({
+        host: 'smtp.hostinger.com',
+        port: 465,
+        secure: true,
+        auth: {
+          user: 'bh@brahatz.com',
+          pass: 'Bracha123@vhtzl'
+        },
+        from: 'bh@brahatz.com'
+      });
+      logger.info('Email service configured with Hostinger SMTP', 'EMAIL_SERVICE');
     } catch (error) {
-      logger.error('Failed to load email configuration', error as Error, 'EMAIL_SERVICE');
+      logger.error('Failed to configure email service', error as Error, 'EMAIL_SERVICE');
     }
   }
 
@@ -276,7 +281,7 @@ export class EmailService {
     from?: string;
   }): Promise<void> {
     try {
-      this.transporter = nodemailer.createTransporter({
+      this.transporter = nodemailer.createTransport({
         host: config.host,
         port: config.port,
         secure: config.secure,
