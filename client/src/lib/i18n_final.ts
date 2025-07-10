@@ -1284,29 +1284,12 @@ export const translations = {
     yourWinningNumbers: "המספרים הזוכים שלך",
     noCompletedDraws: "לא נמצאו הגרלות שהושלמו",
     
-    // MVP FEATURES HEBREW - COMPLETE
-    chatSupport: "תמיכת צ'אט",
-    referFriends: "הפנה חברים",
-    referralDescription: "הזמינו חברים וקבלו 100₪ כאשר הם מבצעים הפקדה ראשונה של 1000₪+",
-    progressToBonus: "התקדמות לבונוס",
-    referralsCount: "מספר הפניות",
-    won: "זכה",
-    correct_numbers: "מספרים נכונים",
-    scan_qr_referral: "סרקו QR כדי להצטרף עם קישור ההפניה שלכם",
-    draw_locked: "הגרלה נעולה",
-    participation_locked: "השתתפות חדשה נעולה 60 שניות לפני ההגרלה",
+    // MVP FEATURES HEBREW - COMPLETE (suppression des doublons)
     standard_lottery: "לוטו רגיל",
     join_standard_lottery: "הצטרפו ללוטו רגיל",
     jackpot_updated: "ג'קפוט עודכן",
     last_update: "עדכון אחרון",
-    auto_update_in: "עדכון אוטומטי בעוד",
-    
-    // FINAL MISSING TRANSLATIONS HEBREW
-    mustSelect6Numbers: "יש לבחור 6 מספרים",
-    drawCreated: "ההגרלה נוצרה בהצלחה",
-    resultsSubmitted: "התוצאות הוגשו בהצלחה",
-    createUserButton: "צור משתמש",
-    drawDate: "תאריך הגרלה"
+    auto_update_in: "עדכון אוטומטי בעוד"
   },
   
   fr: {
