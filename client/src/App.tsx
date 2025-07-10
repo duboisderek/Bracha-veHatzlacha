@@ -34,6 +34,7 @@ import SystemBackupRestore from "@/pages/SystemBackupRestore";
 import { Header } from "@/components/layout/Header";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { WhatsAppSupport } from "@/components/ui/whatsapp-support";
+import { MobileNavigation } from "@/components/layout/MobileNavigation";
 
 function AppContent() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -180,6 +181,9 @@ function AppContent() {
       
       {/* WhatsApp Support sur toutes les pages */}
       <WhatsAppSupport phoneNumber="+972509948023" />
+      
+      {/* Navigation mobile sur toutes les pages authentifiées */}
+      {isAuthenticated && <MobileNavigation />}
     </div>
   );
 }

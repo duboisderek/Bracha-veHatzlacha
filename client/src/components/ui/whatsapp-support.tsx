@@ -24,21 +24,25 @@ export function WhatsAppSupport({
   return (
     <div className={`fixed z-50 ${className}`} 
          style={{ 
-           [isRTL ? 'left' : 'right']: '20px',
-           bottom: '20px'
+           [isRTL ? 'left' : 'right']: '16px',
+           bottom: '16px'
          }}>
       <motion.button
         onClick={handleWhatsAppClick}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
-        className="group relative bg-green-500 hover:bg-green-600 text-white rounded-full p-3 shadow-lg transition-all duration-300 hover:shadow-xl"
+        onTouchStart={() => setIsHovered(true)}
+        onTouchEnd={() => setTimeout(() => setIsHovered(false), 2000)}
+        className="group relative bg-green-500 hover:bg-green-600 active:bg-green-700 text-white 
+                   rounded-full shadow-lg transition-all duration-300 hover:shadow-xl
+                   touch-target-large md:p-3 p-4"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
-        <MessageCircle size={24} className="group-hover:animate-pulse" />
+        <MessageCircle size={24} className="group-hover:animate-pulse md:w-6 md:h-6 w-7 h-7" />
         
         <AnimatePresence>
           {isHovered && (
@@ -47,8 +51,8 @@ export function WhatsAppSupport({
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: isRTL ? -10 : 10, scale: 0.8 }}
               className={`absolute bottom-0 ${isRTL ? 'left-full ml-3' : 'right-full mr-3'} 
-                         bg-gray-900 text-white text-sm px-3 py-2 rounded-lg whitespace-nowrap
-                         shadow-lg border border-gray-700`}
+                         bg-gray-900 text-white mobile-text-sm px-3 py-2 rounded-lg 
+                         shadow-lg border border-gray-700 max-w-xs md:max-w-none`}
             >
               {t('whatsapp_support_tooltip')}
               <div className={`absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45

@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { MobileOptimizedCard, MobileStatsCard, MobileActionCard } from "@/components/mobile/MobileOptimizedCard";
+import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { LotteryBall } from "@/components/ui/lottery-ball";
 import { FloatingParticles } from "@/components/ui/floating-particles";
 import { 
@@ -44,26 +46,30 @@ function WinnersCarousel() {
   }, [recentWinners.length]);
 
   return (
-    <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 p-4 rounded-lg shadow-lg mb-6">
+    <MobileOptimizedCard 
+      gradient
+      className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 border-0 text-white mb-4"
+      compact
+    >
       <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse">
-        <Trophy className="w-6 h-6 text-white animate-bounce" />
+        <Trophy className="w-5 h-5 md:w-6 md:h-6 text-white animate-bounce" />
         <div className="text-center text-white">
-          <h3 className="font-bold text-lg">{t("winnersCarousel")}</h3>
+          <h3 className="font-bold mobile-text-lg">{t("winnersCarousel")}</h3>
           <motion.div
             key={currentIndex}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="text-sm"
+            className="mobile-text-sm"
           >
             <span className="font-semibold">{recentWinners[currentIndex].name}</span>
             {" "}{t("winner")} ₪{recentWinners[currentIndex].amount.toLocaleString()}
             <div className="text-xs opacity-80">{recentWinners[currentIndex].time}</div>
           </motion.div>
         </div>
-        <Star className="w-6 h-6 text-white animate-pulse" />
+        <Star className="w-5 h-5 md:w-6 md:h-6 text-white animate-pulse" />
       </div>
-    </div>
+    </MobileOptimizedCard>
   );
 }
 
@@ -84,22 +90,20 @@ function JackpotDisplay() {
   }, []);
 
   return (
-    <Card className="bg-gradient-to-br from-purple-600 to-blue-600 text-white border-0 shadow-2xl">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Coins className="w-8 h-8 animate-spin" />
-          {t("currentJackpot")}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-center">
-        <div className="text-4xl font-bold mb-2">
+    <MobileOptimizedCard 
+      className="bg-gradient-to-br from-purple-600 to-blue-600 text-white border-0 shadow-lg"
+      title={t("currentJackpot")}
+      icon={<Coins className="w-6 h-6 md:w-8 md:h-8 animate-spin" />}
+    >
+      <div className="text-center">
+        <div className="text-3xl md:text-4xl font-bold mb-2">
           ₪{jackpotAmount.toLocaleString()}
         </div>
-        <div className="text-sm opacity-80">
+        <div className="mobile-text-sm opacity-80">
           {t("lastUpdated")}: {lastUpdate.toLocaleTimeString()}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </MobileOptimizedCard>
   );
 }
 
@@ -433,20 +437,20 @@ export default function Home() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 relative overflow-hidden pb-20 md:pb-8">
       <FloatingParticles count={30} />
       
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        {/* Welcome Header */}
+      <div className="mobile-container md:container mx-auto px-4 py-4 md:py-8 space-y-4 md:space-y-8">
+        {/* Welcome Header - Mobile optimisé */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
             {t("appName")}
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="mobile-text-base md:text-lg text-gray-600">
             {t("welcomeMessage")}
           </p>
         </motion.div>
@@ -454,35 +458,69 @@ export default function Home() {
         {/* Winners Carousel */}
         <WinnersCarousel />
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Jackpot and Next Draw */}
-          <div className="space-y-6">
+        {/* Layout mobile-first */}
+        <div className="mobile-grid-1 lg:grid-cols-3 lg:grid gap-4 md:gap-8">
+          {/* Jackpot et Next Draw - Mobile stacked */}
+          <div className="space-y-4 md:space-y-6">
             <JackpotDisplay />
-            <NextDrawInfo />
             
-            {/* Standard Lottery Suggestion */}
-            <Card className="border-dashed border-2 border-orange-300 bg-orange-50">
-              <CardContent className="text-center p-6">
-                <ExternalLink className="w-8 h-8 text-orange-500 mx-auto mb-2" />
-                <p className="font-medium text-orange-700 mb-3">
-                  {t("standardLotterySuggestion")}
-                </p>
-                <Button variant="outline" className="border-orange-500 text-orange-700 hover:bg-orange-100">
-                  Learn More
-                </Button>
-              </CardContent>
-            </Card>
+            {/* Next Draw Info - Version mobile compacte */}
+            <MobileOptimizedCard 
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+              title={t("nextDrawInfo")}
+              icon={<Clock className="w-5 h-5 md:w-6 md:h-6" />}
+              compact
+            >
+              <div className="text-center">
+                <div className="mobile-text-sm md:text-lg mb-2">{t("drawCountdown")}</div>
+                <div className="flex justify-center space-x-2 md:space-x-4">
+                  <div className="text-center">
+                    <div className="text-lg md:text-2xl font-bold">3</div>
+                    <div className="text-xs">{t("days")}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg md:text-2xl font-bold">14</div>
+                    <div className="text-xs">{t("hours")}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg md:text-2xl font-bold">27</div>
+                    <div className="text-xs">{t("minutes")}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg md:text-2xl font-bold">45</div>
+                    <div className="text-xs">{t("seconds")}</div>
+                  </div>
+                </div>
+              </div>
+            </MobileOptimizedCard>
+            
+            {/* Standard Lottery - Masqué sur mobile pour éviter l'encombrement */}
+            <div className="hidden md:block">
+              <Card className="border-dashed border-2 border-orange-300 bg-orange-50">
+                <CardContent className="text-center p-6">
+                  <ExternalLink className="w-8 h-8 text-orange-500 mx-auto mb-2" />
+                  <p className="font-medium text-orange-700 mb-3">
+                    {t("standardLotterySuggestion")}
+                  </p>
+                  <Button variant="outline" className="border-orange-500 text-orange-700 hover:bg-orange-100">
+                    Learn More
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
-          {/* Center Column - Number Selection */}
+          {/* Number Selection - Prend toute la largeur sur mobile */}
           <div className="lg:col-span-2">
             <NumberSelection />
           </div>
         </div>
       </div>
 
-      {/* Quick Contact Widget */}
-      <QuickContactWidget />
+      {/* Quick Contact Widget - Masqué sur mobile car WhatsApp Support présent */}
+      <div className="hidden md:block">
+        <QuickContactWidget />
+      </div>
     </div>
   );
 }

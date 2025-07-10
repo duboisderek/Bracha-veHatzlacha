@@ -2,8 +2,151 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 3D Transform and Animation Enhancements */
+/* 📱 OPTIMISATIONS MOBILE SPÉCIFIQUES */
+@layer base {
+  /* Améliorer les zones tactiles */
+  button, [role="button"], input, textarea, select {
+    min-height: 44px; /* Zone tactile minimum iOS */
+    min-width: 44px;
+  }
+  
+  /* Supprimer le zoom sur les inputs iOS */
+  input, textarea, select {
+    font-size: 16px !important;
+    transform-origin: top left;
+  }
+  
+  /* Smooth scrolling et optimisations touch */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+}
+
+/* 📱 UTILITAIRES MOBILE */
 @layer utilities {
+  /* Zones tactiles optimisées */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .touch-target-large {
+    min-height: 56px;
+    min-width: 56px;
+  }
+  
+  /* Spacing mobile */
+  .mobile-padding {
+    padding: 1rem;
+  }
+  
+  .mobile-margin {
+    margin: 0.75rem;
+  }
+  
+  /* Text mobile optimisé */
+  .mobile-text-sm {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .mobile-text-base {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .mobile-text-lg {
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  
+  /* Cards mobiles */
+  .mobile-card {
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* Boutons mobiles */
+  .mobile-btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+  
+  .mobile-btn-sm {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+  
+  /* WhatsApp mobile optimisé */
+  .whatsapp-mobile {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 50;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  
+  /* Navigation mobile */
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    padding: 8px 0;
+    z-index: 40;
+  }
+  
+  /* Containers mobiles */
+  .mobile-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Grids mobiles */
+  .mobile-grid-1 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .mobile-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .mobile-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+/* 3D Transform and Animation Enhancements */
   .perspective-1000 {
     perspective: 1000px;
   }
@@ -94,6 +237,74 @@
   }
   100% {
     transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg);
+  }
+}
+
+/* 📱 MEDIA QUERIES MOBILES SPÉCIFIQUES */
+@media (max-width: 768px) {
+  /* Réduire les animations sur mobile pour les performances */
+  .animate-float, .animate-glow, .animate-shimmer {
+    animation-duration: 3s;
+  }
+  
+  /* Cards plus compactes */
+  .card {
+    margin: 0.5rem 0;
+    border-radius: 8px;
+  }
+  
+  /* Texte plus lisible */
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+  
+  /* Boutons plus grands */
+  button {
+    min-height: 48px;
+    font-size: 16px;
+  }
+  
+  /* Navigation sticky */
+  .mobile-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  /* Spacing réduit */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* WhatsApp position ajustée */
+  .whatsapp-mobile {
+    bottom: 80px; /* Au-dessus de la nav mobile */
+  }
+}
+
+@media (max-width: 640px) {
+  /* Très petits écrans */
+  .mobile-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .mobile-text-lg {
+    font-size: 16px;
+  }
+  
+  .mobile-btn {
+    width: 100%;
+    margin: 0.25rem 0;
+  }
+  
+  /* Lottery balls plus petites */
+  .lottery-ball {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
   }
 }
 
