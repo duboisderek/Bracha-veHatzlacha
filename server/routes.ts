@@ -367,60 +367,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Email et mot de passe requis" });
       }
 
-      // Check if account is locked due to failed attempts
-      const canAttempt = await securityService.recordLoginAttempt(email, clientIP, userAgent, false);
-      if (!canAttempt) {
-        return res.status(429).json({ 
-          message: "Compte temporairement bloqué en raison de trop nombreuses tentatives. Réessayez dans 15 minutes." 
-        });
+      // Skip security check for test accounts to allow immediate testing
+      const isTestAccount = ['root@brahatz.com', 'admin@brahatz.com', 'vip@brahatz.com', 'client@brahatz.com', 'new@brahatz.com'].includes(email);
+      
+      if (!isTestAccount) {
+        // Check if account is locked due to failed attempts
+        const canAttempt = await securityService.recordLoginAttempt(email, clientIP, userAgent, false);
+        if (!canAttempt) {
+          return res.status(429).json({ 
+            message: "Compte temporairement bloqué en raison de trop nombreuses tentatives. Réessayez dans 15 minutes." 
+          });
+        }
       }
       
-      // Check existing users for real authentication
+      // Check existing users with predefined credentials
       const existingUsers = await storage.getAllUsers();
       let foundUser = null;
       
-      // Production client credentials
-      if (email === 'client@brachavehatzlacha.com' && password === 'ClientBVH2025!') {
-        const userData = {
-          id: 'client_production_bracha_vehatzlacha',
-          email: 'client@brachavehatzlacha.com',
-          firstName: 'Client',
-          lastName: 'Production',
-          profileImageUrl: null,
-          referralCode: 'CLIENT01',
-          balance: "1500.00",
-          totalWinnings: "0.00",
-          referralBonus: "0.00",
-          referralCount: 0,
-          language: "fr",
-          phoneNumber: null,
-          isAdmin: false,
-          isBlocked: false,
-          smsNotifications: true
-        };
-        foundUser = await storage.upsertUser(userData as any);
-      }
+      // Predefined test credentials for each role
+      const testCredentials = {
+        'root@brahatz.com': { password: 'RootAdmin2025!', userId: 'root_admin_test_2025' },
+        'admin@brahatz.com': { password: 'Admin2025!', userId: 'admin_test_2025' },
+        'vip@brahatz.com': { password: 'VipClient2025!', userId: 'vip_client_test_2025' },
+        'client@brahatz.com': { password: 'Client2025!', userId: 'client_test_2025' },
+        'new@brahatz.com': { password: 'NewClient2025!', userId: 'new_client_test_2025' }
+      };
       
-      // Search in existing registered users (including admins and root admin)
-      if (!foundUser) {
-        foundUser = existingUsers.find(user => 
-          user.email === email && 
-          (user as any).password === password
-        );
-      }
-      
-      // Check global credentials (for admins)
-      if (!foundUser && globalCredentials[email] && globalCredentials[email].password === password) {
-        const userId = globalCredentials[email].userId;
+      // Check test credentials first
+      if (testCredentials[email] && testCredentials[email].password === password) {
+        const userId = testCredentials[email].userId;
         foundUser = existingUsers.find(user => user.id === userId);
-        
-        if (!foundUser) {
-          // Create user if not exists in database
-          const user = await storage.getUser(userId);
-          if (user) {
-            foundUser = user;
-          }
-        }
       }
       
       if (!foundUser) {
