@@ -1,0 +1,56 @@
+Finalisation Système BrachaVeHatzlacha
+Merci d'exécuter les tâches suivantes pour finaliser complètement la plateforme et éliminer les dernières dépendances ou comportements non souhaités, comme indiqué dans le rapport du 10 juillet 2025 :
+
+🔧 Liste complète des options en attente à corriger :
+Redis (production)
+
+Configurer une véritable instance Redis (ex : Upstash, Redis Cloud)
+
+Renseigner REDIS_URL dans les variables d’environnement
+
+Activer le cache des sessions et toutes les fonctionnalités dépendantes
+
+Paiements Crypto
+
+Finaliser l’automatisation du traitement (si prévu via API externe)
+
+Sinon, maintenir la validation manuelle admin avec journalisation claire (logs)
+
+Assurer la transparence des statuts (en attente, confirmé, rejeté)
+
+Backups (sauvegardes)
+
+Connecter l’API de sauvegarde système à un service distant compatible Replit
+
+Exemple recommandé : Replit Storage, Firebase Storage, ou autre S3-compatible
+
+Automatiser une tâche planifiée (CRON ou équivalent) pour backups réguliers
+
+i18n – Clés en double
+
+Supprimer toutes les clés de traduction en doublon dans le fichier i18n_final.ts
+
+Optionnel : ajouter un script de validation i18n ou un check au build
+
+Redis en environnement de développement (local)
+
+Fournir un fallback explicite si Redis est indisponible en local
+
+Ajouter une documentation claire pour les développeurs pour simuler Redis localement
+
+Service Worker (développement)
+
+Activer le Service Worker uniquement dans le mode production
+
+Permettre de tester les fonctionnalités offline (PWA) localement avec un build prod
+
+Suppression automatique du cadeau de bienvenue (bonus 100₪)
+
+Supprimer complètement la logique de crédit automatique de 100₪ pour les nouveaux utilisateurs créés
+
+Vérifier que les comptes fraîchement créés commencent avec un solde zéro par défaut
+
+Supprimer toute mention du bonus côté backend et frontend
+
+🎯 Objectif :
+Corriger les derniers points techniques et comportementaux afin de garantir que le système est 100 % prêt pour un déploiement final en production, sans logique temporaire, sans dépendance externe inactive, et sans données ou bonus par défaut.
