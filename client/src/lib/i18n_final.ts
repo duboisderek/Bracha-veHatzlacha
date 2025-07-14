@@ -302,8 +302,6 @@ export const translations = {
     chooseYourRole: "Choose Your Access",
     
     // Features
-    secureAndTrusted: "Secure & Trusted",
-    weeklyDraws: "Weekly Draws",
     instantPayouts: "Instant Payouts",
     multiLanguage: "Multi-Language",
     
@@ -687,8 +685,6 @@ export const translations = {
     chooseYourRole: "בחר את הגישה שלך",
     
     // Features Hebrew
-    secureAndTrusted: "מאובטח ואמין",
-    weeklyDraws: "הגרלות שבועיות",
     instantPayouts: "תשלומים מיידיים",
     multiLanguage: "רב לשוני",
     
@@ -1503,8 +1499,6 @@ export const translations = {
     chooseYourRole: "Choisissez Votre Accès",
     
     // Features French
-    secureAndTrusted: "Sécurisé et Fiable",
-    weeklyDraws: "Tirages Hebdomadaires",
     instantPayouts: "Paiements Instantanés",
     multiLanguage: "Multi-Langue",
     
