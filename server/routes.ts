@@ -217,6 +217,27 @@ const globalCredentials: Record<string, { password: string; userId: string }> = 
   };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Quick health check endpoint for debugging
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
+  // Simple database test endpoint with timeout protection
+  app.get('/api/db-test', async (req, res) => {
+    const timeout = setTimeout(() => {
+      res.status(408).json({ status: 'timeout', message: 'Database query timeout' });
+    }, 2000);
+    
+    try {
+      const users = await storage.getAllUsers();
+      clearTimeout(timeout);
+      res.json({ status: 'ok', userCount: users.length });
+    } catch (error) {
+      clearTimeout(timeout);
+      res.status(500).json({ status: 'error', message: (error as Error).message });
+    }
+  });
+
   // Session configuration
   app.use((req: any, res, next) => {
     if (!req.session) {
@@ -450,10 +471,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ message: "Logged out" });
   });
 
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // Check if user is authenticated through session
+      if (!req.session?.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      
+      const userId = req.session.user.claims?.sub || req.session.user.id;
       const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -461,29 +492,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Draw endpoints
-  app.get('/api/draws/current', cacheMiddleware('short'), async (req, res) => {
+  // Draw endpoints - simplified without cache wrapper with timeout
+  app.get('/api/current-draw', async (req, res) => {
+    const timeout = setTimeout(() => {
+      if (!res.headersSent) {
+        res.status(408).json({ message: "Request timeout" });
+      }
+    }, 3000);
+    
     try {
-      const currentDraw = await cache.wrap('current-draw', async () => {
-        const draw = await storage.getCurrentDraw();
-        if (!draw) {
-          const existingDraws = await storage.getCompletedDraws();
-          const allDraws = [...existingDraws];
-          const highestDrawNumber = allDraws.length > 0 
-            ? Math.max(...allDraws.map(d => d.drawNumber))
-            : 1000;
-          
-          return await storage.createDraw({
-            drawNumber: highestDrawNumber + 1,
-            drawDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-            jackpotAmount: "87340.00",
-            isActive: true,
-            isCompleted: false,
-          });
-        }
-        return draw;
-      }, 'short');
-      
+      let currentDraw = await storage.getCurrentDraw();
+      if (!currentDraw) {
+        // Create a default draw if none exists
+        currentDraw = await storage.createDraw({
+          drawNumber: 10002,
+          drawDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+          jackpotAmount: "87340.00",
+          isActive: true,
+          isCompleted: false,
+        });
+      }
+      clearTimeout(timeout);
+      if (!res.headersSent) {
+        res.json(currentDraw);
+      }
+    } catch (error) {
+      clearTimeout(timeout);
+      console.error("Error fetching current draw:", error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Failed to fetch current draw" });
+      }
+    }
+  });
+
+  app.get('/api/draws/current', async (req, res) => {
+    try {
+      let currentDraw = await storage.getCurrentDraw();
+      if (!currentDraw) {
+        currentDraw = await storage.createDraw({
+          drawNumber: 10002,
+          drawDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          jackpotAmount: "87340.00",
+          isActive: true,
+          isCompleted: false,
+        });
+      }
       res.json(currentDraw);
     } catch (error) {
       console.error("Error fetching current draw:", error);
@@ -494,7 +547,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/draws/completed', async (req, res) => {
     try {
       const draws = await storage.getCompletedDraws();
-      res.json(draws);
+      res.json(draws || []);
     } catch (error) {
       console.error("Error fetching completed draws:", error);
       res.status(500).json({ message: "Failed to fetch completed draws" });

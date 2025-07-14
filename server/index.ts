@@ -13,17 +13,17 @@ const app = express();
 // Trust proxy for SSL termination (Replit/CloudFlare)
 app.set('trust proxy', 1);
 
-// Security middleware in order
-app.use(httpsRedirectMiddleware);
+// Security middleware in order - disabled HTTPS redirect in development
+if (process.env.NODE_ENV === 'production') {
+  app.use(httpsRedirectMiddleware);
+}
 app.use(securityHeadersMiddleware);
 
 // Enhanced Rate Limiting - Production Ready
 if (process.env.NODE_ENV === 'production') {
   app.use(rateLimitingMiddleware);
-} else {
-  // Development mode: lighter rate limiting to prevent abuse but allow testing
-  app.use('/api', rateLimitingMiddleware);
 }
+// Disable rate limiting in development to prevent blocking
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
@@ -75,14 +75,17 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  console.log("Initializing Redis cache...");
-  await initializeCache();
+  console.log("Starting server initialization...");
   
-  // Schedule automatic backups
+  // Initialize cache in background without blocking
+  initializeCache().catch(err => console.log("Cache init warning:", err.message));
+  
+  // Skip backup scheduling in development
   if (process.env.NODE_ENV === 'production') {
-    await backupService.scheduleBackups();
+    backupService.scheduleBackups().catch(err => console.log("Backup init warning:", err.message));
   }
   
+  console.log("Registering routes...");
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
