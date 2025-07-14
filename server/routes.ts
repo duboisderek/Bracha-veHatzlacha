@@ -401,23 +401,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Check existing users with predefined credentials
+      // Check existing users in database
       const existingUsers = await storage.getAllUsers();
       let foundUser = null;
       
-      // Predefined test credentials for each role
-      const testCredentials = {
-        'root@brahatz.com': { password: 'RootAdmin2025!', userId: 'root_admin_test_2025' },
-        'admin@brahatz.com': { password: 'Admin2025!', userId: 'admin_test_2025' },
-        'vip@brahatz.com': { password: 'VipClient2025!', userId: 'vip_client_test_2025' },
-        'client@brahatz.com': { password: 'Client2025!', userId: 'client_test_2025' },
-        'new@brahatz.com': { password: 'NewClient2025!', userId: 'new_client_test_2025' }
-      };
+      // First check for user by email in database
+      foundUser = existingUsers.find(user => user.email === email);
       
-      // Check test credentials first
-      if (testCredentials[email] && testCredentials[email].password === password) {
-        const userId = testCredentials[email].userId;
-        foundUser = existingUsers.find(user => user.id === userId);
+      if (!foundUser) {
+        // Check global credentials as fallback
+        if (globalCredentials[email] && globalCredentials[email].password === password) {
+          const userId = globalCredentials[email].userId;
+          foundUser = existingUsers.find(user => user.id === userId);
+        }
+      } else {
+        // Verify password against database stored password
+        if (foundUser.password !== password) {
+          foundUser = null;
+        }
       }
       
       if (!foundUser) {

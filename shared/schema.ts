@@ -36,6 +36,7 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   phoneNumber: varchar("phone_number"),
+  password: varchar("password"), // Added password field
   balance: decimal("balance", { precision: 10, scale: 2 }).default("0").notNull(),
   totalWinnings: decimal("total_winnings", { precision: 10, scale: 2 }).default("0").notNull(),
   referralCode: varchar("referral_code").unique().notNull(),
