@@ -20,19 +20,33 @@ export const sslConfig: SSLConfig = {
     preload: true
   },
   securityHeaders: true,
-  contentSecurityPolicy: [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api.whatsapp.com https://web.whatsapp.com",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https: blob:",
-    "connect-src 'self' https: wss: ws: https://api.whatsapp.com",
-    "media-src 'self' https:",
-    "object-src 'none'",
-    "frame-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'"
-  ].join('; ')
+  contentSecurityPolicy: process.env.NODE_ENV === 'development' 
+    ? [
+        "default-src 'self' http: https: ws: wss:",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' http: https:",
+        "style-src 'self' 'unsafe-inline' http: https:",
+        "font-src 'self' http: https: data:",
+        "img-src 'self' data: http: https: blob:",
+        "connect-src 'self' http: https: ws: wss:",
+        "media-src 'self' http: https:",
+        "object-src 'none'",
+        "frame-src 'self' http: https:",
+        "base-uri 'self'",
+        "form-action 'self'"
+      ].join('; ')
+    : [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://api.whatsapp.com https://web.whatsapp.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' https://fonts.gstatic.com",
+        "img-src 'self' data: https: blob:",
+        "connect-src 'self' https: wss: ws: https://api.whatsapp.com",
+        "media-src 'self' https:",
+        "object-src 'none'",
+        "frame-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'"
+      ].join('; ')
 };
 
 export function httpsRedirectMiddleware(req: Request, res: Response, next: NextFunction) {
