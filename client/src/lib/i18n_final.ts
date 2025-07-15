@@ -224,7 +224,6 @@ export const translations = {
     // Basic lottery features
     userLevel: "רמת משתמש",
     balance: "יתרה",
-    winnings: "זכיות",
     totalDraws: "סה״כ הגרלות",
     totalUsers: "סה״כ משתמשים",
     winner: "זוכה",
@@ -361,7 +360,6 @@ export const translations = {
     // Basic lottery features
     userLevel: "Niveau Utilisateur",
     balance: "Solde",
-    winnings: "Gains",
     totalDraws: "Total Tirages",
     totalUsers: "Total Utilisateurs",
     winner: "Gagnant",
