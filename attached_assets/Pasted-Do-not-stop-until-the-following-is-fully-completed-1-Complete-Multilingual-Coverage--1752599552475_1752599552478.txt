@@ -1,0 +1,28 @@
+Do not stop until the following is fully completed:
+
+1. **Complete Multilingual Coverage**:
+    - Systematically review and verify that 100% of all user-facing texts, labels, menus, buttons, forms, tooltips, notifications, errors, and workflow steps are fully translated and correctly displayed in all three languages (French, Hebrew [RTL], English).
+    - For every missing, partial, or incorrect translation, automatically generate and apply the fix, then re-verify all three languages.
+    - Repeat this process in a continuous loop until multilingual coverage is truly 100% everywhere in the application, with perfect RTL/LTR formatting and no regressions.
+
+2. **When — and only when — full translation coverage is achieved and verified in all languages, continue with these next steps:**
+
+    a. **Security & Compliance Audit**:
+        - Review and test authentication, session management, access rights, and input validation for all roles and actions.
+        - Identify and fix any vulnerability or compliance risk.
+    
+    b. **Performance & UX Optimization**:
+        - Test loading speed, resource usage, and UI responsiveness.
+        - Identify any UX friction points and make recommendations or apply improvements.
+
+    c. **Documentation & User Guide**:
+        - Generate complete, clear documentation and quickstart guides for users and admins, including instructions for language switching and troubleshooting translations.
+
+    d. **Monitoring, Logging, and Backups**:
+        - Review and enhance monitoring, log export, health checks, and backup systems to ensure long-term reliability and data safety.
+
+    e. **Automated End-to-End Tests**:
+        - Build and integrate automated E2E tests that cover all languages and critical workflows, to guarantee that everything remains perfect after updates or deployments.
+
+For each phase, do NOT ask for feedback or stop for confirmation.  
+Only report completion when 100% of texts are translated and all post-production points above are fully implemented and verified.
