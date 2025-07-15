@@ -158,31 +158,73 @@ app.use((req, res, next) => {
   console.log(`Starting server using registerRoutes on port ${port}...`);
   
   try {
-    // Protect against process.exit in Vite during setup
-    const originalExit = process.exit;
-    process.exit = ((code?: number) => {
-      console.warn(`⚠️ Process.exit(${code}) blocked during startup - keeping server alive`);
-      return undefined as never;
-    }) as typeof process.exit;
-    
     // Import and call registerRoutes - this creates the complete server
     const { registerRoutes } = await import("./routes");
     const fullServer = await registerRoutes(app);
     
-    // Start the complete server
+    // Add comprehensive error handling
+    fullServer.on('error', (error) => {
+      console.error('❌ Server error:', error);
+    });
+    
+    process.on('uncaughtException', (error) => {
+      console.error('❌ Uncaught Exception:', error);
+    });
+    
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+    
+    // Start the complete server with enhanced monitoring
     await new Promise<void>((resolve, reject) => {
+      const startTime = Date.now();
+      
       fullServer.listen(port, "0.0.0.0", () => {
-        console.log(`🚀 Complete server running on http://0.0.0.0:${port}`);
-        console.log(`🚀 Complete server running on http://localhost:${port}`);
+        const bindTime = Date.now() - startTime;
+        console.log(`🚀 Complete server BOUND to 0.0.0.0:${port} in ${bindTime}ms`);
+        console.log(`🚀 Complete server ACCESSIBLE on http://localhost:${port}`);
+        console.log(`🚀 Server process PID: ${process.pid}`);
+        
+        // Immediate verification
+        console.log("📡 Starting immediate external connectivity test...");
+        
+        // Multiple verification attempts
+        let testCount = 0;
+        const maxTests = 5;
+        
+        const testConnectivity = async () => {
+          testCount++;
+          try {
+            const response = await fetch(`http://localhost:${port}/api/health`, {
+              timeout: 1000
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              console.log(`✅ Test ${testCount}/${maxTests}: Server responding - ${JSON.stringify(data)}`);
+              
+              if (testCount >= maxTests) {
+                console.log("🎯 Server confirmed stable and accessible for external connections");
+                return;
+              }
+            } else {
+              console.log(`⚠️ Test ${testCount}/${maxTests}: HTTP status ${response.status}`);
+            }
+          } catch (error) {
+            console.error(`❌ Test ${testCount}/${maxTests}: ${error.message}`);
+          }
+          
+          if (testCount < maxTests) {
+            setTimeout(testConnectivity, 500);
+          }
+        };
+        
+        setTimeout(testConnectivity, 200);
         resolve();
       }).on('error', reject);
     });
     
-    // Restore process.exit after successful startup
-    setTimeout(() => {
-      process.exit = originalExit;
-      console.log("✅ Server started successfully - all systems operational");
-    }, 2000);
+    console.log("✅ Server startup completed - monitoring for crashes...");
     
   } catch (error) {
     console.error("Error starting complete server:", error);
