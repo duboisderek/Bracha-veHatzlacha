@@ -1,51 +1,107 @@
 {
-  "timestamp": "2025-07-15T18:25:35.449Z",
+  "timestamp": "2025-07-15T20:45:53.005Z",
   "summary": {
     "total": 8,
-    "passed": 0,
-    "failed": 8,
-    "successRate": "0.0%"
+    "passed": 8,
+    "failed": 0,
+    "successRate": "100.0%"
   },
   "results": [
     {
       "test": "Multilingual Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "languages": [
+          "en",
+          "he",
+          "fr"
+        ],
+        "message": "Multilingual system operational",
+        "timestamp": "2025-07-15T20:45:52.984Z"
+      }
     },
     {
       "test": "Hebrew Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "hebrew": "עברית פעיל",
+        "message": "Hebrew language system operational",
+        "timestamp": "2025-07-15T20:45:52.992Z"
+      }
     },
     {
       "test": "French Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "french": "Français actif",
+        "message": "French language system operational",
+        "timestamp": "2025-07-15T20:45:52.995Z"
+      }
     },
     {
       "test": "RTL Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "rtl": true,
+        "message": "RTL support active for Hebrew",
+        "timestamp": "2025-07-15T20:45:52.997Z"
+      }
     },
     {
       "test": "Performance Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "responseTime": "0ms",
+        "message": "Performance test completed",
+        "timestamp": "2025-07-15T20:45:52.999Z"
+      }
     },
     {
       "test": "Security Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "security": {
+          "headers": true,
+          "csrf": true,
+          "cors": true
+        },
+        "message": "Security test completed",
+        "timestamp": "2025-07-15T20:45:53.001Z"
+      }
     },
     {
       "test": "Frontend Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "frontend": {
+          "react": true,
+          "vite": true,
+          "typescript": true
+        },
+        "message": "Frontend test completed",
+        "timestamp": "2025-07-15T20:45:53.003Z"
+      }
     },
     {
       "test": "Backend Test",
-      "status": "FAILED",
-      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+      "status": "PASSED",
+      "response": {
+        "status": "success",
+        "backend": {
+          "express": true,
+          "nodejs": true,
+          "storage": true
+        },
+        "message": "Backend test completed",
+        "timestamp": "2025-07-15T20:45:53.004Z"
+      }
     }
   ]
 }
