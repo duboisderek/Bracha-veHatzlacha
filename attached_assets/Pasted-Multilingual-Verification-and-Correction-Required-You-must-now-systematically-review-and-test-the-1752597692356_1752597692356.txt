@@ -1,0 +1,29 @@
+Multilingual Verification and Correction Required
+
+You must now systematically review and test the entire platform for correct multilingual support across all three languages: **French, Hebrew, and English**.
+
+Your new tasks:
+
+1. For EVERY piece of user-facing text (buttons, labels, menus, forms, placeholders, notifications, error messages, tooltips, modal dialogs, section titles, page headers, UI components, etc.):
+   - Verify that the text is correctly displayed and fully translated in all three languages: French, Hebrew, and English.
+   - Ensure that Hebrew is rendered right-to-left (RTL) and is not broken or misaligned.
+   - Ensure that French and English are displayed correctly and are not overwritten, missing, or malformed after any changes.
+   - All language switchers, locale pickers, and language-based routing or rendering must be tested and confirmed working.
+
+2. For every language:
+   - Test the entire user interface (all screens, pages, dialogs, and actions) with the language set to French, then Hebrew, then English.
+   - Fix any missing or incorrect translation, UI breakage, alignment issue, or text rendering problem in ANY of the three languages.
+   - Make sure that **no correction for one language breaks or degrades the other languages**. All three must be 100% correct and functional at the same time.
+
+3. If using translation files (JSON, i18n, etc.):
+   - Ensure all keys are present and correct in each file.
+   - Validate all interpolation/variables work in all three languages.
+   - For RTL (Hebrew), check that UI layout, alignment, and text direction are always correct.
+
+4. After every fix:
+   - Retest the whole platform in all three languages to confirm that the fix did not introduce new issues.
+   - Repeat this process in a continuous loop until the multilingual system is flawless and all languages display perfectly, everywhere.
+
+**Do NOT stop, and do NOT consider the task complete, until 100% of the platform’s texts, components, and workflows are perfect in French, Hebrew (RTL), and English simultaneously.  
+If any language breaks after a fix, IMMEDIATELY correct it and retest ALL three languages again.  
+Only report completion when every language is fully operational and nothing is broken or missing in any language.**
