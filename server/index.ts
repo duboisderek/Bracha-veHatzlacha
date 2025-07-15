@@ -108,16 +108,20 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Static file serving - serve from client/public for assets
-  app.use(express.static('client/public'));
-  
-  // Catch-all route for SPA - serve main index.html from client directory
-  app.get('*', (req, res) => {
-    if (req.path.startsWith('/api/')) {
-      return res.status(404).json({ error: 'API endpoint not found' });
-    }
-    res.sendFile(path.join(__dirname, '../client/index.html'));
-  });
+  // In development, Vite middleware handles all non-API routes
+  // In production, we would serve the built files
+  if (process.env.NODE_ENV !== 'development') {
+    // Production mode - serve built files
+    app.use(express.static(path.join(__dirname, '../dist/public')));
+    
+    // Catch-all route for SPA
+    app.get('*', (req, res) => {
+      if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'API endpoint not found' });
+      }
+      res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+    });
+  }
 
   // Use PORT environment variable or fallback to 5000
   // this serves both the API and the client.

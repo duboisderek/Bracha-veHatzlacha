@@ -3902,5 +3902,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Setup Vite middleware in development
+  if (process.env.NODE_ENV === 'development') {
+    const { setupVite } = await import('./vite');
+    await setupVite(app, httpServer);
+  }
+
   return httpServer;
 }
