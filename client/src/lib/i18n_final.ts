@@ -2806,17 +2806,7 @@ export const translations = {
     versionUpdate: "Mise à Jour Version",
     webNotifications: "Notifications Web",
     welcomePackage: "Package Bienvenue",
-    winNotifications: "Notifications Gain",
-    massiveJackpots: "Jackpots Massifs",
-    lifeChangingPrizes: "Prix Qui Changent la Vie",
-    advancedSecurityPayouts: "Sécurité Avancée et Paiements",
-    startPlayingNow: "Commencer à Jouer Maintenant",
-    weeklyDraws: "Tirages Hebdomadaires",
-    referralRewards: "Récompenses Parrainage",
-    earnForReferrals: "Gagnez pour Parrainages",
-    multipleChancesToWin: "Chances Multiples de Gagner",
-    readyToChangeLife: "Prêt à Changer de Vie",
-    joinTodayAndStart: "Rejoignez Aujourd'hui et Commencez"
+    winNotifications: "Notifications Gain"
   }
 };
 
