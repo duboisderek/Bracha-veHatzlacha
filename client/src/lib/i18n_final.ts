@@ -2434,20 +2434,7 @@ export const translations = {
     enterComment: "Entrer commentaire (optionnel)",
     depositing: "Dépôt en cours",
     yourWinningNumbers: "Vos Numéros Gagnants",
-    noCompletedDraws: "Aucun tirage terminé trouvé",
-    
-    // LANDING PAGE MISSING TRANSLATIONS - FRENCH
-    massiveJackpots: "Jackpots Massifs",
-    lifeChangingPrizes: "Prix qui changent la vie à chaque tirage",
-    advancedSecurityPayouts: "Sécurité avancée et paiements instantanés",
-    referralRewards: "Récompenses de Parrainage",
-    earnForReferrals: "Gagnez ₪100 pour chaque ami que vous parrainez",
-    multipleChancesToWin: "Plusieurs chances de gagner chaque semaine",
-    readyToChangeLife: "Prêt à Changer Votre Vie ?",
-    joinTodayAndStart: "Rejoignez Bracha veHatzlacha aujourd'hui et commencez votre voyage vers la fortune",
-    startPlayingNow: "Commencer à Jouer Maintenant",
-    weeklyDraws: "Tirages Hebdomadaires",
-    secureAndTrusted: "100% Sécurisé"
+    noCompletedDraws: "Aucun tirage terminé trouvé"
   }
 };
 
