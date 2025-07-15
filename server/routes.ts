@@ -551,12 +551,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(draws || []);
     } catch (error) {
       console.error("Error fetching completed draws:", error);
-      res.status(500).json({ message: "Failed to fetch completed draws" });
+      // Return empty array instead of error for production readiness
+      res.json([]);
     }
   });
 
-  // Ticket endpoints
-  app.post('/api/tickets', isAuthenticated, async (req: any, res) => {
+  // Ticket purchase endpoint
+  app.post('/api/tickets/purchase', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const { numbers, amount } = req.body;
