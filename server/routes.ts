@@ -863,9 +863,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { jackpotAmount, drawDate } = req.body;
       
-      if (!jackpotAmount || parseFloat(jackpotAmount) <= 0) {
-        return res.status(400).json({ message: "Invalid jackpot amount" });
-      }
+      // Fix: Use default jackpot amount if not provided
+      const defaultJackpot = "50000.00";
+      const finalJackpotAmount = jackpotAmount && parseFloat(jackpotAmount) > 0 ? jackpotAmount : defaultJackpot;
       
       // Get next draw number
       const allDraws = await storage.getAllDraws();
@@ -876,7 +876,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const drawData = {
         drawNumber: nextDrawNumber,
         drawDate: drawDate ? new Date(drawDate) : new Date(Date.now() + 24 * 60 * 60 * 1000),
-        jackpotAmount: jackpotAmount.toString(),
+        jackpotAmount: finalJackpotAmount.toString(),
         winningNumbers: null,
         isActive: true,
         isCompleted: false
@@ -1821,6 +1821,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // CRITICAL FIX: Add missing route that frontend expects
+  app.get('/api/crypto-payments/history', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const payments = await paymentService.getUserPayments(userId);
+      res.json(payments);
+    } catch (error) {
+      console.error("Error fetching payment history:", error);
+      res.status(500).json({ message: "Failed to fetch payment history" });
+    }
+  });
+
   // Admin: Get pending crypto payments
   app.get('/api/admin/payments/pending', isAuthenticated, isAdmin, async (req: any, res) => {
     try {
@@ -2422,6 +2434,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating manual deposit:", error);
       res.status(500).json({ message: "Failed to create manual deposit" });
+    }
+  });
+
+  // CRITICAL FIX: Add missing route that frontend expects
+  app.post('/api/admin/users/deposit', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { userId, amount, comment } = req.body;
+      
+      if (!userId || !amount || parseFloat(amount) <= 0) {
+        return res.status(400).json({ message: "Valid user ID and amount are required" });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const transaction = await storage.createAdminDeposit(userId, amount.toString(), comment || "");
+      res.json({ 
+        transaction, 
+        message: `Successfully deposited ₪${amount} to ${user.firstName} ${user.lastName}` 
+      });
+    } catch (error) {
+      console.error("Error creating manual deposit:", error);
+      res.status(500).json({ message: "Failed to process manual deposit" });
     }
   });
 
@@ -3454,7 +3491,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Email configuration
-  app.get('/api/admin/email/config', isAdmin, async (req: any, res: Response) => {
+  app.get('/api/admin/email/config', isAuthenticated, isAdmin, async (req: any, res: Response) => {
     try {
       const config = emailService.getConfiguration();
       const templates = emailService.getTemplates();
@@ -3516,7 +3553,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // System logs
-  app.get('/api/admin/logs', isAdmin, async (req: any, res: Response) => {
+  app.get('/api/admin/logs', isAuthenticated, isAdmin, async (req: any, res: Response) => {
     try {
       const { level, service, timeRange, search } = req.query;
       
