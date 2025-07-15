@@ -1,0 +1,80 @@
+{
+  "timestamp": "2025-07-15T18:39:40.186Z",
+  "totalTests": 12,
+  "passedTests": 9,
+  "failedTests": 3,
+  "details": [
+    {
+      "test": "Translation File Structure",
+      "status": "PASS",
+      "details": "All language sections present",
+      "timestamp": "2025-07-15T18:39:40.188Z"
+    },
+    {
+      "test": "Translation Functions",
+      "status": "PASS",
+      "details": "All utility functions present",
+      "timestamp": "2025-07-15T18:39:40.188Z"
+    },
+    {
+      "test": "Hebrew RTL Support",
+      "status": "PASS",
+      "details": "Hebrew language with proper currency",
+      "timestamp": "2025-07-15T18:39:40.189Z"
+    },
+    {
+      "test": "Translation Key Coverage",
+      "status": "PASS",
+      "details": "2357 translation keys found",
+      "timestamp": "2025-07-15T18:39:40.189Z"
+    },
+    {
+      "test": "Language Context Integration",
+      "status": "PASS",
+      "details": "Language context properly integrated",
+      "timestamp": "2025-07-15T18:39:40.189Z"
+    },
+    {
+      "test": "Translation Import",
+      "status": "FAIL",
+      "details": "Translation system not imported",
+      "timestamp": "2025-07-15T18:39:40.189Z"
+    },
+    {
+      "test": "Multilingual API Endpoints",
+      "status": "PASS",
+      "details": "All multilingual endpoints present",
+      "timestamp": "2025-07-15T18:39:40.191Z"
+    },
+    {
+      "test": "RTL Test Endpoint",
+      "status": "PASS",
+      "details": "RTL testing endpoint present",
+      "timestamp": "2025-07-15T18:39:40.191Z"
+    },
+    {
+      "test": "Database Language Support",
+      "status": "PASS",
+      "details": "Language fields in database schema",
+      "timestamp": "2025-07-15T18:39:40.191Z"
+    },
+    {
+      "test": "User Language Preferences",
+      "status": "PASS",
+      "details": "User language preferences supported",
+      "timestamp": "2025-07-15T18:39:40.191Z"
+    },
+    {
+      "test": "Mobile RTL Support",
+      "status": "FAIL",
+      "details": "No RTL support in Tailwind",
+      "timestamp": "2025-07-15T18:39:40.192Z"
+    },
+    {
+      "test": "Mobile Responsive Design",
+      "status": "FAIL",
+      "details": "Responsive design not configured",
+      "timestamp": "2025-07-15T18:39:40.192Z"
+    }
+  ]
+}

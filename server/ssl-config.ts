@@ -67,6 +67,12 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
     // Content Security Policy
     res.setHeader('Content-Security-Policy', sslConfig.contentSecurityPolicy);
     
+    // CORS Headers for development and production
+    res.setHeader('Access-Control-Allow-Origin', process.env.NODE_ENV === 'production' ? 'https://brahatz.com' : '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    
     // Permissions Policy (formerly Feature-Policy)
     res.setHeader('Permissions-Policy', [
       'camera=()', 

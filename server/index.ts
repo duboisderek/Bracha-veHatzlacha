@@ -1,12 +1,13 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { log } from "./vite";
 import { drawScheduler } from "./scheduler";
 import { initializeCache } from "./cache";
 import { logger, performanceMiddleware, errorLoggingMiddleware } from "./logger";
 import { httpsRedirectMiddleware, securityHeadersMiddleware, rateLimitingMiddleware } from "./ssl-config";
 import { backupService } from "./backup-service";
+import path from "path";
 
 const app = express();
 
@@ -86,7 +87,14 @@ app.use((req, res, next) => {
   }
   
   console.log("Registering routes...");
-  const server = await registerRoutes(app);
+  let server;
+  try {
+    server = await registerRoutes(app);
+    console.log("Routes registered successfully");
+  } catch (error) {
+    console.error("Error registering routes:", error);
+    throw error;
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -96,14 +104,16 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+  // Simple static file serving for now to avoid Vite startup issues
+  app.use(express.static('client/public'));
+  
+  // Catch-all route for SPA
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    res.sendFile(path.join(__dirname, '../client/public/index.html'));
+  });
 
   // Use PORT environment variable or fallback to 5000
   // this serves both the API and the client.
@@ -115,5 +125,7 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    console.log(`Server listening on http://0.0.0.0:${port}`);
+    console.log(`Server listening on http://localhost:${port}`);
   });
 })();

@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-07-15T18:25:35.449Z",
+  "summary": {
+    "total": 8,
+    "passed": 0,
+    "failed": 8,
+    "successRate": "0.0%"
+  },
+  "results": [
+    {
+      "test": "Multilingual Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    },
+    {
+      "test": "Hebrew Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    },
+    {
+      "test": "French Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    },
+    {
+      "test": "RTL Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    },
+    {
+      "test": "Performance Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    },
+    {
+      "test": "Security Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    },
+    {
+      "test": "Frontend Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    },
+    {
+      "test": "Backend Test",
+      "status": "FAILED",
+      "reason": "connect ECONNREFUSED 127.0.0.1:5000"
+    }
+  ]
+}

@@ -834,32 +834,7 @@ export const translations = {
     secureAndTrusted: "Secure and Trusted",
     securityEvents: "Security Events",
     signIn: "Sign In",
-    smartphoneApp: "Smartphone App",
-    socialSharing: "Social Sharing",
-    specialOffers: "Special Offers",
-    systemOverview: "System Overview",
-    thirdPartyIntegrations: "Third Party Integrations",
-    transactionAnalytics: "Transaction Analytics",
-    transactionHistory: "Transaction History",
-    userAcquisition: "User Acquisition",
-    userFeedback: "User Feedback",
-    userPreferences: "User Preferences",
-    userRetention: "User Retention",
-    userSettings: "User Settings",
-    versionUpdate: "Version Update",
-    webNotifications: "Web Notifications",
-    welcomePackage: "Welcome Package",
-    winNotifications: "Win Notifications",
-    massiveJackpots: "Massive Jackpots",
-    lifeChangingPrizes: "Life Changing Prizes",
-    advancedSecurityPayouts: "Advanced Security and Payouts",
-    startPlayingNow: "Start Playing Now",
-    weeklyDraws: "Weekly Draws",
-    referralRewards: "Referral Rewards",
-    earnForReferrals: "Earn for Referrals",
-    multipleChancesToWin: "Multiple Chances to Win",
-    readyToChangeLife: "Ready to Change Life",
-    joinTodayAndStart: "Join Today and Start"
+    // Note: Duplicate keys removed to prevent errors
   },
   
   he: {
@@ -1832,11 +1807,6 @@ export const translations = {
     webNotifications: "התראות אינטרנט",
     welcomePackage: "חבילת ברוכים הבאים",
     winNotifications: "התראות זכייה",
-    massiveJackpots: "ג'קפוטים עצומים",
-    lifeChangingPrizes: "פרסים משני חיים",
-    advancedSecurityPayouts: "אבטחה מתקדמת ותשלומים מיידיים",
-    startPlayingNow: "התחל לשחק עכשיו",
-    weeklyDraws: "הגרלות שבועיות",
     
     // ===== FINAL REMAINING HEBREW TRANSLATIONS FOR 100% COVERAGE =====
     signingIn: "נכנס למערכת",
@@ -2103,18 +2073,9 @@ export const translations = {
     realTimeUpdates: "Mises à Jour en Temps Réel",
     reportIssue: "Signaler un Problème",
     securityAlerts: "Alertes de Sécurité",
-    smartphoneApp: "Application Smartphone",
+    // Note: Duplicate keys removed to prevent errors - these are defined elsewhere
     systemMaintenance: "Maintenance Système",
     terms: "Conditions",
-    thirdPartyIntegrations: "Intégrations Tierces",
-    transactionHistory: "Historique des Transactions",
-    userFeedback: "Commentaires Utilisateur",
-    userPreferences: "Préférences Utilisateur",
-    userSettings: "Paramètres Utilisateur",
-    versionUpdate: "Mise à Jour Version",
-    webNotifications: "Notifications Web",
-    welcomePackage: "Pack de Bienvenue",
-    winNotifications: "Notifications de Gains",
     
     // Role-Based Access French
     rootAdminPanel: "Panneau Admin Principal",
@@ -2791,22 +2752,7 @@ export const translations = {
     secureAndTrusted: "Sûr et Fiable",
     securityEvents: "Événements Sécurité",
     signIn: "Se Connecter",
-    smartphoneApp: "Application Smartphone",
-    socialSharing: "Partage Social",
-    specialOffers: "Offres Spéciales",
-    systemOverview: "Vue d'Ensemble Système",
-    thirdPartyIntegrations: "Intégrations Tierces",
-    transactionAnalytics: "Analytique Transaction",
-    transactionHistory: "Historique Transaction",
-    userAcquisition: "Acquisition Utilisateur",
-    userFeedback: "Retour Utilisateur",
-    userPreferences: "Préférences Utilisateur",
-    userRetention: "Rétention Utilisateur",
-    userSettings: "Paramètres Utilisateur",
-    versionUpdate: "Mise à Jour Version",
-    webNotifications: "Notifications Web",
-    welcomePackage: "Package Bienvenue",
-    winNotifications: "Notifications Gain"
+    // Note: Duplicate keys removed to prevent errors
   }
 };
 
