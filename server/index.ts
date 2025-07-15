@@ -144,10 +144,6 @@ app.use((req, res, next) => {
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString(), server: 'minimal' });
   });
-  
-  app.get('/', (req, res) => {
-    res.send('<h1>BrachaVeHatzlacha Server</h1><p>Server is running!</p>');
-  });
 
   // Create basic server first for immediate port binding
   const { createServer } = await import("http");
