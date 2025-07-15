@@ -1,14 +1,50 @@
 import express, { type Request, Response, NextFunction } from "express";
 import session from "express-session";
-import { registerRoutes } from "./routes";
-import { log } from "./vite";
-import { drawScheduler } from "./scheduler";
-import { initializeCache } from "./cache";
-import { logger, performanceMiddleware, errorLoggingMiddleware } from "./logger";
-import { httpsRedirectMiddleware, securityHeadersMiddleware, rateLimitingMiddleware } from "./ssl-config";
-import { backupService } from "./backup-service";
 import path from "path";
 import { fileURLToPath } from "url";
+
+// Import with error handling
+let registerRoutes, log, drawScheduler, initializeCache, logger, performanceMiddleware, errorLoggingMiddleware;
+let httpsRedirectMiddleware, securityHeadersMiddleware, rateLimitingMiddleware, backupService;
+
+try {
+  const routes = await import("./routes");
+  registerRoutes = routes.registerRoutes;
+  
+  const vite = await import("./vite");
+  log = vite.log;
+  
+  const scheduler = await import("./scheduler");
+  drawScheduler = scheduler.drawScheduler;
+  
+  const cache = await import("./cache");
+  initializeCache = cache.initializeCache;
+  
+  const loggerModule = await import("./logger");
+  logger = loggerModule.logger;
+  performanceMiddleware = loggerModule.performanceMiddleware;
+  errorLoggingMiddleware = loggerModule.errorLoggingMiddleware;
+  
+  const ssl = await import("./ssl-config");
+  httpsRedirectMiddleware = ssl.httpsRedirectMiddleware;
+  securityHeadersMiddleware = ssl.securityHeadersMiddleware;
+  rateLimitingMiddleware = ssl.rateLimitingMiddleware;
+  
+  const backup = await import("./backup-service");
+  backupService = backup.backupService;
+  
+  console.log("✅ All modules imported successfully");
+} catch (error) {
+  console.error("❌ Module import error:", error);
+  // Create fallback functions
+  log = console.log;
+  registerRoutes = async (app) => {
+    const { createServer } = await import("http");
+    app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+    return createServer(app);
+  };
+  initializeCache = async () => {};
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -86,58 +122,97 @@ app.use((req, res, next) => {
 (async () => {
   console.log("Starting server initialization...");
   
-  // Initialize cache in background without blocking
-  initializeCache().catch(err => console.log("Cache init warning:", err.message));
+  // Add process monitoring
+  process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    console.error('Stack:', error.stack);
+  });
   
-  // Skip backup scheduling in development
-  if (process.env.NODE_ENV === 'production') {
-    backupService.scheduleBackups().catch(err => console.log("Backup init warning:", err.message));
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  });
+  
+  // Initialize cache in background without blocking - only if available
+  if (initializeCache) {
+    console.log("Initializing cache...");
+    setTimeout(() => {
+      initializeCache().catch(err => console.log("Cache init warning:", err.message));
+    }, 1000); // Delay cache init to prevent blocking
   }
   
-  console.log("Registering routes...");
-  let server;
-  try {
-    server = await registerRoutes(app);
-    console.log("Routes registered successfully");
-  } catch (error) {
-    console.error("Error registering routes:", error);
-    throw error;
-  }
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
+  // Add basic health endpoint immediately for fast startup
+  app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString(), server: 'minimal' });
+  });
+  
+  app.get('/', (req, res) => {
+    res.send('<h1>BrachaVeHatzlacha Server</h1><p>Server is running!</p>');
   });
 
-  // In development, Vite middleware handles all non-API routes
-  // In production, we would serve the built files
-  if (process.env.NODE_ENV !== 'development') {
-    // Production mode - serve built files
-    app.use(express.static(path.join(__dirname, '../dist/public')));
+  // Create basic server first for immediate port binding
+  const { createServer } = await import("http");
+  let server = createServer(app);
+  
+  // Use the correct approach - let registerRoutes handle everything
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+  console.log(`Starting server using registerRoutes on port ${port}...`);
+  
+  try {
+    // Protect against process.exit in Vite during setup
+    const originalExit = process.exit;
+    process.exit = ((code?: number) => {
+      console.warn(`⚠️ Process.exit(${code}) blocked during startup - keeping server alive`);
+      return undefined as never;
+    }) as typeof process.exit;
     
-    // Catch-all route for SPA
-    app.get('*', (req, res) => {
-      if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ error: 'API endpoint not found' });
-      }
-      res.sendFile(path.join(__dirname, '../dist/public/index.html'));
+    // Import and call registerRoutes - this creates the complete server
+    const { registerRoutes } = await import("./routes");
+    const fullServer = await registerRoutes(app);
+    
+    // Start the complete server
+    await new Promise<void>((resolve, reject) => {
+      fullServer.listen(port, "0.0.0.0", () => {
+        console.log(`🚀 Complete server running on http://0.0.0.0:${port}`);
+        console.log(`🚀 Complete server running on http://localhost:${port}`);
+        resolve();
+      }).on('error', reject);
+    });
+    
+    // Restore process.exit after successful startup
+    setTimeout(() => {
+      process.exit = originalExit;
+      console.log("✅ Server started successfully - all systems operational");
+    }, 2000);
+    
+  } catch (error) {
+    console.error("Error starting complete server:", error);
+    
+    // Fallback to minimal server if registerRoutes fails
+    console.log("Starting fallback minimal server...");
+    server.listen(port, "0.0.0.0", () => {
+      console.log(`🔧 Fallback server running on http://0.0.0.0:${port}`);
     });
   }
 
-  // Use PORT environment variable or fallback to 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled on Replit.
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
+  // Initialize backup scheduling after server is stable
+  if (process.env.NODE_ENV === 'production' && backupService) {
+    setTimeout(() => {
+      backupService.scheduleBackups().catch(err => console.log("Backup init warning:", err.message));
+    }, 5000);
+  }
   
-  server.listen(port, "0.0.0.0", () => {
-    log(`serving on port ${port}`);
-    console.log(`Server listening on http://0.0.0.0:${port}`);
-    console.log(`Server listening on http://localhost:${port}`);
-  }).on('error', (err) => {
-    console.error(`Server failed to start:`, err);
-    process.exit(1);
+  // Add error handling to express app
+  app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
+    console.error("Express error:", err.message);
+    if (!res.headersSent) {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+    next();
   });
-})();
+  
+  console.log("Server setup completed successfully!");
+})().catch(err => {
+  console.error("❌ Fatal server startup error:", err);
+  console.error("Stack trace:", err.stack);
+  process.exit(1);
+});

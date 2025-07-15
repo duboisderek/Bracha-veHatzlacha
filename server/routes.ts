@@ -3902,10 +3902,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Setup Vite middleware in development
+  // Setup Vite middleware in development with timeout protection
   if (process.env.NODE_ENV === 'development') {
-    const { setupVite } = await import('./vite');
-    await setupVite(app, httpServer);
+    try {
+      console.log('Setting up Vite middleware...');
+      const { setupVite } = await import('./vite');
+      
+      // Add timeout protection for Vite setup
+      const viteTimeout = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Vite setup timeout')), 10000);
+      });
+      
+      await Promise.race([
+        setupVite(app, httpServer),
+        viteTimeout
+      ]);
+      
+      console.log('Vite middleware setup completed');
+    } catch (error) {
+      console.error('Vite setup failed, continuing without:', error.message);
+      // Add basic fallback route for development
+      app.get('*', (req, res) => {
+        if (req.path.startsWith('/api/')) {
+          return res.status(404).json({ error: 'API endpoint not found' });
+        }
+        res.send(`
+          <html>
+            <body>
+              <h1>BrachaVeHatzlacha Development Server</h1>
+              <p>Vite middleware failed to load, but API is available.</p>
+              <p>Try accessing: <a href="/api/health">/api/health</a></p>
+            </body>
+          </html>
+        `);
+      });
+    }
   }
 
   return httpServer;
