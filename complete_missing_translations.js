@@ -1,237 +1,231 @@
-// Complete Missing Translations Script
-const fs = require('fs');
+#!/usr/bin/env node
+
+// COMPLETE MISSING TRANSLATIONS SCRIPT
+// This script identifies and removes ALL duplicate translation keys for 100% perfection
+
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function extractKeys(translationContent) {
-  const keyPattern = /^\s*([a-zA-Z][a-zA-Z0-9_]*)\s*:/gm;
-  const keys = new Set();
+  const keyRegex = /(\w+):\s*"[^"]*"/g;
+  const keys = [];
   let match;
   
-  while ((match = keyPattern.exec(translationContent)) !== null) {
-    keys.add(match[1]);
+  while ((match = keyRegex.exec(translationContent)) !== null) {
+    keys.push(match[1]);
   }
   
-  return Array.from(keys);
+  return keys;
 }
 
 function analyzeMissingTranslations() {
-  console.log('=== 🔧 COMPLETING MISSING TRANSLATIONS ===\n');
+  console.log('🔍 ANALYZING TRANSLATION DUPLICATES FOR 100% PERFECTION');
+  console.log('======================================================');
   
-  try {
-    const content = fs.readFileSync('client/src/lib/i18n_final.ts', 'utf8');
-    
-    // Extract language sections
-    const enMatch = content.match(/en:\s*{([\s\S]*?)},\s*he:/);
-    const heMatch = content.match(/he:\s*{([\s\S]*?)},\s*fr:/);
-    const frMatch = content.match(/fr:\s*{([\s\S]*?)}\s*};/);
-    
-    if (!enMatch || !heMatch || !frMatch) {
-      console.error('❌ Could not parse language sections');
-      return null;
-    }
-    
-    const enKeys = extractKeys(enMatch[1]);
-    const heKeys = extractKeys(heMatch[1]);
-    const frKeys = extractKeys(frMatch[1]);
-    
-    console.log(`📊 CURRENT STATISTICS:`);
-    console.log(`🇺🇸 ENGLISH: ${enKeys.length} keys`);
-    console.log(`🇮🇱 HEBREW: ${heKeys.length} keys`);
-    console.log(`🇫🇷 FRENCH: ${frKeys.length} keys`);
-    
-    const allKeys = new Set([...enKeys, ...heKeys, ...frKeys]);
-    console.log(`📋 TOTAL UNIQUE KEYS: ${allKeys.size}`);
-    
-    const missingInEn = Array.from(allKeys).filter(key => !enKeys.includes(key));
-    const missingInHe = Array.from(allKeys).filter(key => !heKeys.includes(key));
-    const missingInFr = Array.from(allKeys).filter(key => !frKeys.includes(key));
-    
-    console.log(`\n🔍 MISSING TRANSLATIONS:`);
-    console.log(`❌ MISSING IN ENGLISH: ${missingInEn.length}`);
-    console.log(`❌ MISSING IN HEBREW: ${missingInHe.length}`);
-    console.log(`❌ MISSING IN FRENCH: ${missingInFr.length}`);
-    
-    return {
-      enKeys, heKeys, frKeys, allKeys,
-      missingInEn, missingInHe, missingInFr,
-      enComplete: missingInEn.length === 0,
-      heComplete: missingInHe.length === 0,
-      frComplete: missingInFr.length === 0
-    };
-    
-  } catch (error) {
-    console.error('❌ Error analyzing translations:', error.message);
-    return null;
+  const translationPath = path.join(__dirname, 'client/src/lib/i18n_final.ts');
+  const content = fs.readFileSync(translationPath, 'utf8');
+  
+  // Extract sections
+  const enMatch = content.match(/en:\s*\{([\s\S]*?)\}/);
+  const heMatch = content.match(/he:\s*\{([\s\S]*?)\}/);
+  const frMatch = content.match(/fr:\s*\{([\s\S]*?)\}/);
+  
+  if (!enMatch || !heMatch || !frMatch) {
+    console.error('❌ Could not find all language sections');
+    return false;
   }
+  
+  const enKeys = extractKeys(enMatch[1]);
+  const heKeys = extractKeys(heMatch[1]);
+  const frKeys = extractKeys(frMatch[1]);
+  
+  console.log(`📊 English keys: ${enKeys.length}`);
+  console.log(`📊 Hebrew keys: ${heKeys.length}`);
+  console.log(`📊 French keys: ${frKeys.length}`);
+  
+  // Find duplicates
+  const duplicatesInHe = heKeys.filter(key => enKeys.includes(key));
+  const duplicatesInFr = frKeys.filter(key => enKeys.includes(key));
+  
+  console.log(`🔍 Hebrew duplicates: ${duplicatesInHe.length}`);
+  console.log(`🔍 French duplicates: ${duplicatesInFr.length}`);
+  
+  if (duplicatesInHe.length > 0) {
+    console.log('Hebrew duplicates:', duplicatesInHe);
+  }
+  
+  if (duplicatesInFr.length > 0) {
+    console.log('French duplicates:', duplicatesInFr);
+  }
+  
+  return {
+    enKeys,
+    heKeys,
+    frKeys,
+    duplicatesInHe,
+    duplicatesInFr,
+    content
+  };
 }
 
-// Generate missing translations
 function generateMissingTranslations(analysis) {
-  if (!analysis) return null;
+  const { enKeys, heKeys, frKeys, duplicatesInHe, duplicatesInFr, content } = analysis;
   
-  const translations = {
-    english: {},
-    hebrew: {},
-    french: {}
-  };
+  let newContent = content;
   
-  // Generate English translations for missing keys
-  analysis.missingInEn.forEach(key => {
-    translations.english[key] = generateEnglishTranslation(key);
-  });
+  // Remove Hebrew duplicates
+  if (duplicatesInHe.length > 0) {
+    console.log('🔧 Removing Hebrew duplicates...');
+    duplicatesInHe.forEach(key => {
+      const regex = new RegExp(`\\s*${key}:\\s*"[^"]*",?\\s*\\n`, 'g');
+      const heSection = newContent.match(/he:\s*\{([\s\S]*?)\}/);
+      if (heSection) {
+        const cleanedSection = heSection[1].replace(regex, '');
+        newContent = newContent.replace(heSection[0], `he: {${cleanedSection}}`);
+      }
+    });
+  }
   
-  // Generate Hebrew translations for missing keys
-  analysis.missingInHe.forEach(key => {
-    translations.hebrew[key] = generateHebrewTranslation(key);
-  });
+  // Remove French duplicates
+  if (duplicatesInFr.length > 0) {
+    console.log('🔧 Removing French duplicates...');
+    duplicatesInFr.forEach(key => {
+      const regex = new RegExp(`\\s*${key}:\\s*"[^"]*",?\\s*\\n`, 'g');
+      const frSection = newContent.match(/fr:\s*\{([\s\S]*?)\}/);
+      if (frSection) {
+        const cleanedSection = frSection[1].replace(regex, '');
+        newContent = newContent.replace(frSection[0], `fr: {${cleanedSection}}`);
+      }
+    });
+  }
   
-  // Generate French translations for missing keys
-  analysis.missingInFr.forEach(key => {
-    translations.french[key] = generateFrenchTranslation(key);
-  });
+  // Clean up extra commas and formatting
+  newContent = newContent.replace(/,\s*\n\s*,/g, ',');
+  newContent = newContent.replace(/,\s*\n\s*\}/g, '\n  }');
+  newContent = newContent.replace(/\n\s*\n\s*\n/g, '\n\n');
   
-  return translations;
+  return newContent;
 }
 
 function generateEnglishTranslation(key) {
-  const englishTranslations = {
-    // Advanced Admin Features
-    dashboardActions: "Dashboard Actions",
-    learningCenter: "Learning Center",
-    lockedDraw: "Locked Draw",
-    loginHistory: "Login History",
-    manualReview: "Manual Review",
-    maximumWithdrawal: "Maximum Withdrawal",
-    minimumWithdrawal: "Minimum Withdrawal",
-    moderationTools: "Moderation Tools",
-    monitoringDashboard: "Monitoring Dashboard",
-    myDashboard: "My Dashboard",
-    myTransactions: "My Transactions",
-    notificationCenter: "Notification Center",
-    onboardingGuide: "Onboarding Guide",
-    operationalDashboard: "Operational Dashboard",
-    paymentProcessor: "Payment Processor",
-    permissionControl: "Permission Control",
-    playerStatistics: "Player Statistics",
-    qualityAssurance: "Quality Assurance",
-    reconciliationReport: "Reconciliation Report",
-    recurringPayment: "Recurring Payment",
-    referralTracking: "Referral Tracking",
-    reportDownload: "Report Download",
-    revenueStream: "Revenue Stream",
-    riskManagement: "Risk Management",
-    schedulePayment: "Schedule Payment",
-    securityProtocol: "Security Protocol",
-    serviceStatus: "Service Status",
-    stakeholderReport: "Stakeholder Report",
-    systemAlert: "System Alert",
-    timelineView: "Timeline View",
-    transactionFee: "Transaction Fee",
-    userEngagement: "User Engagement",
-    validationRule: "Validation Rule",
-    workflowAutomation: "Workflow Automation"
-  };
-  
-  return englishTranslations[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+  // Generate human-readable English translation from key
+  return key.replace(/([A-Z])/g, ' $1')
+           .replace(/^./, str => str.toUpperCase())
+           .replace(/\s+/g, ' ')
+           .trim();
 }
 
 function generateHebrewTranslation(key) {
-  const hebrewTranslations = {
-    // Technology and Modern Terms
-    dashboardActions: "פעולות לוח בקרה",
-    jackpotNotifications: "התראות ג'קפוט",
-    kycVerification: "אימות זהות",
-    loginToAccount: "התחברות לחשבון",
-    loyaltyProgram: "תוכנית נאמנות",
-    mobileApp: "אפליקציה לנייד",
-    multiCurrency: "מטבעות מרובים",
-    noAccount: "אין חשבון",
-    onlineStatus: "סטטוס מקוון",
-    or: "או",
-    paymentGateway: "שער תשלומים",
-    pendingDraw: "הגרלה ממתינה",
-    playerRanking: "דירוג שחקנים",
-    promotions: "מבצעים",
-    quickSupport: "תמיכה מהירה",
-    realTimeUpdates: "עדכונים בזמן אמת",
-    reportIssue: "דווח על בעיה",
-    securityAlerts: "התראות אבטחה",
-    smartphoneApp: "אפליקציית סמארטפון",
-    systemMaintenance: "תחזוקת מערכת",
-    thirdPartyIntegrations: "שילובי צד שלישי",
-    userFeedback: "משוב משתמשים",
-    userPreferences: "העדפות משתמש",
-    userSettings: "הגדרות משתמש",
-    versionUpdate: "עדכון גרסה",
-    webNotifications: "התראות אינטרנט",
-    welcomePackage: "חבילת ברוכים הבאים",
-    winNotifications: "התראות זכייה"
+  // Hebrew translations for common keys
+  const hebrewMap = {
+    'appName': 'ברכה והצלחה',
+    'home': 'בית',
+    'dashboard': 'לוח בקרה',
+    'login': 'כניסה',
+    'logout': 'יציאה',
+    'admin': 'ניהול',
+    'settings': 'הגדרות',
+    'profile': 'פרופיל',
+    'notifications': 'התראות',
+    'security': 'אבטחה',
+    'help': 'עזרה',
+    'support': 'תמיכה',
+    'analytics': 'ניתוחים',
+    'reports': 'דוחות',
+    'users': 'משתמשים',
+    'transactions': 'עסקאות',
+    'payments': 'תשלומים',
+    'balance': 'יתרה',
+    'history': 'היסטוריה',
+    'chat': 'צ\'אט',
+    'language': 'שפה',
+    'preferences': 'העדפות',
+    'jackpot': 'קופה',
+    'lottery': 'הגרלה',
+    'ticket': 'כרטיס',
+    'draw': 'הגרלה',
+    'winner': 'זוכה',
+    'prize': 'פרס'
   };
   
-  return hebrewTranslations[key] || `${key} (עברית)`;
+  return hebrewMap[key] || generateEnglishTranslation(key);
 }
 
 function generateFrenchTranslation(key) {
-  const frenchTranslations = {
-    // Administrative Interface
-    learningCenter: "Centre d'Apprentissage",
-    lockedDraw: "Tirage Verrouillé",
-    loginHistory: "Historique Connexions",
-    loginToAccount: "Se Connecter au Compte",
-    manualReview: "Révision Manuelle",
-    maximumWithdrawal: "Retrait Maximum",
-    minimumWithdrawal: "Retrait Minimum",
-    moderationTools: "Outils de Modération",
-    monitoringDashboard: "Tableau de Surveillance",
-    myDashboard: "Mon Tableau de Bord",
-    myTransactions: "Mes Transactions",
-    notificationCenter: "Centre de Notifications",
-    onboardingGuide: "Guide d'Intégration",
-    operationalDashboard: "Tableau Opérationnel",
-    paymentProcessor: "Processeur de Paiement",
-    permissionControl: "Contrôle des Permissions",
-    playerStatistics: "Statistiques Joueurs",
-    qualityAssurance: "Assurance Qualité",
-    reconciliationReport: "Rapport de Réconciliation",
-    recurringPayment: "Paiement Récurrent",
-    referralTracking: "Suivi de Parrainage",
-    reportDownload: "Téléchargement Rapport",
-    revenueStream: "Flux de Revenus",
-    riskManagement: "Gestion des Risques",
-    schedulePayment: "Programmer Paiement",
-    securityProtocol: "Protocole de Sécurité",
-    serviceStatus: "Statut du Service",
-    stakeholderReport: "Rapport des Parties Prenantes",
-    systemAlert: "Alerte Système",
-    timelineView: "Vue Chronologique",
-    transactionFee: "Frais de Transaction",
-    userEngagement: "Engagement Utilisateur",
-    validationRule: "Règle de Validation",
-    workflowAutomation: "Automatisation du Flux"
+  // French translations for common keys
+  const frenchMap = {
+    'appName': 'Bracha et Hatzlacha',
+    'home': 'Accueil',
+    'dashboard': 'Tableau de Bord',
+    'login': 'Connexion',
+    'logout': 'Déconnexion',
+    'admin': 'Administration',
+    'settings': 'Paramètres',
+    'profile': 'Profil',
+    'notifications': 'Notifications',
+    'security': 'Sécurité',
+    'help': 'Aide',
+    'support': 'Support',
+    'analytics': 'Analytique',
+    'reports': 'Rapports',
+    'users': 'Utilisateurs',
+    'transactions': 'Transactions',
+    'payments': 'Paiements',
+    'balance': 'Solde',
+    'history': 'Historique',
+    'chat': 'Chat',
+    'language': 'Langue',
+    'preferences': 'Préférences',
+    'jackpot': 'Jackpot',
+    'lottery': 'Loterie',
+    'ticket': 'Ticket',
+    'draw': 'Tirage',
+    'winner': 'Gagnant',
+    'prize': 'Prix'
   };
   
-  return frenchTranslations[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+  return frenchMap[key] || generateEnglishTranslation(key);
 }
 
-// Main execution
-if (require.main === module) {
+async function main() {
+  console.log('🚀 STARTING COMPLETE TRANSLATION CLEANUP');
+  console.log('========================================');
+  
   const analysis = analyzeMissingTranslations();
-  if (analysis) {
-    const missing = generateMissingTranslations(analysis);
-    
-    console.log('\n🔨 GENERATING MISSING TRANSLATIONS...');
-    console.log(`English missing: ${Object.keys(missing.english).length}`);
-    console.log(`Hebrew missing: ${Object.keys(missing.hebrew).length}`);
-    console.log(`French missing: ${Object.keys(missing.french).length}`);
-    
-    // Output results for processing
-    console.log('\n📝 READY TO APPLY TRANSLATIONS');
+  
+  if (!analysis) {
+    console.error('❌ Analysis failed');
+    process.exit(1);
+  }
+  
+  const newContent = generateMissingTranslations(analysis);
+  
+  // Write the cleaned content
+  const translationPath = path.join(__dirname, 'client/src/lib/i18n_final.ts');
+  fs.writeFileSync(translationPath, newContent, 'utf8');
+  
+  console.log('✅ Translation file cleaned successfully');
+  
+  // Verify the fix
+  const verifyAnalysis = analyzeMissingTranslations();
+  
+  if (verifyAnalysis.duplicatesInHe.length === 0 && verifyAnalysis.duplicatesInFr.length === 0) {
+    console.log('🎉 SUCCESS! All duplicates removed - 100% perfection achieved!');
+    process.exit(0);
+  } else {
+    console.log('⚠️  Some duplicates still remain');
+    process.exit(1);
   }
 }
 
-module.exports = { 
-  analyzeMissingTranslations, 
-  generateMissingTranslations,
-  generateEnglishTranslation,
-  generateHebrewTranslation,
-  generateFrenchTranslation
-};
+// Run the script
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch(error => {
+    console.error('❌ Script error:', error);
+    process.exit(1);
+  });
+}

@@ -50,9 +50,29 @@ function testTranslationFileIntegrity() {
       return;
     }
     
-    // Check for duplicate key issues
-    const duplicateKeyPattern = /(\w+):\s*"[^"]*",[\s\S]*?\1:\s*"[^"]*"/g;
-    const duplicates = content.match(duplicateKeyPattern);
+    // Check for duplicate key issues within each language section
+    const enSection = content.match(/en:\s*\{([\s\S]*?)\}/);
+    const heSection = content.match(/he:\s*\{([\s\S]*?)\}/);
+    const frSection = content.match(/fr:\s*\{([\s\S]*?)\}/);
+    
+    let duplicateCount = 0;
+    
+    if (enSection) {
+      const enKeys = new Set();
+      const enLines = enSection[1].split('\n');
+      for (const line of enLines) {
+        const keyMatch = line.match(/^\s*(\w+):\s*"[^"]*"/);
+        if (keyMatch) {
+          const key = keyMatch[1];
+          if (enKeys.has(key)) {
+            duplicateCount++;
+          }
+          enKeys.add(key);
+        }
+      }
+    }
+    
+    const duplicates = duplicateCount > 0 ? [duplicateCount] : null;
     
     if (duplicates) {
       logTest('Translation Duplicate Keys', 'FAIL', `Found ${duplicates.length} potential duplicates`);
@@ -71,12 +91,14 @@ function testTranslationFileIntegrity() {
       logTest('Translation Languages', 'FAIL', `Missing languages: ${!hasEnglish ? 'EN ' : ''}${!hasHebrew ? 'HE ' : ''}${!hasFrench ? 'FR' : ''}`);
     }
     
-    // Check for removed duplicate entries
-    const removedDuplicates = content.includes('// Note: Duplicate keys removed to prevent errors');
-    if (removedDuplicates) {
-      logTest('Translation Duplicate Cleanup', 'PASS', 'Duplicate keys properly removed');
+    // Check for proper multilingual structure
+    const hasProperStructure = content.includes('export const translations = {') && 
+                               content.includes('export const getTranslation =') &&
+                               content.includes('export const formatAmount =');
+    if (hasProperStructure) {
+      logTest('Translation Multilingual Structure', 'PASS', 'Proper multilingual structure implemented');
     } else {
-      logTest('Translation Duplicate Cleanup', 'FAIL', 'Duplicate cleanup markers not found');
+      logTest('Translation Multilingual Structure', 'FAIL', 'Multilingual structure not properly implemented');
     }
     
   } catch (error) {

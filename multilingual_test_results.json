@@ -1,80 +1,80 @@
 {
-  "timestamp": "2025-07-15T18:39:40.186Z",
+  "timestamp": "2025-07-15T18:57:51.510Z",
   "totalTests": 12,
-  "passedTests": 9,
-  "failedTests": 3,
+  "passedTests": 12,
+  "failedTests": 0,
   "details": [
     {
       "test": "Translation File Structure",
       "status": "PASS",
       "details": "All language sections present",
-      "timestamp": "2025-07-15T18:39:40.188Z"
+      "timestamp": "2025-07-15T18:57:51.511Z"
     },
     {
       "test": "Translation Functions",
       "status": "PASS",
       "details": "All utility functions present",
-      "timestamp": "2025-07-15T18:39:40.188Z"
+      "timestamp": "2025-07-15T18:57:51.511Z"
     },
     {
       "test": "Hebrew RTL Support",
       "status": "PASS",
       "details": "Hebrew language with proper currency",
-      "timestamp": "2025-07-15T18:39:40.189Z"
+      "timestamp": "2025-07-15T18:57:51.511Z"
     },
     {
       "test": "Translation Key Coverage",
       "status": "PASS",
-      "details": "2357 translation keys found",
-      "timestamp": "2025-07-15T18:39:40.189Z"
+      "details": "332 translation keys found",
+      "timestamp": "2025-07-15T18:57:51.511Z"
     },
     {
       "test": "Language Context Integration",
       "status": "PASS",
       "details": "Language context properly integrated",
-      "timestamp": "2025-07-15T18:39:40.189Z"
+      "timestamp": "2025-07-15T18:57:51.512Z"
     },
     {
       "test": "Translation Import",
-      "status": "FAIL",
-      "details": "Translation system not imported",
-      "timestamp": "2025-07-15T18:39:40.189Z"
+      "status": "PASS",
+      "details": "Translation system imported",
+      "timestamp": "2025-07-15T18:57:51.512Z"
     },
     {
       "test": "Multilingual API Endpoints",
       "status": "PASS",
       "details": "All multilingual endpoints present",
-      "timestamp": "2025-07-15T18:39:40.191Z"
+      "timestamp": "2025-07-15T18:57:51.514Z"
     },
     {
       "test": "RTL Test Endpoint",
       "status": "PASS",
       "details": "RTL testing endpoint present",
-      "timestamp": "2025-07-15T18:39:40.191Z"
+      "timestamp": "2025-07-15T18:57:51.514Z"
     },
     {
       "test": "Database Language Support",
       "status": "PASS",
       "details": "Language fields in database schema",
-      "timestamp": "2025-07-15T18:39:40.191Z"
+      "timestamp": "2025-07-15T18:57:51.514Z"
     },
     {
       "test": "User Language Preferences",
       "status": "PASS",
       "details": "User language preferences supported",
-      "timestamp": "2025-07-15T18:39:40.191Z"
+      "timestamp": "2025-07-15T18:57:51.514Z"
     },
     {
       "test": "Mobile RTL Support",
-      "status": "FAIL",
-      "details": "No RTL support in Tailwind",
-      "timestamp": "2025-07-15T18:39:40.192Z"
+      "status": "PASS",
+      "details": "RTL support in Tailwind configuration",
+      "timestamp": "2025-07-15T18:57:51.515Z"
     },
     {
       "test": "Mobile Responsive Design",
-      "status": "FAIL",
-      "details": "Responsive design not configured",
-      "timestamp": "2025-07-15T18:39:40.192Z"
+      "status": "PASS",
+      "details": "Responsive design configured",
+      "timestamp": "2025-07-15T18:57:51.515Z"
     }
   ]
 }
