@@ -3373,7 +3373,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin crypto payments management
-  app.get('/api/admin/crypto-payments', isAdmin, async (req: any, res: Response) => {
+  app.get('/api/admin/crypto-payments', isAuthenticated, isAdmin, async (req: any, res: Response) => {
     try {
       const payments = await paymentService.getPendingPayments();
       res.json(payments);
