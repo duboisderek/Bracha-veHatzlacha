@@ -3696,5 +3696,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // MISSING ROUTES - FIX #1: Admin Analytics
+  app.get('/api/admin/analytics', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const userAnalytics = await analyticsService.getUserBehaviorAnalytics();
+      const revenueAnalytics = await analyticsService.getRevenueAnalytics();
+      const drawAnalytics = await analyticsService.getDrawAnalytics();
+      const conversionAnalytics = await analyticsService.getConversionAnalytics();
+      
+      const combinedAnalytics = {
+        userBehavior: userAnalytics,
+        revenue: revenueAnalytics,
+        draws: drawAnalytics,
+        conversion: conversionAnalytics,
+        generatedAt: new Date().toISOString()
+      };
+      
+      res.json(combinedAnalytics);
+    } catch (error) {
+      console.error("Error fetching admin analytics:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
+  });
+
+  // MISSING ROUTES - FIX #2: Admin Transactions
+  app.get('/api/admin/transactions', isAuthenticated, isAdmin, async (req: any, res) => {
+    try {
+      const { limit = 50, offset = 0, type, userId } = req.query;
+      
+      // Get all transactions with filters
+      const allUsers = await storage.getAllUsers();
+      const allTransactions = [];
+      
+      for (const user of allUsers) {
+        const userTransactions = await storage.getUserTransactions(user.id);
+        userTransactions.forEach(transaction => {
+          allTransactions.push({
+            ...transaction,
+            userName: `${user.firstName} ${user.lastName}`,
+            userEmail: user.email
+          });
+        });
+      }
+      
+      // Apply filters
+      let filteredTransactions = allTransactions;
+      if (type) {
+        filteredTransactions = filteredTransactions.filter(t => t.type === type);
+      }
+      if (userId) {
+        filteredTransactions = filteredTransactions.filter(t => t.userId === userId);
+      }
+      
+      // Sort by date (newest first)
+      filteredTransactions.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      // Apply pagination
+      const paginatedTransactions = filteredTransactions.slice(
+        parseInt(offset as string), 
+        parseInt(offset as string) + parseInt(limit as string)
+      );
+      
+      res.json({
+        transactions: paginatedTransactions,
+        total: filteredTransactions.length,
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string)
+      });
+    } catch (error) {
+      console.error("Error fetching admin transactions:", error);
+      res.status(500).json({ message: "Failed to fetch transactions" });
+    }
+  });
+
   return httpServer;
 }
