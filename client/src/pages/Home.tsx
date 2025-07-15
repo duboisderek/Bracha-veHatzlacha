@@ -125,7 +125,7 @@ function NumberSelection() {
 
   const participateMutation = useMutation({
     mutationFn: async (data: { numbers: number[], amount: number }) => {
-      return apiRequest("POST", "/api/lottery/participate", data);
+      return apiRequest("POST", "/api/tickets", data);
     },
     onSuccess: () => {
       toast({

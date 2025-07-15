@@ -63,7 +63,7 @@ export function NumberSelection({ onTicketPurchased }: NumberSelectionProps) {
       return apiRequest("POST", "/api/tickets", {
         drawId: (currentDraw as any).id,
         numbers,
-        cost: "100.00",
+        amount: "100.00",
       });
     },
     onSuccess: () => {
