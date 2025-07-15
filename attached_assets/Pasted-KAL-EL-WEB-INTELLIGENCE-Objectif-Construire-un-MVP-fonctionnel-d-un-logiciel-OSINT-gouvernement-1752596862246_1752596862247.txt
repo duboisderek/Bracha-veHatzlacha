@@ -1,0 +1,162 @@
+KAL-EL WEB INTELLIGENCE
+🎯 Objectif : Construire un MVP fonctionnel d’un logiciel OSINT gouvernemental intelligent, modulaire, sécurisé, conforme RGPD/CCPA, intégrant des workflows automatiques, un scoring IA, et des capacités de rapport enrichi en fonction des résultats détectés.
+
+1. 👤 Authentification & Comptes
+Authentification JWT avec rôle (user, admin)
+
+ADMIN : crée/supprime utilisateurs, gère les clés API, active/désactive modules, voit les logs
+
+USER : accès à son historique de recherches + peut gérer ses informations
+
+2. 📋 Formulaire de recherche modulable et intelligent
+Formulaire OSINT dynamique permettant à l’utilisateur de soumettre :
+
+Nom, Prénom (optionnel)
+
+Email (optionnel)
+
+Téléphone (optionnel)
+
+Username (optionnel)
+
+URL profil social (optionnel)
+
+📷 Upload Photo (optionnel)
+
+Niveau d’analyse : Rapide, Standard, Approfondie
+
+✅ Checkbox RGPD (obligatoire)
+
+CAPTCHA Cloudflare Turnstile
+
+Le formulaire est intelligent :
+
+➜ L’utilisateur peut soumettre seulement 1 info ou un combo libre (ex : juste un email, juste une photo, juste un username).
+➜ Le backend déclenche alors uniquement les modules compatibles.
+
+3. 🔄 Workflow OSINT optimisé (backend)
+Chaque soumission utilisateur déclenche un flux d’orchestration FastAPI → n8n :
+
+plaintext
+Copier
+Modifier
+[ Formulaire reçu ]
+      ↓
+[ Validation des champs ]
+      ↓
+[ Détection des modules compatibles ]
+      ↓
+[ Appels API ciblés (par lot async via Celery) ]
+      ↓
+[ Résolution d'entité IA (fusion nom/email/photo) ]
+      ↓
+[ Scoring de fiabilité, exposition, pertinence ]
+      ↓
+[ Sauvegarde résultat JSON + génération visuelle ]
+      ↓
+[ Affichage des résultats + bouton : 🔍 Enquête Approfondie ]
+4. 🧠 Affichage du Résultat + Enquête Approfondie
+L’utilisateur reçoit :
+
+📍 Résumé du profil : photo, nom, statut (ex: clean / exposé / douteux)
+
+🔍 Modules activés : Email (3 fuites détectées), FaceCheck (+89% match), Username détecté sur 7 réseaux
+
+🧮 Score de fiabilité + score d’exposition
+
+📄 Rapport PDF téléchargeable
+
+✅ Un bouton “Enquête Approfondie” s’affiche si l’un des éléments suivants est détecté :
+
+Condition	Action possible
+Fuite email confirmée	➜ propose dark web scan dédié
+Visage matché publiquement	➜ propose graphe relationnel + surveillance
+Données discord/Telegram trouvées	➜ propose scan d’alias sur Telegram
+Score d’exposition > 60 %	➜ déclenche modules supplémentaires (leaks, crypto, identité judiciaire)
+
+En cliquant, une seconde requête approfondie est générée automatiquement, en arrière-plan ou confirmation utilisateur.
+
+5. 🧩 Modules OSINT actifs par champ :
+Donnée fournie	Modules déclenchés
+Nom + prénom	Identité, entreprises, registres
+Email	Fuites (HaveIBeenPwned, Constella), EmailRep
+Téléphone	Numverify, TrueCaller, Epieos
+Username	Sherlock, Maigret, réseaux sociaux
+URL	Crawling profil social, enrichissement
+Photo	FaceCheck, Vision AI, Tesseract OCR
+Aucun mais analyse approfondie	Recherche croisée sur fuites, reconnaissance comportementale, réseau social étendu
+
+6. 📊 Dashboard Résultat (Frontend React)
+Carte Google Maps (si géo trouvée)
+
+Graphe interactif (D3.js ou Cytoscape)
+
+Timeline (activités détectées dans les sources publiques)
+
+Badge de certification (identité confirmée)
+
+Bouton : Rapport Complet PDF
+
+Bouton : Enquête Approfondie
+
+Panneau latéral (score d’exposition, score de fiabilité, modules déclenchés)
+
+7. ⚙️ Stack technique
+Frontend : React + Tailwind + TypeScript
+
+Backend : FastAPI + PostgreSQL + MongoDB + Neo4j + Redis
+
+Async Tasking : Celery + Redis
+
+Orchestration : n8n (flux préconfigurés en JSON)
+
+API Calls : requests / httpx + timeout + fallback
+
+PDF Generation : WeasyPrint ou Puppeteer
+
+Graphes : Neo4j pour stockage, affichage D3.js ou Cytoscape
+
+8. 📂 Structure projet
+pgsql
+Copier
+Modifier
+/backend/
+  ├─ main.py
+  ├─ routes/ (auth, search, admin, results)
+  ├─ models/ (User, APIKey, Search, Result, History)
+  ├─ services/ (face, email, leaks, export, score)
+/frontend/
+  ├─ pages/ (Dashboard, Login, Result, AdminPanel)
+  ├─ components/ (Card, Map, Graph, Timeline)
+/orchestration/
+  ├─ kalel-flows.json
+/env/
+  ├─ .env.template
+/docs/
+  ├─ README.md
+9. 🔒 Sécurité & fallback
+Résultat partiel affiché même si une API ne répond pas
+
+Chaque appel API a :
+
+Timeout (12s)
+
+Retry (3 fois)
+
+Status loggé + affichage à l’utilisateur (source indisponible)
+
+Rapport PDF indique les modules actifs et manquants
+
+🎯 Livrer un MVP fonctionnel avec :
+
+Formulaire modulable
+
+Recherche par 1 ou plusieurs éléments
+
+Affichage propre et institutionnel
+
+Rapport PDF
+
+Enquête approfondie déclenchable
+
+Auth complète avec gestion de comptes/API

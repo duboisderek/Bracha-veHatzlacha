@@ -1,0 +1,33 @@
+Perform a **deep, comprehensive, and final review** of the entire platform before deployment. Your tasks:
+
+1. **Full Frontend Review**:
+   - Systematically test every page, menu, generator, modal, button, action,deposit, and play game in the UI as both user and admin. 
+   - Check that all templates, file previews, navigation, and forms are fully functional.
+   - Confirm that no buttons, menus, links, or UI elements are missing, broken, or inactive.
+
+2. **Complete Backend/API Review**:
+   - Test all backend routes and APIs for every page, options, action, authentication, admin actions,root admin ,user ,all users,creation users ,etc , logging, reporting, and configuration. 
+   - Validate correct responses, error handling, permissions, security rules, and logging for each endpoint.
+   - Ensure database integrity, file storage, and TTL auto-deletion are working.
+
+3. **Full Workflow & Integration Testing**:
+   - Simulate all user and admin workflows . 
+   - Verify role-based access restrictions, audit logging, and security checks for every action.
+   - Cover all edge cases, error scenarios, and validation steps.
+
+4. **Automated and Manual Testing**:
+   - Run all automated tests (unit, integration, E2E) across the platform.
+   - For any failed or missing test, generate and apply fixes, then re-run until 100% pass rate.
+   - If automated tests are incomplete, simulate manual tests for all major flows.
+
+5. **Final Readiness and Robustness Checks**:
+   - Verify UI/UX consistency, branding, responsiveness, and accessibility.
+   - Confirm favicon is present, platform title is correct, and all public-facing texts are in English.
+   - Review performance and security best practices (input validation, auth/session, sensitive data, no exposed endpoints).
+
+6. **Correction and Continuous Loop**:
+   - For every issue, bug, incomplete action, or sub-optimal UX found, automatically generate and apply fixes.
+   - Repeat testing and validation in a loop until **everything is flawless, all tests pass, and the platform is truly production-ready.**
+
+**Do NOT stop or provide a final summary until the entire platform is 100% validated and perfect for deployment.  
+Begin the full verification process now.**
