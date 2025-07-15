@@ -1,6 +1,6 @@
 import { storage } from './storage';
 import { smsService } from './sms-service';
-const config = require('../config.js');
+import config from '../config.mjs';
 
 export class DrawScheduler {
   private intervals: NodeJS.Timeout[] = [];

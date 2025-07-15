@@ -4,7 +4,7 @@ import { setupVite, serveStatic } from "./vite.js";
 import session from "express-session";
 import { drawScheduler } from "./scheduler.js";
 import { initializeCache } from "./cache.js";
-import { securityHeadersMiddleware } from "./ssl-config.js";
+import { securityHeadersMiddleware } from "./ssl-config.ts";
 import path from "path";
 import { fileURLToPath } from "url";
 
