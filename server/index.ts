@@ -22,7 +22,11 @@ app.set('trust proxy', 1);
 if (process.env.NODE_ENV === 'production') {
   app.use(httpsRedirectMiddleware);
 }
-app.use(securityHeadersMiddleware);
+
+// Only apply security headers if not explicitly disabled (for debugging)
+if (!process.env.DISABLE_SECURITY_HEADERS) {
+  app.use(securityHeadersMiddleware);
+}
 
 // Enhanced Rate Limiting - Production Ready
 if (process.env.NODE_ENV === 'production') {

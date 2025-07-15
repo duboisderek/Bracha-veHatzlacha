@@ -19,7 +19,7 @@ export const sslConfig: SSLConfig = {
     includeSubDomains: true,
     preload: true
   },
-  securityHeaders: true,
+  securityHeaders: process.env.NODE_ENV === 'production' || !process.env.DISABLE_SECURITY_HEADERS,
   contentSecurityPolicy: process.env.NODE_ENV === 'development' 
     ? [
         "default-src 'self' http: https: ws: wss:",
