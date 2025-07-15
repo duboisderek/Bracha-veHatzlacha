@@ -79,32 +79,6 @@ export interface IStorage {
   getUserReferrals(userId: string): Promise<Referral[]>;
   updateReferralDeposit(referralId: string): Promise<void>;
   
-  // Crypto payment operations
-  createCryptoPayment(payment: InsertCryptoPayment): Promise<CryptoPayment>;
-  getCryptoPayment(paymentId: string): Promise<CryptoPayment | undefined>;
-  updateCryptoPayment(paymentId: string, updates: Partial<CryptoPayment>): Promise<void>;
-  getPendingCryptoPayments(): Promise<CryptoPayment[]>;
-  getUserCryptoPayments(userId: string): Promise<CryptoPayment[]>;
-  
-  // Security operations
-  createSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent>;
-  getSecurityEvents(limit?: number, severity?: string, userId?: string): Promise<SecurityEvent[]>;
-  
-  // Two factor auth operations
-  createTwoFactorAuth(twoFA: InsertTwoFactorAuth): Promise<TwoFactorAuth>;
-  getTwoFactorAuth(userId: string): Promise<TwoFactorAuth | undefined>;
-  enableTwoFactorAuth(userId: string): Promise<void>;
-  removeBackupCode(userId: string, code: string): Promise<void>;
-  
-  // System settings operations
-  getSystemSetting(key: string): Promise<SystemSetting | undefined>;
-  setSystemSetting(setting: InsertSystemSetting): Promise<SystemSetting>;
-  getAllSystemSettings(): Promise<SystemSetting[]>;
-  
-  // Admin wallet operations
-  getAdminWallets(): Promise<AdminWallet[]>;
-  setAdminWallet(wallet: InsertAdminWallet): Promise<AdminWallet>;
-  
   // Stats operations
   getDrawStats(drawId: number): Promise<{
     totalTickets: number;
@@ -117,9 +91,35 @@ export interface IStorage {
     winningAmount: string;
     numbers: number[];
   }[]>;
+
+  // Crypto payment operations
+  createCryptoPayment(payment: InsertCryptoPayment): Promise<CryptoPayment>;
+  getCryptoPayment(paymentId: string): Promise<CryptoPayment | undefined>;
+  updateCryptoPayment(paymentId: string, updates: Partial<CryptoPayment>): Promise<void>;
+  getPendingCryptoPayments(): Promise<CryptoPayment[]>;
+  getUserCryptoPayments(userId: string): Promise<CryptoPayment[]>;
+
+  // Security operations
+  createSecurityEvent(event: InsertSecurityEvent): Promise<SecurityEvent>;
+  getSecurityEvents(limit?: number, severity?: string, userId?: string): Promise<SecurityEvent[]>;
+
+  // Two factor auth operations
+  createTwoFactorAuth(twoFA: InsertTwoFactorAuth): Promise<TwoFactorAuth>;
+  getTwoFactorAuth(userId: string): Promise<TwoFactorAuth | undefined>;
+  enableTwoFactorAuth(userId: string): Promise<void>;
+  removeBackupCode(userId: string, code: string): Promise<void>;
+
+  // System settings operations
+  getSystemSetting(key: string): Promise<SystemSetting | undefined>;
+  setSystemSetting(setting: InsertSystemSetting): Promise<SystemSetting>;
+  getAllSystemSettings(): Promise<SystemSetting[]>;
+
+  // Admin wallet operations
+  getAdminWallets(): Promise<AdminWallet[]>;
+  setAdminWallet(wallet: InsertAdminWallet): Promise<AdminWallet>;
 }
 
-class DatabaseStorage implements IStorage {
+export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -127,64 +127,66 @@ class DatabaseStorage implements IStorage {
   }
 
   async getAllUsers(): Promise<User[]> {
-    return db
-      .select()
-      .from(users)
-      .orderBy(desc(users.createdAt));
+    return await db.select().from(users);
   }
 
-  async upsertUser(user: UpsertUser): Promise<User> {
-    const [newUser] = await db
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
       .insert(users)
-      .values(user)
+      .values(userData)
       .onConflictDoUpdate({
         target: users.id,
         set: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          phone: user.phone,
-          role: user.role,
-          balance: user.balance,
-          isBlocked: user.isBlocked,
+          ...userData,
+          updatedAt: new Date(),
         },
       })
       .returning();
-    return newUser;
+    return user;
   }
 
   async getUserByReferralCode(referralCode: string): Promise<User | undefined> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.referralCode, referralCode));
+    const [user] = await db.select().from(users).where(eq(users.referralCode, referralCode));
     return user;
   }
 
   async updateUserBalance(userId: string, amount: string): Promise<void> {
     await db
       .update(users)
-      .set({ balance: amount })
+      .set({ 
+        balance: sql`${users.balance} + ${amount}`,
+        updatedAt: new Date()
+      })
       .where(eq(users.id, userId));
   }
 
   async updateUserPhone(userId: string, phoneNumber: string): Promise<void> {
     await db
       .update(users)
-      .set({ phone: phoneNumber })
+      .set({ 
+        phoneNumber,
+        updatedAt: new Date()
+      })
       .where(eq(users.id, userId));
   }
 
   async updateUser(userId: string, updates: Partial<User>): Promise<void> {
     await db
       .update(users)
-      .set(updates)
+      .set({ 
+        ...updates,
+        updatedAt: new Date()
+      })
       .where(eq(users.id, userId));
   }
 
   async updateUserPassword(userId: string, hashedPassword: string): Promise<void> {
     await db
       .update(users)
-      .set({ password: hashedPassword })
+      .set({ 
+        password: hashedPassword,
+        updatedAt: new Date()
+      })
       .where(eq(users.id, userId));
   }
 
@@ -193,8 +195,8 @@ class DatabaseStorage implements IStorage {
     const [draw] = await db
       .select()
       .from(draws)
-      .where(eq(draws.isActive, true))
-      .orderBy(desc(draws.drawNumber))
+      .where(and(eq(draws.isActive, true), eq(draws.isCompleted, false)))
+      .orderBy(desc(draws.drawDate))
       .limit(1);
     return draw;
   }
@@ -229,12 +231,7 @@ class DatabaseStorage implements IStorage {
     return draw;
   }
 
-  async updateDrawWinningNumbers(drawId: number, winningNumbers: number[]): Promise<void> {
-    await db
-      .update(draws)
-      .set({ winningNumbers })
-      .where(eq(draws.id, drawId));
-  }
+
 
   async updateDrawJackpot(drawId: number, additionalAmount: number): Promise<void> {
     await db
@@ -245,12 +242,7 @@ class DatabaseStorage implements IStorage {
       .where(eq(draws.id, drawId));
   }
 
-  async completeDraw(drawId: number): Promise<void> {
-    await db
-      .update(draws)
-      .set({ isCompleted: true, isActive: false })
-      .where(eq(draws.id, drawId));
-  }
+
 
   // Ticket operations
   async createTicket(ticketData: InsertTicket): Promise<Ticket> {
@@ -297,6 +289,38 @@ class DatabaseStorage implements IStorage {
   // Transaction operations
   async createTransaction(transactionData: InsertTransaction): Promise<Transaction> {
     const [transaction] = await db.insert(transactions).values(transactionData).returning();
+    
+    // Check for first deposit tracking for referral bonuses
+    if (transactionData.type === 'deposit') {
+      const user = await this.getUser(transactionData.userId);
+      if (user && user.referredBy) {
+        // Check if this is the first deposit
+        const previousDeposits = await db.select()
+          .from(transactions)
+          .where(and(
+            eq(transactions.userId, transactionData.userId),
+            eq(transactions.type, 'deposit')
+          ));
+        
+        // If this is the first deposit and amount >= 1000₪
+        if (previousDeposits.length === 1 && parseFloat(transactionData.amount) >= 1000) {
+          // Award referral bonus
+          const referrer = await this.getUser(user.referredBy);
+          if (referrer) {
+            await this.updateUserBalance(user.referredBy, "100");
+            
+            // Create referral bonus transaction
+            await db.insert(transactions).values({
+              userId: user.referredBy,
+              type: 'referral_bonus',
+              amount: "100",
+              description: `First deposit referral bonus for ${user.firstName} ${user.lastName} (₪${transactionData.amount})`,
+            });
+          }
+        }
+      }
+    }
+    
     return transaction;
   }
 
@@ -305,22 +329,38 @@ class DatabaseStorage implements IStorage {
       .select()
       .from(transactions)
       .where(eq(transactions.userId, userId))
-      .orderBy(desc(transactions.createdAt));
+      .orderBy(desc(transactions.createdAt))
+      .limit(50);
   }
 
   async createAdminDeposit(userId: string, amount: string, comment: string): Promise<Transaction> {
-    const transaction = await this.createTransaction({
+    // Create the transaction record
+    const [transaction] = await db.insert(transactions).values({
       userId,
-      type: "deposit",
+      type: "admin_deposit",
       amount,
-      description: comment,
-      status: "completed",
-    });
+      description: `Manual deposit by admin: ₪${amount}`,
+      adminComment: comment,
+    }).returning();
 
-    const currentUser = await this.getUser(userId);
-    if (currentUser) {
-      const newBalance = (parseFloat(currentUser.balance) + parseFloat(amount)).toFixed(2);
-      await this.updateUserBalance(userId, newBalance);
+    // Update user balance (add full amount to user)
+    await db
+      .update(users)
+      .set({ 
+        balance: sql`${users.balance} + ${amount}` 
+      })
+      .where(eq(users.id, userId));
+
+    // Update current draw jackpot (50% goes to next draw)
+    const currentDraw = await this.getCurrentDraw();
+    if (currentDraw) {
+      const jackpotIncrease = (parseFloat(amount) * 0.5).toFixed(2);
+      await db
+        .update(draws)
+        .set({ 
+          jackpotAmount: sql`${draws.jackpotAmount} + ${jackpotIncrease}` 
+        })
+        .where(eq(draws.id, currentDraw.id));
     }
 
     return transaction;
@@ -336,18 +376,20 @@ class DatabaseStorage implements IStorage {
     return db
       .select({
         id: chatMessages.id,
-        message: chatMessages.message,
-        timestamp: chatMessages.timestamp,
         userId: chatMessages.userId,
+        message: chatMessages.message,
+        isFromAdmin: chatMessages.isFromAdmin,
+        createdAt: chatMessages.createdAt,
         user: {
           id: users.id,
           firstName: users.firstName,
           lastName: users.lastName,
+          profileImageUrl: users.profileImageUrl,
         }
       })
       .from(chatMessages)
       .leftJoin(users, eq(chatMessages.userId, users.id))
-      .orderBy(desc(chatMessages.timestamp))
+      .orderBy(desc(chatMessages.createdAt))
       .limit(limit);
   }
 
@@ -355,19 +397,52 @@ class DatabaseStorage implements IStorage {
   async createReferral(referralData: InsertReferral): Promise<Referral> {
     const [referral] = await db.insert(referrals).values(referralData).returning();
     
-    // Add bonus to referrer
+    // Award referral bonus to referrer
     const referrer = await this.getUser(referralData.referrerId);
     if (referrer) {
-      const newBalance = (parseFloat(referrer.balance) + parseFloat(referralData.bonusAmount)).toFixed(2);
-      await this.updateUserBalance(referralData.referrerId, newBalance);
+      const bonusAmount = 100; // 100₪ bonus per referral
+      await this.updateUserBalance(referralData.referrerId, bonusAmount.toString());
       
+      // Create transaction for referral bonus
       await this.createTransaction({
         userId: referralData.referrerId,
-        type: "bonus",
-        amount: referralData.bonusAmount,
-        description: "Referral bonus",
-        status: "completed",
+        type: 'referral_bonus',
+        amount: bonusAmount.toString(),
+        description: `Referral bonus for inviting ${referralData.referredId}`,
       });
+      
+      // Check if referrer now has 5 or more referrals for 1000₪ bonus
+      const referrerReferrals = await this.getUserReferrals(referralData.referrerId);
+      const totalReferrals = referrerReferrals.length;
+      
+      // Award 1000₪ bonus after 5th referral (only once)
+      if (totalReferrals === 5) {
+        const bigBonusAmount = 1000; // 1000₪ bonus after 5 referrals
+        await this.updateUserBalance(referralData.referrerId, bigBonusAmount.toString());
+        
+        // Create transaction for big referral bonus
+        await this.createTransaction({
+          userId: referralData.referrerId,
+          type: 'referral_milestone_bonus',
+          amount: bigBonusAmount.toString(),
+          description: `Milestone bonus for reaching 5 referrals - ₪1000`,
+        });
+        
+        // Update user's referral bonus total
+        await db.update(users)
+          .set({ 
+            referralBonus: (parseFloat(referrer.referralBonus || '0') + bigBonusAmount).toString(),
+            referralCount: totalReferrals
+          })
+          .where(eq(users.id, referralData.referrerId));
+      } else {
+        // Update referral count
+        await db.update(users)
+          .set({ 
+            referralCount: totalReferrals
+          })
+          .where(eq(users.id, referralData.referrerId));
+      }
     }
     
     return referral;
@@ -400,6 +475,14 @@ class DatabaseStorage implements IStorage {
       .update(referrals)
       .set({ hasMadeDeposit: true })
       .where(eq(referrals.id, referralId));
+  }
+
+
+
+
+      winningAmount: winner.winningAmount || "0",
+      numbers: winner.numbers as number[] || [],
+    }));
   }
 
   // Crypto payment operations
@@ -545,7 +628,7 @@ class DatabaseStorage implements IStorage {
     return wallet;
   }
 
-  // Stats operations
+  // NOUVELLES MÉTHODES POUR LES STATISTIQUES DE TIRAGES
   async getDrawStats(drawId: number): Promise<{
     totalTickets: number;
     totalJackpot: string;
@@ -620,6 +703,33 @@ class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error getting draw winners:", error);
       return [];
+    }
+  }
+
+  async updateDrawWinningNumbers(drawId: number, winningNumbers: number[]): Promise<void> {
+    try {
+      await db.update(draws)
+        .set({ 
+          winningNumbers
+        })
+        .where(eq(draws.id, drawId));
+    } catch (error) {
+      console.error("Error updating draw winning numbers:", error);
+      throw error;
+    }
+  }
+
+  async completeDraw(drawId: number): Promise<void> {
+    try {
+      await db.update(draws)
+        .set({ 
+          isCompleted: true,
+          isActive: false
+        })
+        .where(eq(draws.id, drawId));
+    } catch (error) {
+      console.error("Error completing draw:", error);
+      throw error;
     }
   }
 }

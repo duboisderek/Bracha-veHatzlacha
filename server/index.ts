@@ -8,6 +8,10 @@ import { logger, performanceMiddleware, errorLoggingMiddleware } from "./logger"
 import { httpsRedirectMiddleware, securityHeadersMiddleware, rateLimitingMiddleware } from "./ssl-config";
 import { backupService } from "./backup-service";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -104,28 +108,28 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Simple static file serving for now to avoid Vite startup issues
+  // Static file serving - serve from client/public for assets
   app.use(express.static('client/public'));
   
-  // Catch-all route for SPA
+  // Catch-all route for SPA - serve main index.html from client directory
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api/')) {
       return res.status(404).json({ error: 'API endpoint not found' });
     }
-    res.sendFile(path.join(__dirname, '../client/public/index.html'));
+    res.sendFile(path.join(__dirname, '../client/index.html'));
   });
 
   // Use PORT environment variable or fallback to 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled on Replit.
   const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
+  
+  server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
     console.log(`Server listening on http://0.0.0.0:${port}`);
     console.log(`Server listening on http://localhost:${port}`);
+  }).on('error', (err) => {
+    console.error(`Server failed to start:`, err);
+    process.exit(1);
   });
 })();
